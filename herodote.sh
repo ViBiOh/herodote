@@ -51,21 +51,79 @@ git_is_inside() {
   git rev-parse --is-inside-work-tree 2>&1
 }
 
-insert_algolia() {
-  curl -X POST \
-     -H "X-Algolia-API-Key: ${ALGOLIA_API_KEY}" \
+git_remote_repository() {
+  if [[ $(git_is_inside) != "true" ]]; then
+    return
+  fi
+
+  local REMOTE_URL
+  REMOTE_URL="$(git remote get-url --push "$(git remote show | head -1)")"
+
+  if [[ ${REMOTE_URL} =~ ^.*@.*:(.*)\/(.*).git$ ]]; then
+    printf "%s/%s" "${BASH_REMATCH[1]}" "${BASH_REMATCH[2]}"
+  fi
+}
+
+algolia_index() {
+  curl -X PUT \
      -H "X-Algolia-Application-Id: ${ALGOLIA_APPLICATION_ID}" \
+     -H "X-Algolia-API-Key: ${ALGOLIA_API_KEY}" \
+     --data-binary '{
+      "ranking": [
+        "desc(date)",
+        "typo",
+        "geo",
+        "words",
+        "filters",
+        "proximity",
+        "attribute",
+        "exact",
+        "custom"
+      ]
+     }' \
+    "https://${ALGOLIA_APPLICATION_ID}.algolia.net/1/indexes/${ALGOLIA_INDEX}/settings" > /dev/null
+}
+
+algolia_latest() {
+  local HTTP_OUTPUT="http_output.txt"
+  local HTTP_STATUS
+
+  HTTP_STATUS="$(curl -q -sSL \
+    --max-time 10 \
+    -o "${HTTP_OUTPUT}" \
+    -w "%{http_code}" \
+    -H "X-Algolia-Application-Id: ${ALGOLIA_APPLICATION_ID}" \
+    -H "X-Algolia-API-Key: ${ALGOLIA_API_KEY}" \
+    "https://${ALGOLIA_APPLICATION_ID}.algolia.net/1/indexes/${ALGOLIA_INDEX}")"
+
+  if [[ ${HTTP_STATUS} == "200" ]] && [[ $(python -c "import json; print(len(json.load(open('${HTTP_OUTPUT}'))['hits']))") -gt 0 ]]; then
+    printf "HEAD...%s" "$(python -c "import json; print(json.load(open('${HTTP_OUTPUT}'))['hits'][0]['hash'])")"
+    rm "${HTTP_OUTPUT}"
+    return
+  fi
+
+  git rev-parse --abbrev-ref HEAD
+}
+
+algolia_insert() {
+  curl -X POST \
+     -H "X-Algolia-Application-Id: ${ALGOLIA_APPLICATION_ID}" \
+     -H "X-Algolia-API-Key: ${ALGOLIA_API_KEY}" \
      --data-binary "${1}" \
-    "https://${ALGOLIA_APPLICATION_ID}.algolia.net/1/indexes/${ALGOLIA_INDEX}"
+    "https://${ALGOLIA_APPLICATION_ID}.algolia.net/1/indexes/${ALGOLIA_INDEX}" > /dev/null
 }
 
 walk_log() {
   git_conventionnal_commits
 
+  local REPOSITORY
+  REPOSITORY="$(git_remote_repository)"
+
+  local count=0
   IFS=$'\n'
 
   shopt -s nocasematch
-  for hash in $(git log --no-merges --pretty=format:'%h' "${1}...${2}"); do
+  for hash in $(git log --no-merges --pretty=format:'%h' "$(algolia_latest)"); do
     if [[ $(git show -s --format='%h %at %s' "${hash}") =~ ^([0-9a-f]{1,16})\ ([0-9]+)\ (revert )?($(IFS='|'; echo "${!CONVENTIONAL_COMMIT_SCOPES[*]}"))(\((.+)\))?(\!)?:\ (.*)$ ]]; then
       local HASH="${BASH_REMATCH[1]}"
       local DATE="${BASH_REMATCH[2]}"
@@ -87,7 +145,14 @@ walk_log() {
         BREAK="false"
       fi
 
-      insert_algolia "$(printf '{"hash": "%s", "revert": %s, "date": %s, "type": "%s", "component": "%s", "content": "%s", "breaking": %s}\n' "${HASH}" "${REVERT}" "${DATE}" "${TYPE}" "${COMPONENT}" "${CONTENT}" "${BREAK}")"
+      count="$(( count + 1 ))"
+      algolia_insert "$(printf '{"repository": "%s", "hash": "%s", "revert": %s, "date": %s, "type": "%s", "component": "%s", "content": "%s", "breaking": %s}\n' "${REPOSITORY}" "${HASH}" "${REVERT}" "${DATE}" "${TYPE}" "${COMPONENT}" "${CONTENT}" "${BREAK}")"
+
+      if [[ ${count} -gt 50 ]]; then
+        printf "%bLimiting first insert to 50 commits%b\n" "${YELLOW}" "${RESET}"
+
+        break
+      fi
     fi
   done
 }
@@ -95,21 +160,18 @@ walk_log() {
 main() {
   var_color
 
-  if [[ "${#}" -ne 2 ]]; then
-    printf "%bUsage: ${0} [END_REF] [START_REF]%b\n" "${RED}" "${RESET}"
-    return 1
-  fi
-
   if [[ $(git_is_inside) != "true" ]]; then
     printf "%bnot inside a git tree%b\n" "${YELLOW}" "${RESET}"
     return 2
   fi
 
-  var_read ALGOLIA_API_KEY
   var_read ALGOLIA_APPLICATION_ID
+  var_read ALGOLIA_API_KEY "" "secret"
   var_read ALGOLIA_INDEX "herodote"
 
-  walk_log "${1}" "${2}"
+  algolia_index
+
+  walk_log
 }
 
 main "${@}"
