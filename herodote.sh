@@ -69,6 +69,13 @@ algolia_index() {
      -H "X-Algolia-Application-Id: ${ALGOLIA_APPLICATION_ID}" \
      -H "X-Algolia-API-Key: ${ALGOLIA_API_KEY}" \
      --data-binary '{
+      "searchableAttributes": [
+        "repository",
+        "hash",
+        "type",
+        "component",
+        "content"
+      ],
       "ranking": [
         "desc(date)",
         "typo",
@@ -79,7 +86,8 @@ algolia_index() {
         "attribute",
         "exact",
         "custom"
-      ]
+      ],
+      "exactOnSingleWordQuery": "word"
      }' \
     "https://${ALGOLIA_APPLICATION_ID}.algolia.net/1/indexes/${ALGOLIA_INDEX}/settings" > /dev/null
 }
@@ -94,7 +102,10 @@ algolia_latest() {
     -w "%{http_code}" \
     -H "X-Algolia-Application-Id: ${ALGOLIA_APPLICATION_ID}" \
     -H "X-Algolia-API-Key: ${ALGOLIA_API_KEY}" \
-    "https://${ALGOLIA_APPLICATION_ID}.algolia.net/1/indexes/${ALGOLIA_INDEX}")"
+    --get \
+    --data-urlencode "query=${REPOSITORY}" \
+    --data-urlencode "hitsPerPage=1" \
+    "https://${ALGOLIA_APPLICATION_ID}-dsn.algolia.net/1/indexes/${ALGOLIA_INDEX}")"
 
   if [[ ${HTTP_STATUS} == "200" ]] && [[ $(python -c "import json; print(len(json.load(open('${HTTP_OUTPUT}'))['hits']))") -gt 0 ]]; then
     printf "HEAD...%s" "$(python -c "import json; print(json.load(open('${HTTP_OUTPUT}'))['hits'][0]['hash'])")"
@@ -102,6 +113,7 @@ algolia_latest() {
     return
   fi
 
+  rm "${HTTP_OUTPUT}"
   git rev-parse --abbrev-ref HEAD
 }
 
@@ -119,7 +131,7 @@ walk_log() {
   local REPOSITORY
   REPOSITORY="$(git_remote_repository)"
 
-  local count=0
+  local count=1
   IFS=$'\n'
 
   shopt -s nocasematch
