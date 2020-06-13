@@ -1,0 +1,31 @@
+#commits {
+  list-style: none;
+  overflow: auto;
+}
+
+#commits li {
+  display: flex;
+  align-items: center;
+  padding: 0.5rem;
+}
+
+.label {
+  border-radius: 4px;
+  padding: 0.5rem;
+  margin-right: 0.5rem;
+}
+
+.label-blue {
+  background-color: var(--primary);
+  color: var(--white);
+}
+
+.label-green {
+  background-color: var(--success);
+  color: var(--dark);
+}
+
+.label-red {
+  background-color: var(--danger);
+  color: var(--white);
+}
