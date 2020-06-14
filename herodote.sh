@@ -64,6 +64,19 @@ git_remote_repository() {
   fi
 }
 
+git_remote_host() {
+  if [[ $(git_is_inside) != "true" ]]; then
+    return
+  fi
+
+  local REMOTE_URL
+  REMOTE_URL="$(git remote get-url --push "$(git remote show | head -1)")"
+
+  if [[ ${REMOTE_URL} =~ ^.*@(.*):.*\/.*.git$ ]]; then
+    printf "%s" "${BASH_REMATCH[1]}"
+  fi
+}
+
 algolia_index() {
   curl -X PUT \
      -H "X-Algolia-Application-Id: ${ALGOLIA_APPLICATION_ID}" \
@@ -131,6 +144,9 @@ walk_log() {
   local REPOSITORY
   REPOSITORY="$(git_remote_repository)"
 
+  local GIT_HOST
+  GIT_HOST="$(git_remote_host)"
+
   local count=1
   IFS=$'\n'
 
@@ -158,7 +174,7 @@ walk_log() {
       fi
 
       count="$(( count + 1 ))"
-      algolia_insert "$(printf '{"repository": "%s", "hash": "%s", "revert": %s, "date": %s, "type": "%s", "component": "%s", "content": "%s", "breaking": %s}\n' "${REPOSITORY}" "${HASH}" "${REVERT}" "${DATE}" "${TYPE}" "${COMPONENT}" "${CONTENT}" "${BREAK}")"
+      algolia_insert "$(printf '{"remote": "%s", "repository": "%s", "hash": "%s", "revert": %s, "date": %s, "type": "%s", "component": "%s", "content": "%s", "breaking": %s}\n' "${GIT_HOST}" "${REPOSITORY}" "${HASH}" "${REVERT}" "${DATE}" "${TYPE}" "${COMPONENT}" "${CONTENT}" "${BREAK}")"
 
       if [[ ${count} -gt 50 ]]; then
         printf "%bLimiting first insert to 50 commits%b\n" "${YELLOW}" "${RESET}"
