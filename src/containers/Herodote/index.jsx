@@ -1,9 +1,7 @@
-import React, { Component } from "react";
-import classNames from "classnames";
-import { search } from "services/Algolia";
-import "./index.css";
-
-const COLOR_MAPPING = ["blue", "green", "red"];
+import React, { Component } from 'react';
+import { search } from 'services/Algolia';
+import CommitsList from 'components/CommitsList';
+import './index.css';
 
 /**
  * Herodote Component.
@@ -25,17 +23,7 @@ export default class Herodote extends Component {
    * React lifecycle.
    */
   async componentDidMount() {
-    const results = await search("");
-
-    const colorMapping = {};
-    let index = 0;
-
-    results.forEach((result) => {
-      result.label = colorMapping[result.repository];
-      if (!result.label) {
-        colorMapping[result.repository] = result.label = COLOR_MAPPING[index++];
-      }
-    });
+    const results = await search('');
 
     this.setState({ results });
   }
@@ -49,17 +37,6 @@ export default class Herodote extends Component {
       return <p>No entry found</p>;
     }
 
-    return (
-      <ol id="commits" className="no-padding">
-        {results.map((result) => (
-          <li key={result.hash}>
-            <span className={classNames("label", `label-${result.label}`)}>
-              {result.repository}
-            </span>
-            <span>{result.content}</span>
-          </li>
-        ))}
-      </ol>
-    );
+    return <CommitsList results={results} />;
   }
 }
