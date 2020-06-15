@@ -1,16 +1,25 @@
-import React from 'react';
-import getColor from 'services/Color';
-import PropTypes from 'prop-types';
+import React from "react";
+import { clear as clearColor, get as getColor } from "services/Color";
+import PropTypes from "prop-types";
 
 /**
  * CommitsList Functional Component.
  */
 export default function CommitsList({ results }) {
+  if (!results.length) {
+    return <p>No entry found</p>;
+  }
+
+  clearColor();
+
   return (
     <ol id="commits" className="no-padding">
       {results.map((result) => (
         <li key={result.hash}>
-          <span className="label" style={{ backgroundColor: getColor(result.repository) }}>
+          <span
+            className="label"
+            style={{ backgroundColor: getColor(result.repository) }}
+          >
             {result.repository}
           </span>
 
@@ -31,7 +40,7 @@ export default function CommitsList({ results }) {
   );
 }
 
-CommitsList.displayName = 'CommitsList';
+CommitsList.displayName = "CommitsList";
 
 CommitsList.propTypes = {
   results: PropTypes.arrayOf(
@@ -39,6 +48,6 @@ CommitsList.propTypes = {
       hash: PropTypes.string.isRequired,
       content: PropTypes.string.isRequired,
       repository: PropTypes.string.isRequired,
-    }),
+    })
   ).isRequired,
 };

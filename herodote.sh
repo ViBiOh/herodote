@@ -89,6 +89,11 @@ algolia_index() {
         "component",
         "content"
       ],
+      "attributesForFaceting": [
+        "repository",
+        "type",
+        "component"
+      ],
       "ranking": [
         "desc(date)",
         "typo",
