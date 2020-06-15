@@ -21,10 +21,15 @@ const availableColors = [
   "#264E36",
 ];
 
-let colorIndex = 0;
-let colorMemory = {};
+let colorIndex;
+let colorMemory;
 
-export default function get(str) {
+export function clear() {
+  colorMemory = {};
+  colorIndex = 0;
+}
+
+export function get(str) {
   let color = colorMemory[str];
   if (!color) {
     color = colorMemory[str] =

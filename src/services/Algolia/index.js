@@ -14,11 +14,11 @@ export function init(config) {
   index = client.initIndex(config.ALGOLIA_INDEX);
 }
 
-export async function search(query) {
+export async function search(query, options = {}) {
   if (!index) {
     global.console.error("[algolia] index not initialized");
   }
 
-  const output = await index.search(query);
+  const output = await index.search(query, options);
   return output.hits;
 }
