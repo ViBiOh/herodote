@@ -15,6 +15,8 @@ export default class App extends Component {
   constructor(props) {
     super(props);
 
+    this._isMounted = false;
+
     this.state = {};
   }
 
@@ -22,11 +24,21 @@ export default class App extends Component {
    * React lifecycle.
    */
   async componentDidMount() {
+    this._isMounted = true;
     const config = await getConfig();
 
     initAlgolia(config);
 
-    this.setState({ config });
+    if (this._isMounted) {
+      this.setState({ config });
+    }
+  }
+
+  /**
+   * React lifecycle.
+   */
+  componentWillUnmount() {
+    this._isMounted = false;
   }
 
   /**

@@ -79,8 +79,8 @@ git_remote_host() {
 
 algolia_index() {
   curl -X PUT \
-     -H "X-Algolia-Application-Id: ${ALGOLIA_APPLICATION_ID}" \
-     -H "X-Algolia-API-Key: ${ALGOLIA_API_KEY}" \
+     -H "X-Algolia-Application-Id: ${ALGOLIA_APP}" \
+     -H "X-Algolia-API-Key: ${ALGOLIA_KEY}" \
      --data-binary '{
       "searchableAttributes": [
         "repository",
@@ -107,7 +107,7 @@ algolia_index() {
       ],
       "exactOnSingleWordQuery": "word"
      }' \
-    "https://${ALGOLIA_APPLICATION_ID}.algolia.net/1/indexes/${ALGOLIA_INDEX}/settings" > /dev/null
+    "https://${ALGOLIA_APP}.algolia.net/1/indexes/${ALGOLIA_INDEX}/settings" > /dev/null
 }
 
 algolia_latest() {
@@ -118,12 +118,12 @@ algolia_latest() {
     --max-time 10 \
     -o "${HTTP_OUTPUT}" \
     -w "%{http_code}" \
-    -H "X-Algolia-Application-Id: ${ALGOLIA_APPLICATION_ID}" \
-    -H "X-Algolia-API-Key: ${ALGOLIA_API_KEY}" \
+    -H "X-Algolia-Application-Id: ${ALGOLIA_APP}" \
+    -H "X-Algolia-API-Key: ${ALGOLIA_KEY}" \
     --get \
     --data-urlencode "query=${REPOSITORY}" \
     --data-urlencode "hitsPerPage=1" \
-    "https://${ALGOLIA_APPLICATION_ID}-dsn.algolia.net/1/indexes/${ALGOLIA_INDEX}")"
+    "https://${ALGOLIA_APP}-dsn.algolia.net/1/indexes/${ALGOLIA_INDEX}")"
 
   if [[ ${HTTP_STATUS} == "200" ]] && [[ $(python -c "import json; print(len(json.load(open('${HTTP_OUTPUT}'))['hits']))") -gt 0 ]]; then
     printf "HEAD...%s" "$(python -c "import json; print(json.load(open('${HTTP_OUTPUT}'))['hits'][0]['hash'])")"
@@ -137,10 +137,10 @@ algolia_latest() {
 
 algolia_insert() {
   curl -X POST \
-     -H "X-Algolia-Application-Id: ${ALGOLIA_APPLICATION_ID}" \
-     -H "X-Algolia-API-Key: ${ALGOLIA_API_KEY}" \
+     -H "X-Algolia-Application-Id: ${ALGOLIA_APP}" \
+     -H "X-Algolia-API-Key: ${ALGOLIA_KEY}" \
      --data-binary "${1}" \
-    "https://${ALGOLIA_APPLICATION_ID}.algolia.net/1/indexes/${ALGOLIA_INDEX}" > /dev/null
+    "https://${ALGOLIA_APP}.algolia.net/1/indexes/${ALGOLIA_INDEX}" > /dev/null
 }
 
 walk_log() {
@@ -198,8 +198,8 @@ main() {
     return 2
   fi
 
-  var_read ALGOLIA_APPLICATION_ID
-  var_read ALGOLIA_API_KEY "" "secret"
+  var_read ALGOLIA_APP
+  var_read ALGOLIA_KEY "" "secret"
   var_read ALGOLIA_INDEX "herodote"
 
   algolia_index

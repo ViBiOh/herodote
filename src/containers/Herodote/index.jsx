@@ -16,6 +16,8 @@ export default class Herodote extends Component {
   constructor(props) {
     super(props);
 
+    this._isMounted = false;
+
     this.state = {
       results: [],
     };
@@ -25,7 +27,15 @@ export default class Herodote extends Component {
    * React lifecycle.
    */
   componentDidMount() {
+    this._isMounted = true;
     this.filterBy("");
+  }
+
+  /**
+   * React lifecycle.
+   */
+  componentWillUnmount() {
+    this._isMounted = false;
   }
 
   /**
@@ -41,7 +51,9 @@ export default class Herodote extends Component {
     const query = q.replace(filterRegex, "");
 
     const results = await search(query, { filters: filters.join(" AND ") });
-    this.setState({ results });
+    if (this._isMounted) {
+      this.setState({ results });
+    }
   };
 
   /**
