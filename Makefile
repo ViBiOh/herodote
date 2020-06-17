@@ -16,3 +16,8 @@ help: Makefile
 .PHONY: init
 init:
 	@curl -q -sSL --max-time 10 "https://raw.githubusercontent.com/ViBiOh/scripts/master/bootstrap" | bash -s "git_hooks"
+
+## version: Output last commit sha1
+.PHONY: version
+version:
+	@printf "$(shell git rev-parse --short HEAD)"
