@@ -1,0 +1,25 @@
+---
+
+name: Herodote
+on:
+  push:
+    branches:
+      - master
+jobs:
+  build:
+    name: Feed
+    runs-on: ubuntu-latest
+    steps:
+      - name: Fetch history
+        uses: actions/checkout@v2
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+
+      - name: Push history
+        run: |
+          curl -q -sSL --max-time 10 "https://raw.githubusercontent.com/ViBiOh/herodote/master/herodote.sh"
+          ./herodote.sh
+        env:
+          ALGOLIA_APP: ${{ secrets.ALGOLIA_APP }}
+          ALGOLIA_KEY: ${{ secrets.ALGOLIA_KEY }}
