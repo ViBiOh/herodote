@@ -1,0 +1,43 @@
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: herodote-http
+  labels:
+    app.kubernetes.io/name: herodote
+    app.kubernetes.io/instance: herodote
+    app.kubernetes.io/managed-by: kubectl
+spec:
+  entryPoints:
+    - http
+  routes:
+    - match: Host(`herodote.vibioh.fr`)
+      kind: Rule
+      middlewares:
+        - name: redirect
+      services:
+        - name: herodote
+          port: 80
+
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: herodote-https
+  labels:
+    app.kubernetes.io/name: herodote
+    app.kubernetes.io/instance: herodote
+    app.kubernetes.io/managed-by: kubectl
+spec:
+  entryPoints:
+    - https
+  routes:
+    - match: Host(`herodote.vibioh.fr`)
+      kind: Rule
+      middlewares:
+        - name: ratelimit
+      services:
+        - name: herodote
+          port: 80
+  tls:
+    certResolver: default
