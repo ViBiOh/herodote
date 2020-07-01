@@ -121,7 +121,7 @@ algolia_latest() {
     -H "X-Algolia-Application-Id: ${ALGOLIA_APP}" \
     -H "X-Algolia-API-Key: ${ALGOLIA_KEY}" \
     --get \
-    --data-urlencode "query=${REPOSITORY}" \
+    --data-urlencode "query=${GIT_REPOSITORY}" \
     --data-urlencode "hitsPerPage=1" \
     "https://${ALGOLIA_APP}-dsn.algolia.net/1/indexes/${ALGOLIA_INDEX}")"
 
@@ -145,12 +145,6 @@ algolia_insert() {
 
 walk_log() {
   git_conventionnal_commits
-
-  local REPOSITORY
-  REPOSITORY="$(git_remote_repository)"
-
-  local GIT_HOST
-  GIT_HOST="$(git_remote_host)"
 
   local count=1
   IFS=$'\n'
@@ -179,7 +173,7 @@ walk_log() {
       fi
 
       count="$(( count + 1 ))"
-      algolia_insert "$(printf '{"remote": "%s", "repository": "%s", "hash": "%s", "revert": %s, "date": %s, "type": "%s", "component": "%s", "content": "%s", "breaking": %s}\n' "${GIT_HOST}" "${REPOSITORY}" "${HASH}" "${REVERT}" "${DATE}" "${TYPE}" "${COMPONENT}" "${CONTENT}" "${BREAK}")"
+      algolia_insert "$(printf '{"remote": "%s", "repository": "%s", "hash": "%s", "revert": %s, "date": %s, "type": "%s", "component": "%s", "content": "%s", "breaking": %s}\n' "${GIT_HOST}" "${GIT_REPOSITORY}" "${HASH}" "${REVERT}" "${DATE}" "${TYPE}" "${COMPONENT}" "${CONTENT}" "${BREAK}")"
 
       if [[ ${count} -gt 50 ]]; then
         printf "%bLimiting first insert to 50 commits%b\n" "${YELLOW}" "${RESET}"
@@ -201,6 +195,8 @@ main() {
   var_read ALGOLIA_APP
   var_read ALGOLIA_KEY "" "secret"
   var_read ALGOLIA_INDEX "herodote"
+  var_read GIT_HOST "$(git_remote_host)"
+  var_read GIT_REPOSITORY "$(git_remote_repository)"
 
   algolia_index
 
