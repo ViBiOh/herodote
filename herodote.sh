@@ -121,7 +121,7 @@ algolia_latest() {
     -H "X-Algolia-Application-Id: ${ALGOLIA_APP}" \
     -H "X-Algolia-API-Key: ${ALGOLIA_KEY}" \
     --get \
-    --data-urlencode "query=${GIT_REPOSITORY}" \
+    --data-urlencode "filters=repository:${GIT_REPOSITORY}" \
     --data-urlencode "hitsPerPage=1" \
     "https://${ALGOLIA_APP}-dsn.algolia.net/1/indexes/${ALGOLIA_INDEX}")"
 
