@@ -174,7 +174,7 @@ a:hover {
 
 @media print {
   body::after {
-    content: 'Save ink, share link. https://ketchup.vibioh.fr';
+    content: 'Save ink, share link. https://herodote.vibioh.fr';
   }
 
   body > * {
