@@ -4,9 +4,15 @@
 }
 
 #commits li {
-  display: flex;
   align-items: center;
-  padding: 0.5rem;
+  display: flex;
+  padding-bottom: 0.5rem;
+  padding-top: 0.5rem;
+}
+
+.search {
+  border: 0;
+  min-width: 30rem;
 }
 
 .label {
@@ -14,4 +20,13 @@
   padding: 0.5rem;
   margin-right: 0.5rem;
   color: var(--white);
+}
+
+.button {
+  border-radius: 2px;
+  background-color: var(--primary);
+  color: var(--white);
+  margin-left: auto;
+  margin-right: auto;
+  display: block;
 }

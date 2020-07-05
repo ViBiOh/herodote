@@ -13,7 +13,7 @@ export default function CommitsList({ results }) {
   clearColor();
 
   return (
-    <ol id="commits" className="no-padding">
+    <ol id="commits" className="no-padding no-margin">
       {results.map((result) => (
         <li key={result.hash}>
           <span
