@@ -19,7 +19,10 @@ export default class Herodote extends Component {
     this._isMounted = false;
 
     this.state = {
+      q: "",
       results: [],
+      nextPage: 0,
+      pagesCount: 0,
     };
   }
 
@@ -42,7 +45,7 @@ export default class Herodote extends Component {
    * Filter content with given query
    * @param  {String} query Query string
    */
-  filterBy = async (q) => {
+  filterBy = async (q, page = 0) => {
     const filters = [];
     q.replace(filterRegex, (all, filter) => {
       filters.push(filter);
@@ -50,15 +53,32 @@ export default class Herodote extends Component {
 
     const query = q.replace(filterRegex, "");
 
-    const results = await search(query, { filters: filters.join(" AND ") });
-    if (this._isMounted) {
-      this.setState({ results });
+    try {
+      const output = await search(query, page, {
+        filters: filters.join(" AND "),
+      });
+
+      if (this._isMounted && output) {
+        let list = output.hits;
+        if (page > 0) {
+          list = [...this.state.results, ...list];
+        }
+
+        this.setState({
+          q,
+          results: list,
+          nextPage: page + 1,
+          pagesCount: output.nbPages,
+        });
+      }
+    } catch (e) {
+      global.console.error(`unable to filter by '${q}': ${e}`);
     }
   };
 
   /**
    * Debounced tigger when user change input
-   * @param  {String} e Input
+   * @param  {Object} e Input
    */
   onSearchChange = (e) => {
     clearTimeout(this.timeout);
@@ -69,19 +89,40 @@ export default class Herodote extends Component {
   };
 
   /**
+   * Fetch next page
+   */
+  onMoreClick = () => {
+    this.filterBy(this.state.q, this.state.nextPage);
+  };
+
+  /**
    * React lifecycle.
    */
   render() {
-    const { results } = this.state;
+    const { results, nextPage, pagesCount } = this.state;
 
     return (
-      <article>
+      <article className="padding">
         <input
           type="text"
           placeholder="Filter commit..."
+          className="search padding"
           onChange={this.onSearchChange}
         />
+
+        <hr />
+
         <CommitsList results={results} />
+
+        {nextPage < pagesCount && (
+          <button
+            type="button"
+            className="button padding margin"
+            onClick={this.onMoreClick}
+          >
+            Load more
+          </button>
+        )}
       </article>
     );
   }
