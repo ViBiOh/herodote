@@ -1,12 +1,12 @@
-import funtch from "funtch";
+import funtch from 'funtch';
 
 /**
  * Return configuration variables for app
  * @return {Object} Configuration object
  */
 export default async function getConfig() {
-  if (process.env.NODE_ENV === "production") {
-    return await funtch.get("/env");
+  if (process.env.NODE_ENV === 'production') {
+    return await funtch.get('/env');
   }
 
   return {

@@ -1,4 +1,4 @@
-import { createBrowserHistory } from "history";
+import { createBrowserHistory } from 'history';
 
 /**
  * BrowserHistory.
@@ -16,8 +16,8 @@ export function search() {
     /([^?&=]+)(?:=([^?&=]*))?/g,
     (match, key, value) => {
       params[key] =
-        typeof value === "undefined" ? true : decodeURIComponent(value);
-    }
+        typeof value === 'undefined' ? true : decodeURIComponent(value);
+    },
   );
 
   return params;
@@ -32,9 +32,9 @@ export function push(params) {
     .filter(([, value]) => Boolean(value))
     .map(([key, value]) => `${key}=${encodeURIComponent(value)}`);
 
-  let query = "";
+  let query = '';
   if (encoded.length) {
-    query = `?${encoded.join("&")}`;
+    query = `?${encoded.join('&')}`;
   }
 
   history.push(`/${query}`);
