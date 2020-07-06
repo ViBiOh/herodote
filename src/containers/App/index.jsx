@@ -1,8 +1,8 @@
-import React, { Component } from "react";
-import getConfig from "services/Config";
-import { init as initAlgolia } from "services/Algolia";
-import Header from "components/Header";
-import Herodote from "containers/Herodote";
+import React, { Component } from 'react';
+import getConfig from 'services/Config';
+import { init as initAlgolia } from 'services/Algolia';
+import Header from 'components/Header';
+import Herodote from 'containers/Herodote';
 
 /**
  * App Component.

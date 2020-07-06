@@ -1,10 +1,10 @@
-import algoliasearch from "algoliasearch/lite";
+import algoliasearch from 'algoliasearch/lite';
 
 let index;
 
 export function init(config) {
   if (!config || !config.ALGOLIA_APP || !config.ALGOLIA_KEY) {
-    global.console.error("[algolia] config not provided");
+    global.console.error('[algolia] config not provided');
     return;
   }
 
@@ -14,7 +14,7 @@ export function init(config) {
 
 export async function search(query, options = {}) {
   if (!index) {
-    global.console.error("[algolia] index not initialized");
+    global.console.error('[algolia] index not initialized');
     return;
   }
 

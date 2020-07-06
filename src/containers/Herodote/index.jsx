@@ -1,8 +1,8 @@
-import React, { Component } from "react";
-import { search as algoliaSearch } from "services/Algolia";
-import { search as urlSearch, push as urlPush } from "helpers/URL";
-import CommitsList from "components/CommitsList";
-import "./index.css";
+import React, { Component } from 'react';
+import { search as algoliaSearch } from 'services/Algolia';
+import { search as urlSearch, push as urlPush } from 'helpers/URL';
+import CommitsList from 'components/CommitsList';
+import './index.css';
 
 const filterRegex = /([^\s]+):([^\s]+)/gim;
 
@@ -20,7 +20,7 @@ export default class Herodote extends Component {
     this._isMounted = false;
 
     this.state = {
-      query: "",
+      query: '',
       results: [],
       nextPage: 0,
       pagesCount: 0,
@@ -55,17 +55,17 @@ export default class Herodote extends Component {
    * Filter content with given query
    * @param  {String} query Query string
    */
-  filterBy = async (query = "", page) => {
+  filterBy = async (query = '', page) => {
     const filtersValues = {};
     query.replace(filterRegex, (all, key, value) => {
       filtersValues[key] = (filtersValues[key] || []).concat(value);
     });
 
     const filters = Object.entries(filtersValues).map(([key, values]) =>
-      values.map((value) => `${key}:${value}`).join(" OR ")
+      values.map((value) => `${key}:${value}`).join(' OR '),
     );
 
-    await this.fetchCommits(query.replace(filterRegex, ""), filters, page);
+    await this.fetchCommits(query.replace(filterRegex, ''), filters, page);
 
     this.setState({ query });
     urlPush({ query });
@@ -79,7 +79,7 @@ export default class Herodote extends Component {
    */
   fetchCommits = async (query, filters, page = 0) => {
     const output = await algoliaSearch(query, {
-      filters: filters.length ? `(${filters.join(") AND (")})` : "",
+      filters: filters.length ? `(${filters.join(') AND (')})` : '',
       page,
     });
 
@@ -117,9 +117,9 @@ export default class Herodote extends Component {
    */
   onMoreClick = () => {
     console.log(
-      "this.state.nextPage",
+      'this.state.nextPage',
       typeof this.state.nextPage,
-      this.state.nextPage
+      this.state.nextPage,
     );
     this.filterBy(this.state.query, this.state.nextPage);
   };

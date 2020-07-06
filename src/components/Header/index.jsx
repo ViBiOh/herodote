@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 
 /**
  * Header Functional Component.
@@ -15,4 +15,4 @@ export default function Header() {
   );
 }
 
-Header.displayName = "Header";
+Header.displayName = 'Header';
