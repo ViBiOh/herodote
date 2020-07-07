@@ -1,0 +1,11 @@
+#commits {
+  list-style: none;
+  overflow: auto;
+}
+
+#commits li {
+  align-items: center;
+  display: flex;
+  padding-bottom: 0.5rem;
+  padding-top: 0.5rem;
+}
