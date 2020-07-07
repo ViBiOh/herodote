@@ -1,10 +1,3 @@
-import { createBrowserHistory } from 'history';
-
-/**
- * BrowserHistory.
- */
-export const history = createBrowserHistory();
-
 /**
  * Retrieve search params in URL into object.
  * @return {Object} Search params
@@ -32,10 +25,14 @@ export function push(params) {
     .filter(([, value]) => Boolean(value))
     .map(([key, value]) => `${key}=${encodeURIComponent(value)}`);
 
-  let query = '';
+  let search = '';
   if (encoded.length) {
-    query = `?${encoded.join('&')}`;
+    search = `?${encoded.join('&')}`;
   }
 
-  history.push(`/${query}`);
+  window.history.pushState(
+    null,
+    null,
+    `${window.location.pathname}${search}${window.location.hash}`,
+  );
 }

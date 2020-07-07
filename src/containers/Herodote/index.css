@@ -1,18 +1,13 @@
-#commits {
-  list-style: none;
-  overflow: auto;
+.flex {
+  display: flex;
 }
 
-#commits li {
-  align-items: center;
-  display: flex;
-  padding-bottom: 0.5rem;
-  padding-top: 0.5rem;
+.full {
+  width: 100%;
 }
 
 .search {
   border: 0;
-  min-width: 30rem;
 }
 
 .label {

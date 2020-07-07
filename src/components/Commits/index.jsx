@@ -1,11 +1,12 @@
 import React from 'react';
 import { clear as clearColor, get as getColor } from 'services/Color';
 import PropTypes from 'prop-types';
+import './index.css';
 
 /**
- * CommitsList Functional Component.
+ * Commits Functional Component.
  */
-export default function CommitsList({ results }) {
+export default function Commits({ results }) {
   if (!results.length) {
     return <p>No entry found</p>;
   }
@@ -40,9 +41,9 @@ export default function CommitsList({ results }) {
   );
 }
 
-CommitsList.displayName = 'CommitsList';
+Commits.displayName = 'Commits';
 
-CommitsList.propTypes = {
+Commits.propTypes = {
   results: PropTypes.arrayOf(
     PropTypes.shape({
       hash: PropTypes.string.isRequired,

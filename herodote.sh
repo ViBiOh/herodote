@@ -90,9 +90,9 @@ algolia_index() {
         "content"
       ],
       "attributesForFaceting": [
-        "repository",
-        "type",
-        "component"
+        "searchable(repository)",
+        "searchable(type)",
+        "searchable(component)"
       ],
       "ranking": [
         "desc(date)",
