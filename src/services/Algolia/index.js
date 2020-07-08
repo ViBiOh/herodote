@@ -36,13 +36,13 @@ export async function search(query, options = {}) {
  * @param  {String} name Name of facet
  * @return {Object}      Algolia reponse
  */
-export async function facets(name) {
+export async function facets(name, query) {
   if (!index) {
     global.console.error('[algolia] index not initialized');
     return;
   }
 
-  return await index.searchForFacetValues(name, '', {
+  return await index.searchForFacetValues(name, query, {
     maxFacetHits: 100,
   });
 }

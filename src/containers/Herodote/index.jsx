@@ -1,225 +1,169 @@
-import React, { Component } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   search as algoliaSearch,
   facets as algoliaFacets,
 } from 'services/Algolia';
 import { search as urlSearch, push as urlPush } from 'helpers/URL';
+import debounced from 'helpers/Debounce';
 import Filters from 'components/Filters';
 import Commits from 'components/Commits';
 import './index.css';
 
 const filterRegex = /([^\s]+):([^\s]+)/gim;
+const doubleSpaces = /\s{2,}/gim;
+const debouncedCall = debounced();
+
+function filterBy(query = '') {
+  const filtersGroup = {};
+  const filters = [];
+
+  query = query.trim();
+  query.replace(filterRegex, (all, key, value) => {
+    filtersGroup[key] = (filtersGroup[key] || []).concat(value);
+    filters.push(`${key}:${value}`);
+  });
+
+  const filtersValue = Object.entries(filtersGroup).map(([key, values]) =>
+    values.map((value) => `${key}:${value}`).join(' OR '),
+  );
+
+  return [
+    query.replace(filterRegex, ''),
+    {
+      filters: filtersValue.length ? `(${filtersValue.join(') AND (')})` : '',
+    },
+    filters,
+  ];
+}
+
+async function fetchCommits(query, options, page) {
+  const output = await algoliaSearch(query, { ...options, page });
+  if (output) {
+    return [output.hits, { next: output.page + 1, count: output.nbPages }];
+  }
+
+  return;
+}
+
+async function fetchFacets(name) {
+  const output = await algoliaFacets(name, '');
+  if (output) {
+    return output.facetHits;
+  }
+
+  return [];
+}
 
 /**
- * Herodote Component.
+ * Herodote Functional Component.
  */
-export default class Herodote extends Component {
-  /**
-   * Creates an instance of Herodote.
-   * @param {Object} props Component props
-   */
-  constructor(props) {
-    super(props);
+export default function Herodote() {
+  const [query, setQuery] = useState('');
+  const [algoliaParams, setAlgoliaParams] = useState({});
+  const [page, setPage] = useState(0);
+  const [filters, setFilters] = useState([]);
+  const [results, setResults] = useState([]);
+  const [pagination, setPagination] = useState({ next: 0, count: 0 });
+  const [facets, setFacets] = useState({});
 
-    this._isMounted = false;
+  useEffect(() => {
+    (async () => {
+      const repository = await fetchFacets('repository');
+      const type = await fetchFacets('type');
+      const component = await fetchFacets('component');
+      setFacets({ repository, type, component });
+    })();
 
-    this.state = {
-      query: '',
-      filters: [],
-      results: [],
-      nextPage: 0,
-      pagesCount: 0,
-      facets: {},
-    };
-  }
-
-  /**
-   * React lifecycle.
-   */
-  componentDidMount() {
-    this._isMounted = true;
-
-    this.loadFacets();
-
-    const { query } = urlSearch();
-    this.filterBy(query);
-  }
-
-  /**
-   * React lifecycle.
-   */
-  componentWillUnmount() {
-    this._isMounted = false;
-  }
-
-  /**
-   * React lifecycle.
-   */
-  componentDidCatch(error, info) {
-    global.console.error(error, info.componentStack);
-  }
-
-  /**
-   * Load facets in appropriate order
-   * @return {[type]} [description]
-   */
-  loadFacets = async () => {
-    const repository = await this.fetchFacets('repository');
-    const type = await this.fetchFacets('type');
-    const component = await this.fetchFacets('component');
-
-    if (this._isMounted) {
-      this.setState({ facets: { repository, type, component } });
+    const { query: searchQuery } = urlSearch();
+    if (searchQuery) {
+      setQuery(searchQuery);
     }
-  };
+  }, []);
 
-  /**
-   * Fetch facets of given name
-   * @param  {String} name Name of facets
-   */
-  fetchFacets = async (name) => {
-    const output = await algoliaFacets(name);
-    if (output) {
-      return output.facetHits;
-    }
+  useEffect(() => {
+    const [algoliaQuery, algoliaOptions, selectedFilters] = filterBy(query);
+    setAlgoliaParams({ query: algoliaQuery, options: algoliaOptions });
+    setFilters(selectedFilters);
+    setPage(0);
 
-    return [];
-  };
-
-  /**
-   * Filter content with given query
-   * @param  {String} query Query string
-   */
-  filterBy = async (query = '', page) => {
-    const filtersGroup = {};
-    const filters = [];
-
-    query = query.trim();
-    query.replace(filterRegex, (all, key, value) => {
-      filtersGroup[key] = (filtersGroup[key] || []).concat(value);
-      filters.push(`${key}:${value}`);
-    });
-
-    const filtersValue = Object.entries(filtersGroup).map(([key, values]) =>
-      values.map((value) => `${key}:${value}`).join(' OR '),
-    );
-
-    await this.fetchCommits(query.replace(filterRegex, ''), filtersValue, page);
-    this.setState({ query, filters });
     urlPush({ query });
-  };
+  }, [query]);
 
-  /**
-   * Fetch commits from algolia backend
-   * @param  {String} query   Search query
-   * @param  {Array}  filters List of filters
-   * @param  {Number} page    Page, 0 based
-   */
-  fetchCommits = async (query, filters, page = 0) => {
-    const output = await algoliaSearch(query, {
-      filters: filters.length ? `(${filters.join(') AND (')})` : '',
-      page,
-    });
+  useEffect(() => {
+    debouncedCall(async () => {
+      const [hits, newPagination] = await fetchCommits(
+        algoliaParams.query,
+        algoliaParams.options,
+        page,
+      );
 
-    if (this._isMounted && output) {
-      let results = output.hits;
       if (page) {
-        results = this.state.results.concat(results);
+        setResults(results.concat(hits));
+      } else {
+        setResults(hits);
       }
-
-      this.setState({
-        results,
-        nextPage: output.page + 1,
-        pagesCount: output.nbPages,
-      });
-    }
-  };
+      setPagination(newPagination);
+    });
+  }, [algoliaParams, page]); // eslint-disable-line react-hooks/exhaustive-deps
 
   /**
-   * Debounced trigger when user change input
-   * @param  {Object} e Input
+   * Handle filter change click event
+   * @param  {Object} e     Click event on a checkbox
+   * @param  {String} name  Facet's name
+   * @param  {String} value Facet's value
    */
-  onSearchChange = (e) => {
-    clearTimeout(this.timeout);
-
-    const query = e.target.value;
-    this.setState({ query });
-
-    ((text) => {
-      this.timeout = setTimeout(() => this.filterBy(text), 300);
-    })(query);
-  };
-
-  /**
-   * Fetch next page
-   */
-  onMoreClick = () => {
-    this.filterBy(this.state.query, this.state.nextPage);
-  };
-
-  /**
-   * Update query on filter change
-   * @param  {Object} e     Event from the checkbox
-   * @param  {String} name  Name of the filter
-   * @param  {String} value Value of the filter
-   */
-  onFilterChange = (e, name, value) => {
+  const onFilterChange = (e, name, value) => {
     const filterValue = `${name}:${value}`;
-    let { query } = this.state;
-
     if (e.target.checked) {
-      this.filterBy(`${query} ${filterValue}`);
+      setQuery(`${query} ${filterValue}`.trim());
     } else {
-      this.filterBy(query.replace(filterValue, ''));
+      setQuery(
+        query.replace(filterValue, '').replace(doubleSpaces, ' ').trim(),
+      );
     }
   };
 
-  /**
-   * React lifecycle.
-   */
-  render() {
-    const { results, filters, nextPage, pagesCount, facets } = this.state;
+  const facetsFilters = Object.entries(facets)
+    .filter(([_, values]) => values && values.length)
+    .map(([key, values]) => (
+      <Filters
+        key={key}
+        name={key}
+        values={values}
+        onChange={onFilterChange}
+        selected={filters}
+      />
+    ));
 
-    const facetsFilters = Object.entries(facets)
-      .filter(([_, values]) => values && values.length)
-      .map(([key, values]) => (
-        <Filters
-          key={key}
-          name={key}
-          values={values}
-          onChange={this.onFilterChange}
-          selected={filters}
+  return (
+    <div className="flex full">
+      <aside className="padding">{facetsFilters}</aside>
+
+      <article className="padding full">
+        <input
+          type="text"
+          placeholder="Filter commit..."
+          className="search padding full"
+          onChange={(e) => setQuery(e.target.value)}
+          value={query}
         />
-      ));
 
-    return (
-      <div className="flex full">
-        <aside className="padding">{facetsFilters}</aside>
+        <hr />
 
-        <article className="padding full">
-          <input
-            type="text"
-            placeholder="Filter commit..."
-            className="search padding full"
-            onChange={this.onSearchChange}
-            value={this.state.query}
-          />
+        <Commits results={results} />
 
-          <hr />
-
-          <Commits results={results} />
-
-          {nextPage < pagesCount && (
-            <button
-              type="button"
-              className="button padding margin"
-              onClick={this.onMoreClick}
-            >
-              Load more
-            </button>
-          )}
-        </article>
-      </div>
-    );
-  }
+        {pagination.next < pagination.count && (
+          <button
+            type="button"
+            className="button padding margin"
+            onClick={() => setPage(pagination.next)}
+          >
+            Load more
+          </button>
+        )}
+      </article>
+    </div>
+  );
 }
+
+Herodote.displayName = 'Herodote';
