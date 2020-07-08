@@ -8,7 +8,7 @@ import './index.css';
 export default function Filters({ name, values, onChange, selected }) {
   return (
     <div className="filter">
-      <h3 className="no-padding no-margin">{name}</h3>
+      <h2 className="no-padding no-margin">{name}</h2>
       <ol className="filter__values no-padding no-margin">
         {values.map(({ value }) => {
           const id = `${name}:${value}`;
