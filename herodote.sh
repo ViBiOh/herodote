@@ -125,8 +125,8 @@ algolia_latest() {
     --data-urlencode "hitsPerPage=1" \
     "https://${ALGOLIA_APP}-dsn.algolia.net/1/indexes/${ALGOLIA_INDEX}")"
 
-  if [[ ${HTTP_STATUS} == "200" ]] && [[ $(python -c "import json; print(len(json.load(open('${HTTP_OUTPUT}'))['hits']))") -gt 0 ]]; then
-    printf "HEAD...%s" "$(python -c "import json; print(json.load(open('${HTTP_OUTPUT}'))['hits'][0]['hash'])")"
+  if [[ ${HTTP_STATUS} == "200" ]] && [[ $(jq --raw-output '.hits[] | length' "${HTTP_OUTPUT}") -gt 0 ]]; then
+    printf "HEAD...%s" "$(jq --raw-output '.hits[0].hash' "${HTTP_OUTPUT}")"
     rm "${HTTP_OUTPUT}"
     return
   fi
