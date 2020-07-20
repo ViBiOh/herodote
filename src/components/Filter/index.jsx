@@ -3,11 +3,11 @@ import PropTypes from 'prop-types';
 import './index.css';
 
 /**
- * Filters Functional Component.
+ * Filter Functional Component.
  */
-export default function Filters({ name, values, onChange, selected }) {
+export default function Filter({ name, values, onChange, selected }) {
   return (
-    <div className="filter">
+    <span className="filter">
       <h2 className="no-padding no-margin">{name}</h2>
       <ol className="filter__values no-padding no-margin">
         {values.map(({ value }) => {
@@ -21,20 +21,20 @@ export default function Filters({ name, values, onChange, selected }) {
                 onChange={(e) => onChange(e, name, value)}
                 checked={selected.includes(id)}
               />
-              <label htmlFor={id} className="filter__label">
+              <label htmlFor={id} className="filter__label ellipsis">
                 {value}
               </label>
             </li>
           );
         })}
       </ol>
-    </div>
+    </span>
   );
 }
 
-Filters.displayName = 'Filters';
+Filter.displayName = 'Filter';
 
-Filters.propTypes = {
+Filter.propTypes = {
   name: PropTypes.string.isRequired,
   onChange: PropTypes.func.isRequired,
   selected: PropTypes.arrayOf(PropTypes.string).isRequired,

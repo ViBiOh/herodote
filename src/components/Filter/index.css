@@ -1,15 +1,11 @@
 .filter {
-  margin-top: 2rem;
-}
-
-.filter:first-of-type {
-  margin-top: 0;
+  width: 20rem;
 }
 
 .filter__values {
   list-style: none;
   overflow: auto;
-  max-height: 30rem;
+  max-height: 20rem;
 }
 
 .filter__values li {

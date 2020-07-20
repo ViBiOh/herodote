@@ -1,0 +1,8 @@
+#filters {
+  display: flex;
+  align-items: flex-start;
+}
+
+.search {
+  border: 0;
+}

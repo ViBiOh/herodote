@@ -1,56 +1,38 @@
-import React, { Component } from 'react';
+import React, { useEffect, useState } from 'react';
 import getConfig from 'services/Config';
 import { init as initAlgolia } from 'services/Algolia';
 import Header from 'components/Header';
+import Filters from 'containers/Filters';
 import Herodote from 'containers/Herodote';
+import Throbber from 'components/Throbber';
 
 /**
- * App Component.
+ * App Functional Component.
  */
-export default class App extends Component {
-  /**
-   * Creates an instance of App.
-   * @param {Object} props Component props
-   */
-  constructor(props) {
-    super(props);
+export default function App() {
+  const [config, setConfig] = useState();
+  const [query, setQuery] = useState('');
+  const [filters, setFilters] = useState([]);
 
-    this._isMounted = false;
+  useEffect(() => {
+    (async () => {
+      const rawConfig = await getConfig();
+      initAlgolia(rawConfig);
+      setConfig(rawConfig);
+    })();
+  }, []);
 
-    this.state = {};
-  }
+  return (
+    <div className="content">
+      <Header />
 
-  /**
-   * React lifecycle.
-   */
-  async componentDidMount() {
-    this._isMounted = true;
-    const config = await getConfig();
-
-    initAlgolia(config);
-
-    if (this._isMounted) {
-      this.setState({ config });
-    }
-  }
-
-  /**
-   * React lifecycle.
-   */
-  componentWillUnmount() {
-    this._isMounted = false;
-  }
-
-  /**
-   * React lifecycle.
-   */
-  render() {
-    return (
-      <div className="content">
-        <Header />
-
-        {this.state.config && <Herodote />}
+      <div className="padding full">
+        {!config && <Throbber label="Loading configuration..." />}
+        {config && <Filters onChange={setQuery} filters={filters} />}
+        {config && <Herodote query={query} setFilters={setFilters} />}
       </div>
-    );
-  }
+    </div>
+  );
 }
+
+App.displayName = 'App';
