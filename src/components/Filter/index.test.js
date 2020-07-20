@@ -14,7 +14,7 @@ function defaultProps() {
 it('should always render as a div', () => {
   const props = defaultProps();
   const { container } = render(<Filters {...props} />);
-  expect(container.firstChild.nodeName).toBe('DIV');
+  expect(container.firstChild.nodeName).toBe('SPAN');
 });
 
 it('should contains title with given name', () => {
