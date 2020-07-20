@@ -4,14 +4,15 @@ import {
   facets as algoliaFacets,
 } from 'services/Algolia';
 import { search as urlSearch, push as urlPush } from 'helpers/URL';
-import debounced from 'helpers/Debounce';
-import Filters from 'components/Filters';
+import { Debounce as useDebounce } from 'helpers/Debounce';
 import Commits from 'components/Commits';
+import Error from 'components/Error';
+import Filters from 'components/Filters';
+import Throbber from 'components/Throbber';
 import './index.css';
 
 const filterRegex = /([^\s]+):([^\s]+)/gim;
 const doubleSpaces = /\s{2,}/gim;
-const debouncedCall = debounced();
 
 function filterBy(query = '') {
   const filtersGroup = {};
@@ -42,7 +43,7 @@ async function fetchCommits(query, options, page) {
     return [output.hits, { next: output.page + 1, count: output.nbPages }];
   }
 
-  return;
+  return [];
 }
 
 async function fetchFacets(name) {
@@ -54,11 +55,20 @@ async function fetchFacets(name) {
   return [];
 }
 
+async function loadFacets() {
+  const repository = await fetchFacets('repository');
+  const type = await fetchFacets('type');
+  const component = await fetchFacets('component');
+  return { repository, type, component };
+}
+
 /**
  * Herodote Functional Component.
  */
 export default function Herodote() {
+  const [error, setError] = useState('');
   const [query, setQuery] = useState('');
+  const [pending, setPending] = useState(true);
   const [algoliaParams, setAlgoliaParams] = useState({});
   const [page, setPage] = useState(0);
   const [filters, setFilters] = useState([]);
@@ -68,12 +78,15 @@ export default function Herodote() {
 
   useEffect(() => {
     (async () => {
-      const repository = await fetchFacets('repository');
-      const type = await fetchFacets('type');
-      const component = await fetchFacets('component');
-      setFacets({ repository, type, component });
+      try {
+        setFacets(await loadFacets());
+      } catch (e) {
+        setError(e);
+      }
     })();
+  }, []);
 
+  useEffect(() => {
     const { query: searchQuery } = urlSearch();
     if (searchQuery) {
       setQuery(searchQuery);
@@ -82,29 +95,38 @@ export default function Herodote() {
 
   useEffect(() => {
     const [algoliaQuery, algoliaOptions, selectedFilters] = filterBy(query);
+    setPending(true);
+
     setAlgoliaParams({ query: algoliaQuery, options: algoliaOptions });
     setFilters(selectedFilters);
     setPage(0);
-
     urlPush({ query });
   }, [query]);
 
-  useEffect(() => {
-    debouncedCall(async () => {
-      const [hits, newPagination] = await fetchCommits(
-        algoliaParams.query,
-        algoliaParams.options,
-        page,
-      );
+  useDebounce(
+    300,
+    async () => {
+      try {
+        const [hits, newPagination] = await fetchCommits(
+          algoliaParams.query,
+          algoliaParams.options,
+          page,
+        );
 
-      if (page) {
-        setResults(results.concat(hits));
-      } else {
-        setResults(hits);
+        if (page) {
+          setResults(results.concat(hits));
+        } else {
+          setResults(hits);
+        }
+
+        setPagination(newPagination);
+        setPending(false);
+      } catch (e) {
+        setError(e);
       }
-      setPagination(newPagination);
-    });
-  }, [algoliaParams, page]); // eslint-disable-line react-hooks/exhaustive-deps
+    },
+    [algoliaParams, page],
+  );
 
   /**
    * Handle filter change click event
@@ -135,11 +157,14 @@ export default function Herodote() {
       />
     ));
 
-  return (
-    <div className="flex full">
-      <aside className="padding">{facetsFilters}</aside>
-
-      <article className="padding full">
+  let commitsList;
+  if (error) {
+    commitsList = <Error error={error} />;
+  } else if (pending) {
+    commitsList = <Throbber label="Loading commits..." />;
+  } else {
+    commitsList = (
+      <React.Fragment>
         <input
           type="text"
           placeholder="Filter commit..."
@@ -161,7 +186,14 @@ export default function Herodote() {
             Load more
           </button>
         )}
-      </article>
+      </React.Fragment>
+    );
+  }
+
+  return (
+    <div className="flex full">
+      <aside className="padding">{facetsFilters}</aside>
+      <article className="padding full">{commitsList}</article>
     </div>
   );
 }

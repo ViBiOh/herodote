@@ -1,13 +1,16 @@
-/**
- * Debounce call of given func
- * @param  {Number} duration Debounce duration
- * @return {Function} Debounced function call
- */
-export default function (duration = 300) {
-  let timeout;
+import { useState, useEffect } from 'react';
 
-  return function (fn, ...args) {
+/**
+ * Debounce call to an effect
+ * @param {Number}   duration     Debounce duration
+ * @param {Function} fn           Debounced function
+ * @param {Array}    dependencies List of effect's dependencies
+ */
+export function Debounce(duration = 300, fn, dependencies) {
+  const [timeout, saveTimeout] = useState();
+
+  useEffect(() => {
     clearTimeout(timeout);
-    timeout = setTimeout(() => fn(...args), duration);
-  };
+    saveTimeout(setTimeout(fn, duration));
+  }, [duration, ...dependencies]); // eslint-disable-line react-hooks/exhaustive-deps
 }
