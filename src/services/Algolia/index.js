@@ -24,8 +24,7 @@ export function init(config) {
  */
 export async function search(query, options = {}) {
   if (!index) {
-    global.console.error('[algolia] index not initialized');
-    return;
+    throw new Error('[algolia] index not initialized');
   }
 
   return await index.search(query, options);
@@ -38,8 +37,7 @@ export async function search(query, options = {}) {
  */
 export async function facets(name, query) {
   if (!index) {
-    global.console.error('[algolia] index not initialized');
-    return;
+    throw new Error('[algolia] index not initialized');
   }
 
   return await index.searchForFacetValues(name, query, {

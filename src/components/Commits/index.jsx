@@ -24,9 +24,11 @@ export default function Commits({ results }) {
             {result.repository}
           </span>
 
-          <pre className="label no-margin">
+          <pre className="label no-margin success">
             {result.type}
-            {result.component && `(${result.component})`}
+            {result.component && (
+              <strong className="primary">({result.component})</strong>
+            )}
           </pre>
           <a
             href={`https://${result.remote}/${result.repository}/commit/${result.hash}`}
