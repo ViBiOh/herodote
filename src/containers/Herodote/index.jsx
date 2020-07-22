@@ -98,7 +98,7 @@ export default function Herodote({ query, setFilters }) {
 
   return (
     <article>
-      <Commits results={results} />
+      <Commits commits={results} />
 
       {pagination.next < pagination.count && (
         <button
