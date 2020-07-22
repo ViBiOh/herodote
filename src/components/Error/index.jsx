@@ -8,7 +8,7 @@ export default function Error({ error }) {
   return (
     <div className="danger">
       <h2>Error</h2>
-      <pre>{`${error}`}</pre>
+      <pre>{`${error.message}`}</pre>
     </div>
   );
 }
@@ -16,5 +16,7 @@ export default function Error({ error }) {
 Error.displayName = 'Error';
 
 Error.propTypes = {
-  error: PropTypes.shape({}).isRequired,
+  error: PropTypes.shape({
+    message: PropTypes.string.isRequired,
+  }).isRequired,
 };

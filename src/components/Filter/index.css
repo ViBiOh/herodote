@@ -1,18 +1,32 @@
 .filter {
-  width: 20rem;
+  position: relative;
+  border-left: 1px solid var(--white)
+}
+
+.filter:first-of-type {
+  border-left: 0;
+}
+
+.filter:last-of-type .filter__values {
+  right: 0;
 }
 
 .filter__values {
+  display: none;
   list-style: none;
-  overflow: auto;
   max-height: 20rem;
+  overflow: auto;
+  position: absolute;
+  top: 4rem;
+}
+
+.filer__values-active {
+  display: block;
 }
 
 .filter__values li {
   align-items: center;
   display: flex;
-  padding-bottom: 0.5rem;
-  padding-top: 0.5rem;
 }
 
 .filter__label {

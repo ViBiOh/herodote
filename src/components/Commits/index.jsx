@@ -31,6 +31,7 @@ export default function Commits({ results }) {
             )}
           </pre>
           <a
+            className="commit-link ellipsis"
             href={`https://${result.remote}/${result.repository}/commit/${result.hash}`}
             target="_blank"
             rel="noopener noreferrer"
