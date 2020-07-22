@@ -42,5 +42,6 @@ export async function facets(name, query) {
 
   return await index.searchForFacetValues(name, query, {
     maxFacetHits: 100,
+    sortFacetValuesBy: 'alpha',
   });
 }
