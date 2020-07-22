@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { search as algoliaSearch } from 'services/Algolia';
 import { push as urlPush } from 'helpers/URL';
-import { Debounce as useDebounce } from 'helpers/Debounce';
+import { useDebounce } from 'helpers/Hooks';
 import Commits from 'components/Commits';
 import Error from 'components/Error';
 import Throbber from 'components/Throbber';
@@ -103,7 +103,7 @@ export default function Herodote({ query, setFilters }) {
       {pagination.next < pagination.count && (
         <button
           type="button"
-          className="button padding margin"
+          className="button button-rounded padding margin margin-auto bg-primary"
           onClick={() => setPage(pagination.next)}
         >
           Load more

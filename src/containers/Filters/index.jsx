@@ -87,7 +87,7 @@ export default function Filters({ onChange, filters }) {
       <input
         type="text"
         placeholder="Filter commit..."
-        className="search padding full"
+        className="no-border padding search"
         onChange={(e) => setQuery(e.target.value)}
         value={query}
       />

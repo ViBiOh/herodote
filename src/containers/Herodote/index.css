@@ -3,12 +3,3 @@
   padding: 0.5rem;
   margin-right: 0.5rem;
 }
-
-.button {
-  border-radius: 2px;
-  background-color: var(--primary);
-  color: var(--white);
-  margin-left: auto;
-  margin-right: auto;
-  display: block;
-}
