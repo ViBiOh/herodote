@@ -63,30 +63,26 @@ export default function Herodote({ query, setFilters }) {
     setFilters(selectedFilters);
   }, [setFilters, query]);
 
-  useDebounce(
-    300,
-    async () => {
-      try {
-        const [hits, newPagination] = await fetchCommits(
-          algoliaParams.query,
-          algoliaParams.options,
-          page,
-        );
+  useDebounce(async () => {
+    try {
+      const [hits, newPagination] = await fetchCommits(
+        algoliaParams.query,
+        algoliaParams.options,
+        page,
+      );
 
-        if (page) {
-          setResults(results.concat(hits));
-        } else {
-          setResults(hits);
-        }
-
-        setPagination(newPagination);
-        setPending(false);
-      } catch (e) {
-        setError(e);
+      if (page) {
+        setResults(results.concat(hits));
+      } else {
+        setResults(hits);
       }
-    },
-    [algoliaParams, page],
-  );
+
+      setPagination(newPagination);
+      setPending(false);
+    } catch (e) {
+      setError(e);
+    }
+  }, [algoliaParams, page]);
 
   if (error) {
     return <Error error={error} />;

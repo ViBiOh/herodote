@@ -27,11 +27,11 @@ export function useOnClickOutside(ref, handler) {
 
 /**
  * Debounce call to an effect
- * @param {Number}   duration     Debounce duration
  * @param {Function} fn           Debounced function
  * @param {Array}    dependencies List of effect's dependencies
+ * @param {Number}   duration     Debounce duration
  */
-export function useDebounce(duration = 300, fn, dependencies) {
+export function useDebounce(fn, dependencies, duration = 300) {
   const [timeout, saveTimeout] = useState();
 
   useEffect(() => {

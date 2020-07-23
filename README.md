@@ -16,6 +16,10 @@ Git [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) histo
 
 Herodote aims to provide a quick view of activitiy of all your repositories. It's the changelog of your organizations.
 
+Herodote only understands conventionnal commits. Commits that don't match expectations are ignored. To ensure you have conventionnal commits, you can use [`commit-msg hooks`](https://github.com/ViBiOh/scripts/blob/master/hooks/commit-msg) and/or a [simple Github Action that checks it](.github/workflows/branch_clean.yml). You can also have a look at [`MeilleursAgents/JudCoCo`](https://github.com/MeilleursAgents/JudCoCo).
+
+Herodote loads data with its own script, which is idempotent. On cold start, with an empty index, it only loads last 50 commits.
+
 ## Getting started
 
 ### Algolia
@@ -26,7 +30,9 @@ For a personnal use, the free-tier is enough with 10k search and index by month.
 
 ### CI Integration
 
-Herodote is fed by its own script: [herodote.sh](herodote.sh).
+Herodote is fed by its own script: [herodote.sh](herodote.sh). The script automatically configure the Algolia index.
+
+It automatically detects last commit's SHA in index and add only new ones of repository.
 
 The script needs the following variables to be set (or will prompt you for):
 

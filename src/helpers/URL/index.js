@@ -25,14 +25,14 @@ export function push(params) {
     .filter(([, value]) => Boolean(value))
     .map(([key, value]) => `${key}=${encodeURIComponent(value)}`);
 
-  let search = '';
+  let searchStr = '';
   if (encoded.length) {
-    search = `?${encoded.join('&')}`;
+    searchStr = `?${encoded.join('&')}`;
   }
 
   window.history.pushState(
     null,
     null,
-    `${window.location.pathname}${search}${window.location.hash}`,
+    `${window.location.pathname}${searchStr}${window.location.hash}`,
   );
 }
