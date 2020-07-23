@@ -86,7 +86,8 @@ export default function Filters({ onChange, filters }) {
     <aside id="filters" className="flex full">
       <input
         type="text"
-        placeholder="Filter commit..."
+        aria-label="Filter commits"
+        placeholder="Filter commits..."
         className="no-border padding search"
         onChange={(e) => setQuery(e.target.value)}
         value={query}
