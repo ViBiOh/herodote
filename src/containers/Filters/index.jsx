@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { facets as algoliaFacets } from 'services/Algolia';
-import { search as urlSearch } from 'helpers/URL';
 import PropTypes from 'prop-types';
 import Filter from 'components/Filter';
 import Error from 'components/Error';
@@ -28,11 +27,10 @@ async function loadFacets() {
 /**
  * Filters Functional Component.
  */
-export default function Filters({ onChange, filters }) {
+export default function Filters({ query, onChange, filters }) {
   const [pending, setPending] = useState(true);
   const [error, setError] = useState('');
 
-  const [query, setQuery] = useState('');
   const [facets, setFacets] = useState({});
 
   useEffect(() => {
@@ -44,13 +42,6 @@ export default function Filters({ onChange, filters }) {
         setError(e);
       }
     })();
-  }, []);
-
-  useEffect(() => {
-    const { query: searchQuery } = urlSearch();
-    if (searchQuery) {
-      setQuery(searchQuery);
-    }
   }, []);
 
   useEffect(() => {
@@ -74,9 +65,9 @@ export default function Filters({ onChange, filters }) {
   const onFilterChange = (e, name, value) => {
     const filterValue = `${name}:${value}`;
     if (e.target.checked) {
-      setQuery(`${query} ${filterValue}`.trim());
+      onChange(`${query} ${filterValue}`.trim());
     } else {
-      setQuery(
+      onChange(
         query.replace(filterValue, '').replace(doubleSpaces, ' ').trim(),
       );
     }
@@ -89,7 +80,7 @@ export default function Filters({ onChange, filters }) {
         aria-label="Filter commits"
         placeholder="Filter commits..."
         className="no-border padding search"
-        onChange={(e) => setQuery(e.target.value)}
+        onChange={(e) => onChange(e.target.value)}
         value={query}
       />
 
@@ -113,4 +104,5 @@ Filters.displayName = 'Filters';
 Filters.propTypes = {
   filters: PropTypes.arrayOf(PropTypes.string).isRequired,
   onChange: PropTypes.func.isRequired,
+  query: PropTypes.string.isRequired,
 };
