@@ -81,8 +81,8 @@ Commits.displayName = 'Commits';
 Commits.propTypes = {
   commits: PropTypes.arrayOf(
     PropTypes.shape({
-      hash: PropTypes.string.isRequired,
       content: PropTypes.string.isRequired,
+      hash: PropTypes.string.isRequired,
       repository: PropTypes.string.isRequired,
     }),
   ).isRequired,

@@ -27,13 +27,13 @@ export default function Throbber({ label, title, className }) {
 Throbber.displayname = 'Throbber';
 
 Throbber.propTypes = {
+  className: PropTypes.string,
   label: PropTypes.string,
   title: PropTypes.string,
-  className: PropTypes.string,
 };
 
 Throbber.defaultProps = {
+  className: '',
   label: '',
   title: '',
-  className: '',
 };
