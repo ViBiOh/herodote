@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { facets as algoliaFacets } from 'services/Algolia';
 import PropTypes from 'prop-types';
+import AlgoliaLogo from 'components/AlgoliaLogo';
 import Filter from 'components/Filter';
 import Error from 'components/Error';
 import Throbber from 'components/Throbber';
@@ -75,11 +76,17 @@ export default function Filters({ query, onChange, filters }) {
 
   return (
     <aside id="filters" className="flex full">
+      <AlgoliaLogo
+        className="algolia-logo"
+        height={38}
+        title="Search by Algolia"
+      />
+
       <input
         type="text"
         aria-label="Filter commits"
         placeholder="Filter commits..."
-        className="no-border padding search"
+        className="no-border no-margin padding search"
         onChange={(e) => onChange(e.target.value)}
         value={query}
       />

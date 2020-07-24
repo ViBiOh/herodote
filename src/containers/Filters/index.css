@@ -6,11 +6,18 @@
 }
 
 .search {
+  border-radius: 4px 0 0 4px;
   flex: 1 1;
+  height: 4rem;
+}
+
+.algolia-logo {
+  height: 4rem;
+  margin-right: 2px;
 }
 
 @media screen and (max-width: 767px) {
   .search {
-    flex-basis: 100%;
+    flex-basis: calc(100% - 4.2rem);
   }
 }
