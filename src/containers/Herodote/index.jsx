@@ -5,6 +5,7 @@ import { useDebounce } from 'helpers/Hooks';
 import Commits from 'components/Commits';
 import Error from 'components/Error';
 import Throbber from 'components/Throbber';
+import ThrobberButton from 'components/ThrobberButton';
 import './index.css';
 
 const filterRegex = /([^\s]+):([^\s]+)/gim;
@@ -46,6 +47,7 @@ async function fetchCommits(query, options, page) {
  */
 export default function Herodote({ query, setFilters }) {
   const [pending, setPending] = useState(true);
+  const [morePending, setMorePending] = useState(false);
   const [error, setError] = useState('');
 
   const [algoliaParams, setAlgoliaParams] = useState({});
@@ -55,6 +57,7 @@ export default function Herodote({ query, setFilters }) {
 
   useEffect(() => {
     setPending(true);
+
     const [algoliaQuery, algoliaOptions, selectedFilters] = filterBy(query);
     setAlgoliaParams({ query: algoliaQuery, options: algoliaOptions });
     setPage(0);
@@ -78,6 +81,7 @@ export default function Herodote({ query, setFilters }) {
       }
 
       setPagination(newPagination);
+      setMorePending(false);
       setPending(false);
     } catch (e) {
       setError(e);
@@ -97,13 +101,14 @@ export default function Herodote({ query, setFilters }) {
       <Commits commits={results} />
 
       {pagination.next < pagination.count && (
-        <button
+        <ThrobberButton
+          pending={morePending}
+          onClick={() => setMorePending(true) || setPage(pagination.next)}
           type="button"
           className="button button-rounded padding margin margin-auto bg-primary"
-          onClick={() => setPage(pagination.next)}
         >
           Load more
-        </button>
+        </ThrobberButton>
       )}
     </article>
   );
