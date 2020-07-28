@@ -2,11 +2,11 @@
 
 Git [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) historian accross repositories.
 
-* Full-text search with the help of Algolia as a backend
-* Light frontend (<60kb gzipped) with desktop and responsive UI
-* Filters on repository, type or component.
-* Light shell script for loading data into backend
-* Github Actions provided for integration
+- Full-text search with the help of Algolia as a backend
+- Light frontend (<60kb gzipped) with desktop and responsive UI
+- Filters on repository, type or component.
+- Light shell script for loading data into backend
+- Github Actions provided for integration
 
 [![Build Status](https://travis-ci.com/ViBiOh/herodote.svg?branch=master)](https://travis-ci.com/ViBiOh/herodote)
 [![codecov](https://codecov.io/gh/ViBiOh/herodote/branch/master/graph/badge.svg)](https://codecov.io/gh/ViBiOh/herodote)
@@ -36,11 +36,11 @@ It automatically detects last commit's SHA in index and add only new ones of rep
 
 The script needs the following variables to be set (or will prompt you for):
 
-* `ALGOLIA_APP`: Application ID of Algolia, can be found from the _API Keys_ section on your app's dashboard
-* `ALGOLIA_KEY`: Admin API Key of Algolia, can be found from the _API Keys_ section on your app's dashboard
-* `ALGOLIA_INDEX`: Index name when commits will be written (default to `herodote`)
-* `GIT_HOST`: Name of your git provider (e.g. `github.com`). It's guessed from `git remote get-url --push origin` if you are in a git folder
-* `GIT_REPOSITORY`: Name of your repository (e.g. `ViBiOh/herodote`). It's guessed from `git remote get-url --push origin` if you are in a git folder
+- `ALGOLIA_APP`: Application ID of Algolia, can be found from the _API Keys_ section on your app's dashboard
+- `ALGOLIA_KEY`: Admin API Key of Algolia, can be found from the _API Keys_ section on your app's dashboard
+- `ALGOLIA_INDEX`: Index name when commits will be written (default to `herodote`)
+- `GIT_HOST`: Name of your git provider (e.g. `github.com`). It's guessed from `git remote get-url --push origin` if you are in a git folder
+- `GIT_REPOSITORY`: Name of your repository (e.g. `ViBiOh/herodote`). It's guessed from `git remote get-url --push origin` if you are in a git folder
 
 If you execute your script in a non-interactive environment, set the `SCRIPTS_NO_INTERACTIVE=1` for disabling prompt.
 
@@ -50,7 +50,6 @@ You can use the following Github Actions for pushing your commits to Algolia ind
 
 ```yaml
 ---
-
 name: Herodote
 on:
   push:
@@ -80,9 +79,8 @@ jobs:
 
 You **have to** add secrets in your repository in the repository's settings: https://github.com/YOUR_NAME/YOUR_REPOSITORY/settings/secrets
 
-* `HERODOTE_ALGOLIA_APP`: `ALGOLIA_APP` from [#ci-integration](#ci-integration)
-* `HERODOTE_ALGOLIA_KEY`: `ALGOLIA_KEY` from [#ci-integration](#ci-integration)
-
+- `HERODOTE_ALGOLIA_APP`: `ALGOLIA_APP` from [#ci-integration](#ci-integration)
+- `HERODOTE_ALGOLIA_KEY`: `ALGOLIA_KEY` from [#ci-integration](#ci-integration)
 
 ### Frontend
 
@@ -90,8 +88,8 @@ You can deploy Herodote's frontend by using the given Docker container: [vibioh/
 
 Your **have to** provide environment variable in order to make it work:
 
-* `ALGOLIA_APP`: Same value as in [#ci-integration](#ci-integration)
-* `ALGOLIA_INDEX`: Same value as in [#ci-integration](#ci-integration) (there is no default here, you have to provide value)
-* `ALGOLIA_KEY`: Search-Only API Key of Algolia, can be found from the _API Keys_ section on your app's dashboard. **⚠️ don't provide the admin key, the variable is sent to the client, it's public! ⚠️**
+- `ALGOLIA_APP`: Same value as in [#ci-integration](#ci-integration)
+- `ALGOLIA_INDEX`: Same value as in [#ci-integration](#ci-integration) (there is no default here, you have to provide value)
+- `ALGOLIA_KEY`: Search-Only API Key of Algolia, can be found from the _API Keys_ section on your app's dashboard. **⚠️ don't provide the admin key, the variable is sent to the client, it's public! ⚠️**
 
 For more detailed configuration of container, you can have a look at the [`ViBiOh/viws`](https://github.com/ViBiOh/viws) project.
