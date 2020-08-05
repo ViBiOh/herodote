@@ -74,7 +74,7 @@ jobs:
           ALGOLIA_KEY: ${{ secrets.HERODOTE_ALGOLIA_KEY }}
           GIT_HOST: github.com
           GIT_REPOSITORY: ${{ github.repository }}
-          SCRIPTS_NO_INTERACTIVE: "1"
+          SCRIPTS_NO_INTERACTIVE: '1'
 ```
 
 You **have to** add secrets in your repository in the repository's settings: https://github.com/YOUR_NAME/YOUR_REPOSITORY/settings/secrets

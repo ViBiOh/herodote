@@ -79,9 +79,9 @@ git_remote_host() {
 
 algolia_index() {
   curl -X PUT \
-     -H "X-Algolia-Application-Id: ${ALGOLIA_APP}" \
-     -H "X-Algolia-API-Key: ${ALGOLIA_KEY}" \
-     --data-binary '{
+    -H "X-Algolia-Application-Id: ${ALGOLIA_APP}" \
+    -H "X-Algolia-API-Key: ${ALGOLIA_KEY}" \
+    --data-binary '{
       "searchableAttributes": [
         "repository",
         "hash",
@@ -107,7 +107,7 @@ algolia_index() {
       ],
       "exactOnSingleWordQuery": "word"
      }' \
-    "https://${ALGOLIA_APP}.algolia.net/1/indexes/${ALGOLIA_INDEX}/settings" > /dev/null
+    "https://${ALGOLIA_APP}.algolia.net/1/indexes/${ALGOLIA_INDEX}/settings" >/dev/null
 }
 
 algolia_latest() {
@@ -137,10 +137,10 @@ algolia_latest() {
 
 algolia_insert() {
   curl -X POST \
-     -H "X-Algolia-Application-Id: ${ALGOLIA_APP}" \
-     -H "X-Algolia-API-Key: ${ALGOLIA_KEY}" \
-     --data-binary "${1}" \
-    "https://${ALGOLIA_APP}.algolia.net/1/indexes/${ALGOLIA_INDEX}" > /dev/null
+    -H "X-Algolia-Application-Id: ${ALGOLIA_APP}" \
+    -H "X-Algolia-API-Key: ${ALGOLIA_KEY}" \
+    --data-binary "${1}" \
+    "https://${ALGOLIA_APP}.algolia.net/1/indexes/${ALGOLIA_INDEX}" >/dev/null
 }
 
 walk_log() {
@@ -151,7 +151,10 @@ walk_log() {
 
   shopt -s nocasematch
   for hash in $(git log --no-merges --pretty=format:'%h' "$(algolia_latest)"); do
-    if [[ $(git show -s --format='%h %at %s' "${hash}") =~ ^([0-9a-f]{1,16})\ ([0-9]+)\ (revert )?($(IFS='|'; echo "${!CONVENTIONAL_COMMIT_SCOPES[*]}"))(\((.+)\))?(\!)?:\ (.*)$ ]]; then
+    if [[ $(git show -s --format='%h %at %s' "${hash}") =~ ^([0-9a-f]{1,16})\ ([0-9]+)\ (revert )?($(
+      IFS='|'
+      echo "${!CONVENTIONAL_COMMIT_SCOPES[*]}"
+    ))(\((.+)\))?(\!)?:\ (.*)$ ]]; then
       local HASH="${BASH_REMATCH[1]}"
       local DATE="${BASH_REMATCH[2]}"
       local REVERT="${BASH_REMATCH[3]}"
@@ -172,7 +175,7 @@ walk_log() {
         BREAK="false"
       fi
 
-      count="$(( count + 1 ))"
+      count="$((count + 1))"
       algolia_insert "$(printf '{"remote": "%s", "repository": "%s", "hash": "%s", "revert": %s, "date": %s, "type": "%s", "component": "%s", "content": "%s", "breaking": %s}\n' "${GIT_HOST}" "${GIT_REPOSITORY}" "${HASH}" "${REVERT}" "${DATE}" "${TYPE}" "${COMPONENT}" "${CONTENT}" "${BREAK}")"
 
       if [[ ${count} -gt 50 ]]; then

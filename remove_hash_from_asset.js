@@ -16,17 +16,17 @@
  *   * in filename
  *   * in content of files
  */
-const fs = require("fs").promises;
+const fs = require('fs').promises;
 
-const OUTPUT_DIR = "build";
+const OUTPUT_DIR = 'build';
 const HASH_FINDER = /((static\/[^")\\]*?)\.([a-z0-9]{8})(\.[^")\\]+))/gim;
 
 const processedFiles = [];
-const excludePattern = RegExp("/media/", "gim");
+const excludePattern = RegExp('/media/', 'gim');
 const version = process.argv[2];
 
 if (!version) {
-  console.error("You must provide version hash for cache-busting");
+  console.error('You must provide version hash for cache-busting');
   process.exit(1);
 }
 
@@ -49,7 +49,7 @@ async function replaceHash(file, hashlessFile) {
 
   console.info(`Converting hashes in ${file} into ${hashlessFile || file}`);
 
-  let fileContent = await fs.readFile(file, "utf-8");
+  let fileContent = await fs.readFile(file, 'utf-8');
   fileContent = fileContent.replace(
     HASH_FINDER,
     (all, filename, prefix, hash, suffix) => {
@@ -61,7 +61,7 @@ async function replaceHash(file, hashlessFile) {
       }
 
       return `${outputFilename}?v=${version}`;
-    }
+    },
   );
 
   if (hashlessFile) {
