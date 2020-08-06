@@ -22,7 +22,7 @@ spec:
     spec:
       containers:
         - name: herodote
-          image: vibioh/herodote
+          image: vibioh/herodote-ui
           envFrom:
             - secretRef:
                 name: herodote

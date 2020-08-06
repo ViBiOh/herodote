@@ -2,7 +2,7 @@
 
 Git [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) historian accross repositories.
 
-- Full-text search with the help of Algolia as a backend
+- Full-text search with the help of Postgresql or Algolia as a backend
 - Light frontend (<60kb gzipped) with desktop and responsive UI
 - Filters on repository, type or component.
 - Light shell script for loading data into backend
@@ -16,7 +16,7 @@ Git [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) histo
 
 Herodote aims to provide a quick view of activitiy of all your repositories. It's the changelog of your organizations.
 
-Herodote only understands conventionnal commits. Commits that don't match expectations are ignored. To ensure you have conventionnal commits, you can use [`commit-msg hooks`](https://github.com/ViBiOh/scripts/blob/master/hooks/commit-msg) and/or a [simple Github Action that checks it](.github/workflows/branch_clean.yml). You can also have a look at [`MeilleursAgents/JudCoCo`](https://github.com/MeilleursAgents/JudCoCo).
+Herodote only understands conventionnal commits. Commits that don't match expectations are ignored. To ensure you have conventionnal commits, you can use [`commit-msg hooks`](https://github.com/ViBiOh/scripts/blob/master/hooks/commit-msg) and/or a [simple Github Action that checks it](.github/workflows/branch_clean.yml).
 
 Herodote loads data with its own script, which is idempotent. On cold start, with an empty index, it only loads last 50 commits.
 
@@ -93,3 +93,57 @@ Your **have to** provide environment variable in order to make it work:
 - `ALGOLIA_KEY`: Search-Only API Key of Algolia, can be found from the _API Keys_ section on your app's dashboard. **⚠️ don't provide the admin key, the variable is sent to the client, it's public! ⚠️**
 
 For more detailed configuration of container, you can have a look at the [`ViBiOh/viws`](https://github.com/ViBiOh/viws) project.
+
+### Backend
+
+```bash
+Usage of herodote:
+  -address string
+        [http] Listen address {HERODOTE_ADDRESS}
+  -cert string
+        [http] Certificate file {HERODOTE_CERT}
+  -corsCredentials
+        [cors] Access-Control-Allow-Credentials {HERODOTE_CORS_CREDENTIALS}
+  -corsExpose string
+        [cors] Access-Control-Expose-Headers {HERODOTE_CORS_EXPOSE}
+  -corsHeaders string
+        [cors] Access-Control-Allow-Headers {HERODOTE_CORS_HEADERS} (default "Content-Type")
+  -corsMethods string
+        [cors] Access-Control-Allow-Methods {HERODOTE_CORS_METHODS} (default "GET")
+  -corsOrigin string
+        [cors] Access-Control-Allow-Origin {HERODOTE_CORS_ORIGIN} (default "*")
+  -csp string
+        [owasp] Content-Security-Policy {HERODOTE_CSP} (default "default-src 'self'; base-uri 'self'")
+  -dbHost string
+        [db] Host {HERODOTE_DB_HOST}
+  -dbName string
+        [db] Name {HERODOTE_DB_NAME}
+  -dbPass string
+        [db] Pass {HERODOTE_DB_PASS}
+  -dbPort uint
+        [db] Port {HERODOTE_DB_PORT} (default 5432)
+  -dbSslmode string
+        [db] SSL Mode {HERODOTE_DB_SSLMODE} (default "disable")
+  -dbUser string
+        [db] User {HERODOTE_DB_USER}
+  -frameOptions string
+        [owasp] X-Frame-Options {HERODOTE_FRAME_OPTIONS} (default "deny")
+  -graceDuration string
+        [http] Grace duration when SIGTERM received {HERODOTE_GRACE_DURATION} (default "15s")
+  -herodoteHttpSecret string
+        [herodote] HTTP Secret Key for Update {HERODOTE_HERODOTE_HTTP_SECRET}
+  -hsts
+        [owasp] Indicate Strict Transport Security {HERODOTE_HSTS} (default true)
+  -key string
+        [http] Key file {HERODOTE_KEY}
+  -okStatus int
+        [http] Healthy HTTP Status code {HERODOTE_OK_STATUS} (default 204)
+  -port uint
+        [http] Listen port {HERODOTE_PORT} (default 1080)
+  -prometheusPath string
+        [prometheus] Path for exposing metrics {HERODOTE_PROMETHEUS_PATH} (default "/metrics")
+  -url string
+        [alcotest] URL to check {HERODOTE_URL}
+  -userAgent string
+        [alcotest] User-Agent for check {HERODOTE_USER_AGENT} (default "Alcotest")
+```
