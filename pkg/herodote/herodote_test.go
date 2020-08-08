@@ -127,8 +127,9 @@ func TestHandler(t *testing.T) {
 			"simple",
 			app{},
 			httptest.NewRequest(http.MethodGet, "/", nil),
-			"",
-			http.StatusOK,
+			`¯\_(ツ)_/¯
+`,
+			http.StatusNotFound,
 			http.Header{},
 		},
 		{
@@ -143,8 +144,9 @@ func TestHandler(t *testing.T) {
 			"post valid",
 			app{secret: "testing"},
 			postWithToken,
-			"",
-			http.StatusOK,
+			`¯\_(ツ)_/¯
+`,
+			http.StatusNotFound,
 			http.Header{},
 		},
 	}

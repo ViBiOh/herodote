@@ -6,6 +6,7 @@ DROP TABLE IF EXISTS herodote.repository;
 
 DROP INDEX IF EXISTS words;
 DROP INDEX IF EXISTS repository_id;
+DROP INDEX IF EXISTS repository_name;
 DROP INDEX IF EXISTS commit_component;
 DROP INDEX IF EXISTS commit_type;
 
@@ -28,16 +29,17 @@ CREATE TABLE herodote.repository (
 ALTER SEQUENCE herodote.repository_seq OWNED BY herodote.repository.id;
 
 CREATE UNIQUE INDEX repository_id ON herodote.repository(id);
+CREATE INDEX repository_name ON herodote.repository(name);
 
 -- commit
 CREATE TABLE herodote.commit (
   hash TEXT NOT NULL,
   repository_id BIGINT NOT NULL REFERENCES herodote.repository(id) ON DELETE CASCADE,
-  component TEXT NOT NULL,
   type TEXT NOT NULL,
+  component TEXT NOT NULL,
   content TEXT NOT NULL,
-  search_vector TSVECTOR,
-  date TIMESTAMP WITH TIME ZONE NOT NULL
+  date TIMESTAMP WITH TIME ZONE NOT NULL,
+  search_vector TSVECTOR
 );
 
 CREATE INDEX commit_component ON herodote.commit(component);
