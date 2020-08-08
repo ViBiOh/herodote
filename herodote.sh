@@ -77,8 +77,9 @@ git_remote_host() {
   fi
 }
 
-algolia_index() {
-  curl -X PUT \
+configure_algolia() {
+  curl -q -sSL --max-time 10 \
+    -X PUT \
     -H "X-Algolia-Application-Id: ${ALGOLIA_APP}" \
     -H "X-Algolia-API-Key: ${ALGOLIA_KEY}" \
     --data-binary '{
@@ -110,37 +111,79 @@ algolia_index() {
     "https://${ALGOLIA_APP}.algolia.net/1/indexes/${ALGOLIA_INDEX}/settings" >/dev/null
 }
 
-algolia_latest() {
-  local HTTP_OUTPUT="http_output.txt"
-  local HTTP_STATUS
+latest_commit() {
+  local LATEST_HASH
 
-  HTTP_STATUS="$(curl -q -sSL \
-    --max-time 10 \
-    -o "${HTTP_OUTPUT}" \
-    -w "%{http_code}" \
-    -H "X-Algolia-Application-Id: ${ALGOLIA_APP}" \
-    -H "X-Algolia-API-Key: ${ALGOLIA_KEY}" \
-    --get \
-    --data-urlencode "filters=repository:${GIT_REPOSITORY}" \
-    --data-urlencode "hitsPerPage=1" \
-    "https://${ALGOLIA_APP}-dsn.algolia.net/1/indexes/${ALGOLIA_INDEX}")"
+  if [[ -n ${HERODOTE_API} ]]; then
+    HTTP_STATUS="$(curl -q -sSL --max-time 10 \
+      -o "${HTTP_OUTPUT}" \
+      -w "%{http_code}" \
+      --get \
+      "${HERODOTE_API}/commits?repository=${GIT_REPOSITORY}&pageSize=1")"
 
-  if [[ ${HTTP_STATUS} == "200" ]] && [[ $(jq --raw-output '.hits[] | length' "${HTTP_OUTPUT}") -gt 0 ]]; then
-    printf "HEAD...%s" "$(jq --raw-output '.hits[0].hash' "${HTTP_OUTPUT}")"
-    rm "${HTTP_OUTPUT}"
-    return
+    if [[ ${HTTP_STATUS} -eq 200 ]]; then
+      LATEST_HASH="$(cat "${HTTP_OUTPUT}")"
+    fi
+  else
+    HTTP_STATUS="$(curl -q -sSL --max-time 10 \
+      -o "${HTTP_OUTPUT}" \
+      -w "%{http_code}" \
+      -H "X-Algolia-Application-Id: ${ALGOLIA_APP}" \
+      -H "X-Algolia-API-Key: ${ALGOLIA_KEY}" \
+      --get \
+      --data-urlencode "filters=repository:${GIT_REPOSITORY}" \
+      --data-urlencode "hitsPerPage=1" \
+      "https://${ALGOLIA_APP}-dsn.algolia.net/1/indexes/${ALGOLIA_INDEX}")"
+
+    if [[ ${HTTP_STATUS} -eq 200 ]] && [[ $(jq --raw-output '.hits[] | length' "${HTTP_OUTPUT}") -gt 0 ]]; then
+      LATEST_HASH="$(jq --raw-output '.hits[0].hash' "${HTTP_OUTPUT}")"
+      return
+    fi
+  fi
+
+  if [[ ${HTTP_STATUS} -ge 400 ]]; then
+    printf "%bunable to get latest commit from backend%b\n\t%bHTTP_STATUS:%b %d%b\n\t%bHTTP_OUTPUT:%b %s%b\n" "${RED}" "${RESET}" "${BLUE}" "${YELLOW}" "${HTTP_STATUS}" "${RESET}" "${BLUE}" "${YELLOW}" "$(cat "${HTTP_OUTPUT}")" "${RESET}" 1>&2
   fi
 
   rm "${HTTP_OUTPUT}"
-  git rev-parse --abbrev-ref HEAD
+
+  if [[ -n ${LATEST_HASH:-} ]]; then
+    printf "HEAD...%s" "${LATEST_HASH}"
+  else
+    git rev-parse --abbrev-ref HEAD
+  fi
 }
 
-algolia_insert() {
-  curl -X POST \
-    -H "X-Algolia-Application-Id: ${ALGOLIA_APP}" \
-    -H "X-Algolia-API-Key: ${ALGOLIA_KEY}" \
-    --data-binary "${1}" \
-    "https://${ALGOLIA_APP}.algolia.net/1/indexes/${ALGOLIA_INDEX}" >/dev/null
+insert_commit() {
+  local PAYLOAD="${1:-}"
+
+  if [[ -n ${HERODOTE_API} ]]; then
+    HTTP_STATUS="$(curl -q -sSL --max-time 10 \
+      -X POST \
+      -o "${HTTP_OUTPUT}" \
+      -w "%{http_code}" \
+      -H "Authorization: ${HERODOTE_SECRET}" \
+      -H "Content-Type: application/json" \
+      "${HERODOTE_API}/commits" \
+      -d "${PAYLOAD}")"
+  else
+    HTTP_STATUS="$(curl -q -sSL --max-time 10 \
+      -X POST \
+      -o "${HTTP_OUTPUT}" \
+      -w "%{http_code}" \
+      -H "X-Algolia-Application-Id: ${ALGOLIA_APP}" \
+      -H "X-Algolia-API-Key: ${ALGOLIA_KEY}" \
+      --data-binary "${PAYLOAD}" \
+      "https://${ALGOLIA_APP}.algolia.net/1/indexes/${ALGOLIA_INDEX}")"
+  fi
+
+  if [[ ${HTTP_STATUS} -gt 299 ]]; then
+    printf "%bunable to insert commit%b\n\t%bHTTP_STATUS:%b %d%b\n\t%bHTTP_OUTPUT:%b %s%b\n" "${RED}" "${RESET}" "${BLUE}" "${YELLOW}" "${HTTP_STATUS}" "${RESET}" "${BLUE}" "${YELLOW}" "$(cat "${HTTP_OUTPUT}")" "${RESET}" 1>&2
+    rm "${HTTP_OUTPUT}"
+    return 1
+  fi
+
+  rm "${HTTP_OUTPUT}"
 }
 
 walk_log() {
@@ -150,7 +193,7 @@ walk_log() {
   IFS=$'\n'
 
   shopt -s nocasematch
-  for hash in $(git log --no-merges --pretty=format:'%h' "$(algolia_latest)"); do
+  for hash in $(git log --no-merges --pretty=format:'%h' "$(latest_commit)"); do
     if [[ $(git show -s --format='%h %at %s' "${hash}") =~ ^([0-9a-f]{1,16})\ ([0-9]+)\ (revert )?($(
       IFS='|'
       echo "${!CONVENTIONAL_COMMIT_SCOPES[*]}"
@@ -176,7 +219,9 @@ walk_log() {
       fi
 
       count="$((count + 1))"
-      algolia_insert "$(printf '{"remote": "%s", "repository": "%s", "hash": "%s", "revert": %s, "date": %s, "type": "%s", "component": "%s", "content": "%s", "breaking": %s}\n' "${GIT_HOST}" "${GIT_REPOSITORY}" "${HASH}" "${REVERT}" "${DATE}" "${TYPE}" "${COMPONENT}" "${CONTENT}" "${BREAK}")"
+
+      insert_commit "$(printf '{"hash":"%s","type":"%s","component":"%s","revert": %s,"breaking": %s,"content": "%s","date":%s,"remote":"%s","repository":"%s"}' "${HASH}" "${TYPE}" "${COMPONENT}" "${REVERT}" "${BREAK}" "${CONTENT}" "${DATE}" "${GIT_HOST}" "${GIT_REPOSITORY}")"
+      printf "%b%s inserted!%b\n" "${BLUE}" "${HASH}" "${RESET}"
 
       if [[ ${count} -gt 50 ]]; then
         printf "%bLimiting first insert to 50 commits%b\n" "${YELLOW}" "${RESET}"
@@ -195,13 +240,22 @@ main() {
     return 2
   fi
 
-  var_read ALGOLIA_APP
-  var_read ALGOLIA_KEY "" "secret"
-  var_read ALGOLIA_INDEX "herodote"
+  local HTTP_OUTPUT="http_output.txt"
+  local HTTP_STATUS
+
   var_read GIT_HOST "$(git_remote_host)"
   var_read GIT_REPOSITORY "$(git_remote_repository)"
 
-  algolia_index
+  var_read HERODOTE_API
+  var_read HERODOTE_SECRET "" "secret"
+
+  if [[ -z ${HERODOTE_API:-} ]]; then
+    var_read ALGOLIA_APP
+    var_read ALGOLIA_KEY "" "secret"
+    var_read ALGOLIA_INDEX "herodote"
+
+    configure_algolia
+  fi
 
   walk_log
 }

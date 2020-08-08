@@ -34,11 +34,12 @@ CREATE INDEX repository_name ON herodote.repository(name);
 -- commit
 CREATE TABLE herodote.commit (
   hash TEXT NOT NULL,
-  repository_id BIGINT NOT NULL REFERENCES herodote.repository(id) ON DELETE CASCADE,
   type TEXT NOT NULL,
   component TEXT NOT NULL,
   content TEXT NOT NULL,
   date TIMESTAMP WITH TIME ZONE NOT NULL,
+  remote TEXT NOT NULL,
+  repository TEXT NOT NULL,
   search_vector TSVECTOR
 );
 

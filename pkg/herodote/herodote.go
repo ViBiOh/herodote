@@ -16,6 +16,11 @@ import (
 	"github.com/ViBiOh/httputils/v3/pkg/request"
 )
 
+const (
+	commitsPath = "/commits"
+	refreshPath = "/refresh"
+)
+
 var (
 	// ErrAuthentificationFailed occurs when secret is invalid
 	ErrAuthentificationFailed = errors.New("invalid secret provided")
@@ -60,7 +65,12 @@ func New(config Config, database *sql.DB) (App, error) {
 		secret: secret,
 		db:     database,
 	}, nil
+}
 
+func (a app) Start() {
+	cron.New().Days().At("06:00").In("Europe/Paris").Start(a.refreshLexeme, func(err error) {
+		logger.Error("unable to refresh lexeme: %s", err)
+	})
 }
 
 // Handler for request. Should be use with net/http
@@ -71,7 +81,12 @@ func (a app) Handler() http.Handler {
 			return
 		}
 
-		if r.Method == http.MethodPost && strings.HasPrefix(r.URL.Path, `/refresh`) {
+		if strings.HasPrefix(r.URL.Path, commitsPath) {
+			a.handleCommits(w, r)
+			return
+		}
+
+		if r.Method == http.MethodPost && strings.HasPrefix(r.URL.Path, refreshPath) {
 			if err := a.refreshLexeme(time.Now()); err != nil {
 				httperror.InternalServerError(w, err)
 				return
@@ -80,22 +95,16 @@ func (a app) Handler() http.Handler {
 			return
 		}
 
-		if r.Method == http.MethodPost && strings.HasPrefix(r.URL.Path, `/commits`) {
-			a.handlePost(w, r)
-			return
-		}
-
 		httperror.NotFound(w)
 	})
 }
 
-func (a app) Start() {
-	cron.New().Days().At("06:00").In("Europe/Paris").Start(a.refreshLexeme, func(err error) {
-		logger.Error("unable to refresh lexeme: %s", err)
-	})
-}
+func (a app) handleCommits(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		w.WriteHeader(http.StatusMethodNotAllowed)
+		return
+	}
 
-func (a app) handlePost(w http.ResponseWriter, r *http.Request) {
 	data, err := request.ReadBodyRequest(r)
 	if err != nil {
 		httperror.BadRequest(w, err)
@@ -103,7 +112,6 @@ func (a app) handlePost(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var commit Commit
-
 	if err := json.Unmarshal(data, &commit); err != nil {
 		httperror.BadRequest(w, err)
 		return
