@@ -2,15 +2,18 @@ package herodote
 
 import (
 	"database/sql"
+	"encoding/json"
 	"errors"
 	"flag"
 	"net/http"
 	"strings"
+	"time"
 
 	"github.com/ViBiOh/httputils/v3/pkg/cron"
 	"github.com/ViBiOh/httputils/v3/pkg/flags"
 	"github.com/ViBiOh/httputils/v3/pkg/httperror"
 	"github.com/ViBiOh/httputils/v3/pkg/logger"
+	"github.com/ViBiOh/httputils/v3/pkg/request"
 )
 
 var (
@@ -65,7 +68,24 @@ func (a app) Handler() http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.Method == http.MethodPost && r.Header.Get("Authorization") != a.secret {
 			httperror.Unauthorized(w, ErrAuthentificationFailed)
+			return
 		}
+
+		if r.Method == http.MethodPost && strings.HasPrefix(r.URL.Path, `/refresh`) {
+			if err := a.refreshLexeme(time.Now()); err != nil {
+				httperror.InternalServerError(w, err)
+				return
+			}
+
+			return
+		}
+
+		if r.Method == http.MethodPost && strings.HasPrefix(r.URL.Path, `/commits`) {
+			a.handlePost(w, r)
+			return
+		}
+
+		httperror.NotFound(w)
 	})
 }
 
@@ -73,4 +93,32 @@ func (a app) Start() {
 	cron.New().Days().At("06:00").In("Europe/Paris").Start(a.refreshLexeme, func(err error) {
 		logger.Error("unable to refresh lexeme: %s", err)
 	})
+}
+
+func (a app) handlePost(w http.ResponseWriter, r *http.Request) {
+	data, err := request.ReadBodyRequest(r)
+	if err != nil {
+		httperror.BadRequest(w, err)
+		return
+	}
+
+	var commit Commit
+
+	if err := json.Unmarshal(data, &commit); err != nil {
+		httperror.BadRequest(w, err)
+		return
+	}
+
+	commit = commit.Sanitize()
+	if err := commit.Check(); err != nil {
+		httperror.BadRequest(w, err)
+		return
+	}
+
+	if err := a.saveCommit(r.Context(), commit); err != nil {
+		httperror.InternalServerError(w, err)
+		return
+	}
+
+	w.WriteHeader(http.StatusCreated)
 }
