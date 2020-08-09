@@ -8,7 +8,7 @@ let index;
  */
 export function init(config) {
   if (!config || !config.ALGOLIA_APP || !config.ALGOLIA_KEY) {
-    global.console.error('[algolia] config not provided');
+    global.console.warn('[algolia] config not provided');
     return;
   }
 
@@ -17,17 +17,47 @@ export function init(config) {
 }
 
 /**
+ * Enabled tell if Algolia is enabled
+ * @return {Boolean} True is enabled, false otherwise
+ */
+export function enabled() {
+  return Boolean(index);
+}
+
+/**
  * Perform algolia search
  * @param  {string} query   Query searched
  * @param  {Object} options Search options
  * @return {Object}         Algolia reponse
  */
-export async function search(query, options = {}) {
+export async function search(query, filters = [], page = 0) {
   if (!index) {
     throw new Error('[algolia] index not initialized');
   }
 
-  return await index.search(query, options);
+  let filtersValue = '';
+  if (filters.length) {
+    filtersValue = `(${Object.values(
+      filters.reduce((previous, current) => {
+        const parts = current.split(':');
+        if (parts.length < 1) {
+          return previous;
+        }
+
+        const previousValue = previous[parts[0]];
+
+        if (previousValue) {
+          previous[parts[0]] = `${previousValue} OR ${current}`;
+        } else {
+          previous[parts[0]] = current;
+        }
+
+        return previous;
+      }, {}),
+    ).join(') AND (')})`;
+  }
+
+  return await index.search(query, { filters: filtersValue, page });
 }
 
 /**

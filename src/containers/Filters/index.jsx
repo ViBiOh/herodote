@@ -1,5 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { facets as algoliaFacets } from 'services/Algolia';
+import {
+  facets as algoliaFacets,
+  enabled as algoliaEnabled,
+} from 'services/Algolia';
+import { filters as apiFilters, enabled as apiEnabled } from 'services/Backend';
 import PropTypes from 'prop-types';
 import AlgoliaLogo from 'components/AlgoliaLogo';
 import Filter from 'components/Filter';
@@ -10,9 +14,16 @@ import './index.css';
 const doubleSpaces = /\s{2,}/gim;
 
 async function fetchFacets(name) {
-  const output = await algoliaFacets(name, '');
-  if (output) {
-    return output.facetHits;
+  if (apiEnabled()) {
+    const output = await apiFilters(name);
+    if (output) {
+      return output.results || [];
+    }
+  } else if (algoliaEnabled()) {
+    const output = await algoliaFacets(name, '');
+    if (output) {
+      return output.facetHits.map((o) => o.value);
+    }
   }
 
   return [];
@@ -22,6 +33,7 @@ async function loadFacets() {
   const repository = await fetchFacets('repository');
   const type = await fetchFacets('type');
   const component = await fetchFacets('component');
+
   return { repository, type, component };
 }
 
@@ -76,11 +88,13 @@ export default function Filters({ query, onChange, filters }) {
 
   return (
     <aside id="filters" className="flex full">
-      <AlgoliaLogo
-        className="algolia-logo"
-        height={38}
-        title="Search by Algolia"
-      />
+      {!apiEnabled() && algoliaEnabled() && (
+        <AlgoliaLogo
+          className="algolia-logo"
+          height={38}
+          title="Search by Algolia"
+        />
+      )}
 
       <input
         type="text"

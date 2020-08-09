@@ -1,5 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { search as algoliaSearch } from 'services/Algolia';
+import {
+  search as algoliaSearch,
+  enabled as algoliaEnabled,
+} from 'services/Algolia';
+import { search as apiSearch, enabled as apiEnabled } from 'services/Backend';
 import { push as urlPush } from 'helpers/URL';
 import { useDebounce } from 'helpers/Hooks';
 import Commits from 'components/Commits';
@@ -10,33 +14,31 @@ import './index.css';
 
 const filterRegex = /([^\s]+):([^\s]+)/gim;
 
-function filterBy(query = '') {
-  const filtersGroup = {};
+function parseQuery(query = '') {
   const filters = [];
-
   query = query.trim();
+
   query.replace(filterRegex, (all, key, value) => {
-    filtersGroup[key] = (filtersGroup[key] || []).concat(value);
     filters.push(`${key}:${value}`);
   });
 
-  const filtersValue = Object.entries(filtersGroup).map(([key, values]) =>
-    values.map((value) => `${key}:${value}`).join(' OR '),
-  );
-
-  return [
-    query.replace(filterRegex, ''),
-    {
-      filters: filtersValue.length ? `(${filtersValue.join(') AND (')})` : '',
-    },
-    filters,
-  ];
+  return [query.replace(filterRegex, ''), filters];
 }
 
-async function fetchCommits(query, options, page) {
-  const output = await algoliaSearch(query, { ...options, page });
-  if (output) {
-    return [output.hits, { next: output.page + 1, count: output.nbPages }];
+async function fetchCommits(query, filters, page) {
+  if (apiEnabled()) {
+    const output = await apiSearch(query, filters, page);
+    if (output) {
+      return [
+        output.results || [],
+        { next: output.page + 1, count: output.pageCount },
+      ];
+    }
+  } else if (algoliaEnabled()) {
+    const output = await algoliaSearch(query, filters, page);
+    if (output) {
+      return [output.hits, { next: output.page + 1, count: output.nbPages }];
+    }
   }
 
   return [];
@@ -45,39 +47,37 @@ async function fetchCommits(query, options, page) {
 /**
  * Herodote Functional Component.
  */
-export default function Herodote({ query, setFilters }) {
+export default function Herodote({ query, filters, setFilters }) {
   const [pending, setPending] = useState(true);
   const [morePending, setMorePending] = useState(false);
   const [error, setError] = useState('');
 
-  const [algoliaParams, setAlgoliaParams] = useState({});
   const [page, setPage] = useState(0);
   const [results, setResults] = useState([]);
   const [pagination, setPagination] = useState({ next: 0, count: 0 });
 
   useEffect(() => {
     setPending(true);
-
-    const [algoliaQuery, algoliaOptions, selectedFilters] = filterBy(query);
-    setAlgoliaParams({ query: algoliaQuery, options: algoliaOptions });
     setPage(0);
-    urlPush({ query });
 
-    setFilters(selectedFilters);
-  }, [setFilters, query]);
+    urlPush({ query });
+  }, [query]);
 
   useDebounce(async () => {
     try {
-      const [hits, newPagination] = await fetchCommits(
-        algoliaParams.query,
-        algoliaParams.options,
+      const [newQuery, newFilters] = parseQuery(query);
+      setFilters(newFilters);
+
+      const [items, newPagination] = await fetchCommits(
+        newQuery,
+        newFilters,
         page,
       );
 
       if (page) {
-        setResults(results.concat(hits));
+        setResults(results.concat(items));
       } else {
-        setResults(hits);
+        setResults(items);
       }
 
       setPagination(newPagination);
@@ -86,7 +86,7 @@ export default function Herodote({ query, setFilters }) {
     } catch (e) {
       setError(e);
     }
-  }, [algoliaParams, page]);
+  }, [query, filters, page]);
 
   if (error) {
     return <Error error={error} />;

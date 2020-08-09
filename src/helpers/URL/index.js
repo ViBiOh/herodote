@@ -21,6 +21,19 @@ export function search() {
  * @param  {Object} params Search params
  */
 export function push(params) {
+  window.history.pushState(
+    null,
+    null,
+    `${window.location.pathname}${encode(params)}${window.location.hash}`,
+  );
+}
+
+/**
+ * Encode given params into the query string
+ * @param  {Object} params Wanted params as object
+ * @return {String}        Query string to append
+ */
+export function encode(params) {
   const encoded = Object.entries(params)
     .filter(([, value]) => Boolean(value))
     .map(([key, value]) => `${key}=${encodeURIComponent(value)}`);
@@ -30,9 +43,5 @@ export function push(params) {
     searchStr = `?${encoded.join('&')}`;
   }
 
-  window.history.pushState(
-    null,
-    null,
-    `${window.location.pathname}${searchStr}${window.location.hash}`,
-  );
+  return searchStr;
 }
