@@ -46,7 +46,7 @@ spec:
 apiVersion: traefik.containo.us/v1alpha1
 kind: IngressRoute
 metadata:
-  name: herodote-http
+  name: herodote-api-http
   labels:
     app.kubernetes.io/name: herodote
     app.kubernetes.io/instance: herodote
@@ -60,14 +60,14 @@ spec:
       middlewares:
         - name: redirect
       services:
-        - name: herodote
+        - name: herodote-api
           port: 80
 
 ---
 apiVersion: traefik.containo.us/v1alpha1
 kind: IngressRoute
 metadata:
-  name: herodote-https
+  name: herodote-api-https
   labels:
     app.kubernetes.io/name: herodote
     app.kubernetes.io/instance: herodote
@@ -81,7 +81,7 @@ spec:
       middlewares:
         - name: ratelimit
       services:
-        - name: herodote
+        - name: herodote-api
           port: 80
   tls:
     certResolver: default
