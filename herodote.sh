@@ -121,8 +121,8 @@ latest_commit() {
       --get \
       "${HERODOTE_API}/commits?repository=${GIT_REPOSITORY}&pageSize=1")"
 
-    if [[ ${HTTP_STATUS} -eq 200 ]]; then
-      LATEST_HASH="$(cat "${HTTP_OUTPUT}")"
+    if [[ ${HTTP_STATUS} -eq 200 ]] && [[ $(jq --raw-output '.total' "${HTTP_OUTPUT}") -gt 0 ]]; then
+      LATEST_HASH="$(jq --raw-output '.results[0].hash' "${HTTP_OUTPUT}")"
     fi
   else
     HTTP_STATUS="$(curl -q -sSL --max-time 10 \
@@ -225,6 +225,11 @@ walk_log() {
 
       if [[ ${count} -gt 50 ]]; then
         printf "%bLimiting first insert to 50 commits%b\n" "${YELLOW}" "${RESET}"
+
+        if [[ -n ${HERODOTE_API} ]]; then
+          printf "%bRefreshing materialized view%b\n" "${BLUE}" "${RESET}"
+          curl -q -sSL --max-time 30 -H "Authorization: ${HERODOTE_SECRET}" "${HERODOTE_API}/refresh"
+        fi
 
         break
       fi

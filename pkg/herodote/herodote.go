@@ -12,7 +12,9 @@ import (
 	"github.com/ViBiOh/httputils/v3/pkg/cron"
 	"github.com/ViBiOh/httputils/v3/pkg/flags"
 	"github.com/ViBiOh/httputils/v3/pkg/httperror"
+	"github.com/ViBiOh/httputils/v3/pkg/httpjson"
 	"github.com/ViBiOh/httputils/v3/pkg/logger"
+	"github.com/ViBiOh/httputils/v3/pkg/query"
 	"github.com/ViBiOh/httputils/v3/pkg/request"
 )
 
@@ -100,11 +102,16 @@ func (a app) Handler() http.Handler {
 }
 
 func (a app) handleCommits(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodPost {
+	if r.Method == http.MethodPost {
+		a.handlePostCommits(w, r)
+	} else if r.Method == http.MethodGet {
+		a.handleGetCommits(w, r)
+	} else {
 		w.WriteHeader(http.StatusMethodNotAllowed)
-		return
 	}
+}
 
+func (a app) handlePostCommits(w http.ResponseWriter, r *http.Request) {
 	data, err := request.ReadBodyRequest(r)
 	if err != nil {
 		httperror.BadRequest(w, err)
@@ -129,4 +136,20 @@ func (a app) handleCommits(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.WriteHeader(http.StatusCreated)
+}
+
+func (a app) handleGetCommits(w http.ResponseWriter, r *http.Request) {
+	pagination, err := query.ParsePagination(r, 1, 20, 100)
+	if err != nil {
+		httperror.BadRequest(w, err)
+		return
+	}
+
+	commits, totalCount, err := a.searchCommit(r.Context(), r.URL.Query().Get("q"), pagination.Page, pagination.PageSize)
+	if err != nil {
+		httperror.InternalServerError(w, err)
+		return
+	}
+
+	httpjson.ResponsePaginatedJSON(w, http.StatusOK, pagination.Page, pagination.PageSize, totalCount, commits, httpjson.IsPretty(r))
 }
