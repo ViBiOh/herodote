@@ -25,7 +25,7 @@ export function enabled() {
  * Perform herodote backend search
  * @param  {string} query   Query searched
  * @param  {Object} options Search options
- * @return {Object}         Algolia reponse
+ * @return {Object}         API response
  */
 export async function search(query, filters = [], page = 0) {
   if (!funtcher) {
@@ -52,9 +52,9 @@ export async function search(query, filters = [], page = 0) {
 }
 
 /**
- * Perform algolia facets search
+ * Perform API filters search
  * @param  {String} name Name of facet
- * @return {Object}      Algolia reponse
+ * @return {Object}      API response
  */
 export async function filters(name) {
   if (!funtcher) {
