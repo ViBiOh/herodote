@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/ViBiOh/httputils/v3/pkg/db"
+	"github.com/lib/pq"
 )
 
 const insertCommitQuery = `
@@ -58,34 +59,18 @@ SELECT
   count(1) OVER() AS full_count
 FROM
   herodote.commit
-ORDER BY
-  date DESC
-LIMIT $1
-OFFSET $2
-`
-const searchCommitQueryWithVector = `
-SELECT
-  hash,
-  type,
-  component,
-  revert,
-  breaking,
-  content,
-  date,
-  remote,
-  repository,
-  count(1) OVER() AS full_count
-FROM
-  herodote.commit
 WHERE
-  search_vector @@ to_tsquery('english', $3)
+  TRUE
+`
+
+const searchCommitTail = `
 ORDER BY
   date DESC
 LIMIT $1
 OFFSET $2
 `
 
-func (a app) searchCommit(ctx context.Context, query string, page, pageSize uint) ([]Commit, uint, error) {
+func (a app) searchCommit(ctx context.Context, query string, filters map[string][]string, page, pageSize uint) ([]Commit, uint, error) {
 	words, err := a.findSimilarWords(ctx, query)
 	if err != nil {
 		return nil, 0, fmt.Errorf("unable to find similar words: %s", err)
@@ -107,11 +92,40 @@ func (a app) searchCommit(ctx context.Context, query string, page, pageSize uint
 		return nil
 	}
 
-	if len(words) == 0 {
-		return list, totalCount, db.List(ctx, a.db, scanner, searchCommitQuery, pageSize, (page-1)*pageSize)
+	sqlQuery, sqlArgs := computeSearchQuery(page, pageSize, words, filters)
+
+	return list, totalCount, db.List(ctx, a.db, scanner, sqlQuery, sqlArgs...)
+}
+
+func computeSearchQuery(page, pageSize uint, words []string, filters map[string][]string) (string, []interface{}) {
+	query := searchCommitQuery
+	args := []interface{}{
+		pageSize,
+		(page - 1) * pageSize,
 	}
 
-	return list, totalCount, db.List(ctx, a.db, scanner, searchCommitQueryWithVector, pageSize, (page-1)*pageSize, strings.Join(words, " | "))
+	if len(words) != 0 {
+		args = append(args, strings.Join(words, " | "))
+		query += fmt.Sprintf(" AND search_vector @@ to_tsquery('english', $%d)", len(args))
+	}
+
+	for key, values := range filters {
+		if len(values) == 0 {
+			continue
+		}
+
+		sqlValues := make([]string, len(values))
+		for index, value := range values {
+			sqlValues[index] = strings.ToLower(value)
+		}
+
+		args = append(args, pq.Array(sqlValues))
+		query += fmt.Sprintf(" AND %s = ANY($%d)", key, len(args))
+	}
+
+	query += searchCommitTail
+
+	return query, args
 }
 
 const findSimilarWordsQuery = `
