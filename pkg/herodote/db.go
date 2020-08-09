@@ -152,3 +152,60 @@ func (a app) findSimilarWords(ctx context.Context, query string) ([]string, erro
 
 	return list, db.List(ctx, a.db, scanner, findSimilarWordsQuery, query)
 }
+
+func (a app) listFilters(ctx context.Context, query string) ([]string, error) {
+	var list []string
+
+	scanner := func(rows *sql.Rows) error {
+		var item string
+		if err := rows.Scan(&item); err != nil {
+			return err
+		}
+
+		list = append(list, item)
+		return nil
+	}
+
+	return list, db.List(ctx, a.db, scanner, query)
+}
+
+const listRepositoryFiltersQuery = `
+SELECT DISTINCT
+  repository
+FROM
+  herodote.commit
+ORDER BY
+  repository
+`
+
+func (a app) listRepositories(ctx context.Context) ([]string, error) {
+	return a.listFilters(ctx, listRepositoryFiltersQuery)
+}
+
+const listTypeFiltersQuery = `
+SELECT DISTINCT
+  type
+FROM
+  herodote.commit
+ORDER BY
+  type
+`
+
+func (a app) listTypes(ctx context.Context) ([]string, error) {
+	return a.listFilters(ctx, listTypeFiltersQuery)
+}
+
+const listComponentFiltersQuery = `
+SELECT DISTINCT
+  component
+FROM
+  herodote.commit
+WHERE
+  component <> ''
+ORDER BY
+  component
+`
+
+func (a app) listComponents(ctx context.Context) ([]string, error) {
+	return a.listFilters(ctx, listComponentFiltersQuery)
+}
