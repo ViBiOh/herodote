@@ -48,7 +48,7 @@ The script needs the following variables to be set (or will prompt you for):
 You also **have to** provide a backend configuration (depending on your choise between Postgres and Algolia):
 
 - `HERODOTE_API`: URL of your Herodote API (e.g. https://herodote-api.vibioh.fr)
-- `HERODOTE_SECRET`: `herodoteHttpSecret` or your Herodote API (cf. [API Usage](#api-usage) section)
+- `HERODOTE_SECRET`: `httpSecret` or your Herodote API (cf. [API Usage](#api-usage) section)
 
 or
 
@@ -153,10 +153,10 @@ Usage of herodote:
         [owasp] X-Frame-Options {HERODOTE_FRAME_OPTIONS} (default "deny")
   -graceDuration string
         [http] Grace duration when SIGTERM received {HERODOTE_GRACE_DURATION} (default "15s")
-  -herodoteHttpSecret string
-        [herodote] HTTP Secret Key for Update {HERODOTE_HERODOTE_HTTP_SECRET}
   -hsts
         [owasp] Indicate Strict Transport Security {HERODOTE_HSTS} (default true)
+  -httpSecret string
+        [herodote] HTTP Secret Key for Update {HERODOTE_HTTP_SECRET}
   -key string
         [http] Key file {HERODOTE_KEY}
   -okStatus int

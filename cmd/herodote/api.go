@@ -23,7 +23,7 @@ func main() {
 	owaspConfig := owasp.Flags(fs, "")
 	corsConfig := cors.Flags(fs, "cors")
 
-	herodoteConfig := herodote.Flags(fs, "herodote")
+	herodoteConfig := herodote.Flags(fs, "")
 	dbConfig := db.Flags(fs, "db")
 
 	logger.Fatal(fs.Parse(os.Args[1:]))
