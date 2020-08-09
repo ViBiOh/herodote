@@ -23,9 +23,8 @@ spec:
       containers:
         - name: herodote
           image: vibioh/herodote-ui
-          envFrom:
-            - secretRef:
-                name: herodote
+          env:
+            HERODOTE_API: https://herodote-api.vibioh.fr
           ports:
             - name: http
               containerPort: 1080
@@ -72,7 +71,7 @@ spec:
           image: vibioh/herodote-api
           envFrom:
             - secretRef:
-                name: herodote-api
+                name: herodote
           ports:
             - name: http
               containerPort: 1080
