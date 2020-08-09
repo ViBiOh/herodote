@@ -253,11 +253,11 @@ main() {
   var_read GIT_HOST "$(git_remote_host)"
   var_read GIT_REPOSITORY "$(git_remote_repository)"
 
-  var_read HERODOTE_API
+  var_read HERODOTE_API ""
   var_read HERODOTE_SECRET "" "secret"
 
   if [[ -z ${HERODOTE_API:-} ]]; then
-    var_read ALGOLIA_APP
+    var_read ALGOLIA_APP ""
     var_read ALGOLIA_KEY "" "secret"
     var_read ALGOLIA_INDEX "herodote"
 
