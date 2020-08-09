@@ -20,6 +20,7 @@ import (
 
 const (
 	commitsPath = "/commits"
+	filtersPath = "/filters"
 	refreshPath = "/refresh"
 )
 
@@ -85,6 +86,11 @@ func (a app) Handler() http.Handler {
 
 		if strings.HasPrefix(r.URL.Path, commitsPath) {
 			a.handleCommits(w, r)
+			return
+		}
+
+		if strings.HasPrefix(r.URL.Path, filtersPath) {
+			a.handleFilters(w, r)
 			return
 		}
 
@@ -161,4 +167,35 @@ func (a app) handleGetCommits(w http.ResponseWriter, r *http.Request) {
 	}
 
 	httpjson.ResponsePaginatedJSON(w, http.StatusOK, pagination.Page, pagination.PageSize, totalCount, commits, httpjson.IsPretty(r))
+}
+
+func (a app) handleFilters(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		w.WriteHeader(http.StatusMethodNotAllowed)
+		return
+	}
+
+	ctx := r.Context()
+	name := r.URL.Query().Get("name")
+
+	var values []string
+	var err error
+
+	switch strings.ToLower(name) {
+	case "repository":
+		values, err = a.listRepositories(ctx)
+	case "type":
+		values, err = a.listTypes(ctx)
+	case "component":
+		values, err = a.listComponents(ctx)
+	default:
+		httperror.NotFound(w)
+		return
+	}
+
+	if err != nil {
+		httperror.InternalServerError(w, err)
+	}
+
+	httpjson.ResponseArrayJSON(w, http.StatusOK, values, httpjson.IsPretty(r))
 }
