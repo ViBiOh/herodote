@@ -139,7 +139,6 @@ latest_commit() {
 
     if [[ ${HTTP_STATUS} -eq 200 ]] && [[ $(jq --raw-output '.hits[] | length' "${HTTP_OUTPUT}") -gt 0 ]]; then
       LATEST_HASH="$(jq --raw-output '.hits[0].hash' "${HTTP_OUTPUT}")"
-      return
     fi
   fi
 
