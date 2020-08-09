@@ -221,7 +221,32 @@ walk_log() {
 
       count="$((count + 1))"
 
-      insert_commit "$(printf '{"hash":"%s","type":"%s","component":"%s","revert": %s,"breaking": %s,"content": "%s","date":%s,"remote":"%s","repository":"%s"}' "${HASH}" "${TYPE}" "${COMPONENT}" "${REVERT}" "${BREAK}" "${CONTENT}" "${DATE}" "${GIT_HOST}" "${GIT_REPOSITORY}")"
+      local PAYLOAD
+      PAYLOAD="$(
+        jq -c -n \
+          --arg hash "${HASH}" \
+          --arg type "${TYPE}" \
+          --arg component "${COMPONENT}" \
+          --argjson revert "${REVERT}" \
+          --argjson breaking "${BREAK}" \
+          --arg content "${CONTENT}" \
+          --argjson date "${DATE}" \
+          --arg remote "${GIT_HOST}" \
+          --arg repository "${GIT_REPOSITORY}" \
+          '{
+          "hash": $hash,
+          "type": $type,
+          "component": $component,
+          "revert": $revert,
+          "breaking": $breaking,
+          "content": $content,
+          "date": $date,
+          "remote": $remote,
+          "repository": $repository
+        }'
+      )"
+
+      insert_commit "${PAYLOAD}"
       printf "%b%s inserted!%b\n" "${BLUE}" "${HASH}" "${RESET}"
 
       if [[ ${count} -gt 50 ]]; then
