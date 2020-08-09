@@ -10,6 +10,7 @@ export default async function getConfig() {
   }
 
   return {
+    HERODOTE_API: process.env.REACT_APP_HERODOTE_API,
     ALGOLIA_APP: process.env.REACT_APP_ALGOLIA_APP,
     ALGOLIA_KEY: process.env.REACT_APP_ALGOLIA_KEY,
     ALGOLIA_INDEX: process.env.REACT_APP_ALGOLIA_INDEX,

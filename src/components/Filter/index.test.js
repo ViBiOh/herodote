@@ -27,10 +27,10 @@ it('should contains title with given name', () => {
 
 it('should contains an entry for each values', () => {
   const props = defaultProps();
-  props.values = [{ value: 'one' }, { value: 'two' }, { value: 'three' }];
+  props.values = ['one', 'two', 'three'];
   const { getByText } = render(<Filters {...props} />);
 
-  props.values.forEach(({ value }) => {
+  props.values.forEach((value) => {
     const item = getByText(value);
     expect(item).toBeInTheDocument();
     expect(item.nodeName).toBe('LABEL');

@@ -34,7 +34,7 @@ export default function Filter({ name, values, onChange, selected }) {
           },
         )}
       >
-        {values.map(({ value }) => {
+        {values.map((value) => {
           const id = `${name}:${value}`;
           return (
             <li key={id}>
@@ -62,9 +62,5 @@ Filter.propTypes = {
   name: PropTypes.string.isRequired,
   onChange: PropTypes.func.isRequired,
   selected: PropTypes.arrayOf(PropTypes.string).isRequired,
-  values: PropTypes.arrayOf(
-    PropTypes.shape({
-      value: PropTypes.string.isRequired,
-    }),
-  ).isRequired,
+  values: PropTypes.arrayOf(PropTypes.string).isRequired,
 };

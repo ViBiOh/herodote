@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import getConfig from 'services/Config';
 import { init as initAlgolia } from 'services/Algolia';
+import { init as initAPI } from 'services/Backend';
 import { search as urlSearch } from 'helpers/URL';
 import Header from 'components/Header';
 import Filters from 'containers/Filters';
@@ -18,6 +19,7 @@ export default function App() {
   useEffect(() => {
     (async () => {
       const rawConfig = await getConfig();
+      initAPI(rawConfig);
       initAlgolia(rawConfig);
       setConfig(rawConfig);
     })();
