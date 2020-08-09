@@ -54,7 +54,8 @@ jobs:
       language: minimal
       script:
         - curl -q -sSL --max-time 30 "https://raw.githubusercontent.com/ViBiOh/scripts/master/bootstrap" | bash -s "docker_promote"
-        - scripts/docker_promote "${DOCKER_USER}/herodote" "$(make version)"
+        - scripts/docker_promote "${DOCKER_USER}/herodote-api" "$(make version)"
+        - scripts/docker_promote "${DOCKER_USER}/herodote-ui" "$(make version)"
 
 stages:
   - Build
