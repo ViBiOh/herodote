@@ -23,6 +23,8 @@ func (c Commit) Sanitize() Commit {
 	c.Hash = cleanString(c.Hash)
 	c.Type = cleanString(c.Type)
 	c.Component = cleanString(c.Component)
+	c.Remote = cleanString(c.Remote)
+	c.Repository = cleanString(c.Repository)
 
 	return c
 }

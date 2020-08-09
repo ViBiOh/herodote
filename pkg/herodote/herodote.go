@@ -145,7 +145,16 @@ func (a app) handleGetCommits(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	commits, totalCount, err := a.searchCommit(r.Context(), r.URL.Query().Get("q"), pagination.Page, pagination.PageSize)
+	params := r.URL.Query()
+
+	query := strings.TrimSpace(params.Get("q"))
+	filters := map[string][]string{
+		"repository": params["repository"],
+		"type":       params["type"],
+		"component":  params["component"],
+	}
+
+	commits, totalCount, err := a.searchCommit(r.Context(), query, filters, pagination.Page, pagination.PageSize)
 	if err != nil {
 		httperror.InternalServerError(w, err)
 		return
