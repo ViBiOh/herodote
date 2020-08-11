@@ -1,7 +1,7 @@
 package herodote
 
 import (
-	"database/sql"
+	"context"
 	"encoding/json"
 	"errors"
 	"flag"
@@ -9,6 +9,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/ViBiOh/herodote/pkg/model"
+	"github.com/ViBiOh/herodote/pkg/store"
 	"github.com/ViBiOh/httputils/v3/pkg/cron"
 	"github.com/ViBiOh/httputils/v3/pkg/flags"
 	"github.com/ViBiOh/httputils/v3/pkg/httperror"
@@ -43,7 +45,7 @@ type Config struct {
 type app struct {
 	secret string
 
-	db *sql.DB
+	store store.App
 }
 
 // Flags adds flags for configuring package
@@ -54,24 +56,27 @@ func Flags(fs *flag.FlagSet, prefix string) Config {
 }
 
 // New creates new App from Config
-func New(config Config, database *sql.DB) (App, error) {
+func New(config Config, store store.App) (App, error) {
 	secret := strings.TrimSpace(*config.secret)
 	if len(secret) == 0 {
 		return nil, errors.New("http secret is required")
 	}
 
-	if database == nil {
-		return nil, errors.New("database is required")
+	if store == nil {
+		return nil, errors.New("store is required")
 	}
 
 	return app{
 		secret: secret,
-		db:     database,
+		store:  store,
 	}, nil
 }
 
 func (a app) Start() {
-	cron.New().Days().At("06:00").In("Europe/Paris").Start(a.refreshLexeme, func(err error) {
+	cron.New().Days().At("06:00").In("Europe/Paris").Start(func(_ time.Time) error {
+		logger.Info("Refreshing lexeme")
+		return a.store.Refresh(context.Background())
+	}, func(err error) {
 		logger.Error("unable to refresh lexeme: %s", err)
 	})
 }
@@ -95,7 +100,7 @@ func (a app) Handler() http.Handler {
 		}
 
 		if r.Method == http.MethodPost && strings.HasPrefix(r.URL.Path, refreshPath) {
-			if err := a.refreshLexeme(time.Now()); err != nil {
+			if err := a.store.Refresh(r.Context()); err != nil {
 				httperror.InternalServerError(w, err)
 				return
 			}
@@ -124,7 +129,7 @@ func (a app) handlePostCommits(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var commit Commit
+	var commit model.Commit
 	if err := json.Unmarshal(data, &commit); err != nil {
 		httperror.BadRequest(w, err)
 		return
@@ -136,7 +141,7 @@ func (a app) handlePostCommits(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := a.saveCommit(r.Context(), commit); err != nil {
+	if err := a.store.SaveCommit(r.Context(), commit); err != nil {
 		httperror.InternalServerError(w, err)
 		return
 	}
@@ -160,7 +165,7 @@ func (a app) handleGetCommits(w http.ResponseWriter, r *http.Request) {
 		"component":  params["component"],
 	}
 
-	commits, totalCount, err := a.searchCommit(r.Context(), query, filters, pagination.Page, pagination.PageSize)
+	commits, totalCount, err := a.store.SearchCommit(r.Context(), query, filters, pagination.Page, pagination.PageSize)
 	if err != nil {
 		httperror.InternalServerError(w, err)
 		return
@@ -175,26 +180,15 @@ func (a app) handleFilters(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	ctx := r.Context()
-	name := r.URL.Query().Get("name")
-
-	var values []string
-	var err error
-
-	switch strings.ToLower(name) {
-	case "repository":
-		values, err = a.listRepositories(ctx)
-	case "type":
-		values, err = a.listTypes(ctx)
-	case "component":
-		values, err = a.listComponents(ctx)
-	default:
-		httperror.NotFound(w)
-		return
-	}
-
+	values, err := a.store.ListFilters(r.Context(), r.URL.Query().Get("name"))
 	if err != nil {
-		httperror.InternalServerError(w, err)
+		if errors.Is(err, store.ErrNotFound) {
+			httperror.NotFound(w)
+		} else {
+			httperror.InternalServerError(w, err)
+		}
+
+		return
 	}
 
 	httpjson.ResponseArrayJSON(w, http.StatusOK, values, httpjson.IsPretty(r))

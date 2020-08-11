@@ -1,7 +1,6 @@
 package herodote
 
 import (
-	"database/sql"
 	"errors"
 	"flag"
 	"fmt"
@@ -11,6 +10,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/ViBiOh/herodote/pkg/store"
 	"github.com/ViBiOh/httputils/v3/pkg/request"
 )
 
@@ -48,8 +48,8 @@ func TestNew(t *testing.T) {
 	secretString := "testing"
 
 	type args struct {
-		config   Config
-		database *sql.DB
+		config Config
+		store  store.App
 	}
 
 	var cases = []struct {
@@ -72,17 +72,17 @@ func TestNew(t *testing.T) {
 				config: Config{secret: &secretString},
 			},
 			nil,
-			errors.New("database is required"),
+			errors.New("store is required"),
 		},
 		{
 			"valid",
 			args{
-				config:   Config{secret: &secretString},
-				database: &sql.DB{},
+				config: Config{secret: &secretString},
+				store:  store.New(nil),
 			},
 			app{
 				secret: "testing",
-				db:     &sql.DB{},
+				store:  store.New(nil),
 			},
 			nil,
 		},
@@ -90,7 +90,7 @@ func TestNew(t *testing.T) {
 
 	for _, tc := range cases {
 		t.Run(tc.intention, func(t *testing.T) {
-			got, gotErr := New(tc.args.config, tc.args.database)
+			got, gotErr := New(tc.args.config, tc.args.store)
 
 			failed := false
 

@@ -1,4 +1,4 @@
-package herodote
+package model
 
 import (
 	"fmt"

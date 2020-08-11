@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"github.com/ViBiOh/herodote/pkg/herodote"
+	"github.com/ViBiOh/herodote/pkg/store"
 	"github.com/ViBiOh/httputils/v3/pkg/alcotest"
 	"github.com/ViBiOh/httputils/v3/pkg/cors"
 	"github.com/ViBiOh/httputils/v3/pkg/db"
@@ -33,7 +34,8 @@ func main() {
 	herodoteDb, err := db.New(dbConfig)
 	logger.Fatal(err)
 
-	herodoteApp, err := herodote.New(herodoteConfig, herodoteDb)
+	storeApp := store.New(herodoteDb)
+	herodoteApp, err := herodote.New(herodoteConfig, storeApp)
 	logger.Fatal(err)
 
 	server := httputils.New(serverConfig)
