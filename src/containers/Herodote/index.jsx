@@ -31,7 +31,7 @@ async function fetchCommits(query, filters, page) {
     if (output) {
       return [
         output.results || [],
-        { next: output.page + 1, count: output.pageCount },
+        { next: output.page, count: output.pageCount },
       ];
     }
   } else if (algoliaEnabled()) {
