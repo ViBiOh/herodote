@@ -76,4 +76,4 @@ build:
 .PHONY: run
 run:
 	$(MAIN_RUNNER) \
-		-herodoteHttpSecret "herodote"
+		-httpSecret "herodote"
