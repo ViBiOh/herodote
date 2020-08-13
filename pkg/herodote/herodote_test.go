@@ -173,3 +173,57 @@ func TestHandler(t *testing.T) {
 		})
 	}
 }
+
+func TestCheckDate(t *testing.T) {
+	type args struct {
+		raw string
+	}
+
+	var cases = []struct {
+		intention string
+		args      args
+		wantErr   error
+	}{
+		{
+			"empty",
+			args{
+				raw: "",
+			},
+			nil,
+		},
+		{
+			"invalid format",
+			args{
+				raw: "2020-31-08",
+			},
+			errors.New(`unable to parse date: parsing time "2020-31-08": month out of range`),
+		},
+		{
+			"valid",
+			args{
+				raw: "2020-08-31",
+			},
+			nil,
+		},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.intention, func(t *testing.T) {
+			gotErr := checkDate(tc.args.raw)
+
+			failed := false
+
+			if tc.wantErr == nil && gotErr != nil {
+				failed = true
+			} else if tc.wantErr != nil && gotErr == nil {
+				failed = true
+			} else if tc.wantErr != nil && !strings.Contains(gotErr.Error(), tc.wantErr.Error()) {
+				failed = true
+			}
+
+			if failed {
+				t.Errorf("checkDate() = `%s`, want `%s`", gotErr, tc.wantErr)
+			}
+		})
+	}
+}
