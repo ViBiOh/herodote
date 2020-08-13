@@ -37,7 +37,7 @@ LIMIT $1
 OFFSET $2
 `
 
-func (a app) SearchCommit(ctx context.Context, query string, filters map[string][]string, page, pageSize uint) ([]model.Commit, uint, error) {
+func (a app) SearchCommit(ctx context.Context, query string, filters map[string][]string, before, after string, page, pageSize uint) ([]model.Commit, uint, error) {
 	words, err := a.findSimilarWords(ctx, query)
 	if err != nil {
 		return nil, 0, fmt.Errorf("unable to find similar words: %s", err)
@@ -59,13 +59,15 @@ func (a app) SearchCommit(ctx context.Context, query string, filters map[string]
 		return nil
 	}
 
-	sqlQuery, sqlArgs := computeSearchQuery(page, pageSize, words, filters)
+	sqlQuery, sqlArgs := computeSearchQuery(page, pageSize, words, filters, before, after)
 
 	return list, totalCount, db.List(ctx, a.db, scanner, sqlQuery, sqlArgs...)
 }
 
-func computeSearchQuery(page, pageSize uint, words []string, filters map[string][]string) (string, []interface{}) {
-	query := searchCommitQuery
+func computeSearchQuery(page, pageSize uint, words []string, filters map[string][]string, before, after string) (string, []interface{}) {
+	query := strings.Builder{}
+	query.WriteString(searchCommitQuery)
+
 	args := []interface{}{
 		pageSize,
 		(page - 1) * pageSize,
@@ -73,7 +75,7 @@ func computeSearchQuery(page, pageSize uint, words []string, filters map[string]
 
 	if len(words) != 0 {
 		args = append(args, strings.Join(words, " | "))
-		query += fmt.Sprintf(" AND search_vector @@ to_tsquery('english', $%d)", len(args))
+		query.WriteString(fmt.Sprintf(" AND search_vector @@ to_tsquery('english', $%d)", len(args)))
 	}
 
 	for key, values := range filters {
@@ -87,12 +89,22 @@ func computeSearchQuery(page, pageSize uint, words []string, filters map[string]
 		}
 
 		args = append(args, pq.Array(sqlValues))
-		query += fmt.Sprintf(" AND %s = ANY($%d)", key, len(args))
+		query.WriteString(fmt.Sprintf(" AND %s = ANY($%d)", key, len(args)))
 	}
 
-	query += searchCommitTail
+	if len(before) != 0 {
+		args = append(args, before)
+		query.WriteString(fmt.Sprintf(" AND date < $%d", len(args)))
+	}
 
-	return query, args
+	if len(after) != 0 {
+		args = append(args, after)
+		query.WriteString(fmt.Sprintf(" AND date > $%d", len(args)))
+	}
+
+	query.WriteString(searchCommitTail)
+
+	return query.String(), args
 }
 
 const findSimilarWordsQuery = `
@@ -101,7 +113,7 @@ SELECT DISTINCT
 FROM
   herodote.lexeme
 WHERE
-  similarity(word, unaccent($1)) > 0.2
+  similarity(word, unaccent($1)) > 0.4
 `
 
 func (a app) findSimilarWords(ctx context.Context, query string) ([]string, error) {

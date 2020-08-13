@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"flag"
+	"fmt"
 	"net/http"
 	"strings"
 	"time"
@@ -21,6 +22,8 @@ import (
 )
 
 const (
+	isoDateLayout = "2006-01-02"
+
 	commitsPath = "/commits"
 	filtersPath = "/filters"
 	refreshPath = "/refresh"
@@ -165,7 +168,19 @@ func (a app) handleGetCommits(w http.ResponseWriter, r *http.Request) {
 		"component":  params["component"],
 	}
 
-	commits, totalCount, err := a.store.SearchCommit(r.Context(), query, filters, pagination.Page, pagination.PageSize)
+	before := strings.TrimSpace(params.Get("before"))
+	if err := checkDate(before); err != nil {
+		httperror.BadRequest(w, err)
+		return
+	}
+
+	after := strings.TrimSpace(params.Get("after"))
+	if err := checkDate(after); err != nil {
+		httperror.BadRequest(w, err)
+		return
+	}
+
+	commits, totalCount, err := a.store.SearchCommit(r.Context(), query, filters, before, after, pagination.Page, pagination.PageSize)
 	if err != nil {
 		httperror.InternalServerError(w, err)
 		return
@@ -192,4 +207,17 @@ func (a app) handleFilters(w http.ResponseWriter, r *http.Request) {
 	}
 
 	httpjson.ResponseArrayJSON(w, http.StatusOK, values, httpjson.IsPretty(r))
+}
+
+func checkDate(raw string) error {
+	if len(raw) == 0 {
+		return nil
+	}
+
+	_, err := time.Parse(isoDateLayout, raw)
+	if err != nil {
+		return fmt.Errorf("unable to parse date: %s", err)
+	}
+
+	return nil
 }
