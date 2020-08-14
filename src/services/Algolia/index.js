@@ -1,4 +1,5 @@
 import algoliasearch from 'algoliasearch/lite';
+import parseISO from 'date-fns/parseISO';
 
 let index;
 
@@ -30,14 +31,14 @@ export function enabled() {
  * @param  {Object} options Search options
  * @return {Object}         Algolia reponse
  */
-export async function search(query, filters = [], page = 0) {
+export async function search(query, filters = [], dates = {}, page = 0) {
   if (!index) {
     throw new Error('[algolia] index not initialized');
   }
 
   let filtersValue = '';
   if (filters.length) {
-    filtersValue = `(${Object.values(
+    filtersValue = Object.values(
       filters.reduce((previous, current) => {
         const parts = current.split(':');
         if (parts.length < 1) {
@@ -54,10 +55,31 @@ export async function search(query, filters = [], page = 0) {
 
         return previous;
       }, {}),
-    ).join(') AND (')})`;
+    ).join(') AND (');
   }
 
-  return await index.search(query, { filters: filtersValue, page });
+  const datesValue = Object.entries(dates)
+    .filter(([, value]) => Boolean(value))
+    .map(([key, value]) => [key, Math.round(parseISO(value).getTime() / 1000)])
+    .map(([key, value]) => {
+      if (key === 'after') {
+        return `date > ${value}`;
+      }
+
+      if (key === 'before') {
+        return `date < ${value}`;
+      }
+
+      return '';
+    })
+    .filter(Boolean)
+    .join(') AND (');
+
+  if (datesValue.length > 0) {
+    filtersValue += ` ${datesValue}`;
+  }
+
+  return await index.search(query, { filters: `(${filtersValue})`, page });
 }
 
 /**

@@ -15,6 +15,7 @@ export default function App() {
   const [config, setConfig] = useState();
   const [query, setQuery] = useState('');
   const [filters, setFilters] = useState([]);
+  const [dates, setDates] = useState({});
 
   useEffect(() => {
     (async () => {
@@ -39,9 +40,22 @@ export default function App() {
       <div className="padding full">
         {!config && <Throbber label="Loading configuration..." />}
         {config && (
-          <Filters query={query} onChange={setQuery} filters={filters} />
+          <Filters
+            query={query}
+            onChange={setQuery}
+            filters={filters}
+            dates={dates}
+          />
         )}
-        {config && <Herodote query={query} setFilters={setFilters} />}
+        {config && (
+          <Herodote
+            query={query}
+            filters={filters}
+            dates={dates}
+            setFilters={setFilters}
+            setDates={setDates}
+          />
+        )}
       </div>
     </div>
   );

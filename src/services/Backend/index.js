@@ -27,7 +27,7 @@ export function enabled() {
  * @param  {Object} options Search options
  * @return {Object}         API response
  */
-export async function search(query, filters = [], page = 0) {
+export async function search(query, filters = [], dates = {}, page = 0) {
   if (!funtcher) {
     throw new Error('[api] config not initialized');
   }
@@ -44,10 +44,23 @@ export async function search(query, filters = [], page = 0) {
     .filter(Boolean)
     .join('&');
 
+  const datesValue = Object.entries(dates)
+    .filter(([, value]) => Boolean(value))
+    .map(([key, value]) => `${key}=${encodeURIComponent(value)}`)
+    .join('&');
+
+  let params = '';
+  if (filtersValue) {
+    params += `&${filtersValue}`;
+  }
+  if (datesValue) {
+    params += `&${datesValue}`;
+  }
+
   return await funtcher.get(
     `/commits?page=${encodeURIComponent(page + 1)}&q=${encodeURIComponent(
       query,
-    )}&${filtersValue}`,
+    )}${params}`,
   );
 }
 
