@@ -6,7 +6,7 @@ import {
 import { filters as apiFilters, enabled as apiEnabled } from 'services/Backend';
 import PropTypes from 'prop-types';
 import AlgoliaLogo from 'components/AlgoliaLogo';
-import Filter from 'components/Filter';
+import ListFilter from 'components/ListFilter';
 import Error from 'components/Error';
 import Throbber from 'components/Throbber';
 import './index.css';
@@ -108,7 +108,7 @@ export default function Filters({ query, onChange, filters }) {
       {Object.entries(facets)
         .filter(([_, values]) => values && values.length)
         .map(([key, values]) => (
-          <Filter
+          <ListFilter
             key={key}
             name={key}
             values={values}

@@ -7,13 +7,12 @@ import './index.css';
 /**
  * Filter Functional Component.
  */
-export default function Filter({ name, values, onChange, selected }) {
+export default function Filter({ label, count, children }) {
   const ref = useRef();
   const [opened, toggle] = useState(false);
   useOnClickOutside(ref, () => toggle(false));
 
-  const count = selected.filter((e) => e.startsWith(name)).length;
-  let buttonLabel = name;
+  let buttonLabel = label;
   if (count) {
     buttonLabel += ` (${count})`;
   }
@@ -34,23 +33,7 @@ export default function Filter({ name, values, onChange, selected }) {
           },
         )}
       >
-        {values.map((value) => {
-          const id = `${name}:${value}`;
-          return (
-            <li key={id}>
-              <input
-                id={id}
-                type="checkbox"
-                value={value}
-                onChange={(e) => onChange(e, name, value)}
-                checked={selected.includes(id)}
-              />
-              <label htmlFor={id} className="filter__label ellipsis">
-                {value}
-              </label>
-            </li>
-          );
-        })}
+        {children}
       </ol>
     </span>
   );
@@ -59,8 +42,10 @@ export default function Filter({ name, values, onChange, selected }) {
 Filter.displayName = 'Filter';
 
 Filter.propTypes = {
-  name: PropTypes.string.isRequired,
-  onChange: PropTypes.func.isRequired,
-  selected: PropTypes.arrayOf(PropTypes.string).isRequired,
-  values: PropTypes.arrayOf(PropTypes.string).isRequired,
+  children: PropTypes.oneOfType([
+    PropTypes.arrayOf(PropTypes.node),
+    PropTypes.node,
+  ]),
+  count: PropTypes.number.isRequired,
+  label: PropTypes.string.isRequired,
 };
