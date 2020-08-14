@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from 'react';
+import isValid from 'date-fns/isValid';
+import parseISO from 'date-fns/parseISO';
 import {
   search as algoliaSearch,
   enabled as algoliaEnabled,
@@ -16,18 +18,31 @@ const filterRegex = /([^\s]+):([^\s]+)/gim;
 
 function parseQuery(query = '') {
   const filters = [];
-  query = query.trim();
+  const dates = {};
 
+  query = query.trim();
   query.replace(filterRegex, (all, key, value) => {
-    filters.push(`${key}:${value}`);
+    if (key === 'before' || key === 'after') {
+      dates[key] = value;
+    } else {
+      filters.push(`${key}:${value}`);
+    }
   });
 
-  return [query.replace(filterRegex, ''), filters];
+  return [query.replace(filterRegex, ''), filters, dates];
 }
 
-async function fetchCommits(query, filters, page) {
+async function fetchCommits(query, filters, dates, page) {
+  const validDates = Object.entries(dates)
+    .filter(([, value]) => value.length === 10)
+    .filter(([, value]) => isValid(parseISO(value)))
+    .reduce((previous, [key, value]) => {
+      previous[key] = value;
+      return previous;
+    }, {});
+
   if (apiEnabled()) {
-    const output = await apiSearch(query, filters, page);
+    const output = await apiSearch(query, filters, validDates, page);
     if (output) {
       return [
         output.results || [],
@@ -35,7 +50,7 @@ async function fetchCommits(query, filters, page) {
       ];
     }
   } else if (algoliaEnabled()) {
-    const output = await algoliaSearch(query, filters, page);
+    const output = await algoliaSearch(query, filters, validDates, page);
     if (output) {
       return [output.hits, { next: output.page + 1, count: output.nbPages }];
     }
@@ -47,30 +62,39 @@ async function fetchCommits(query, filters, page) {
 /**
  * Herodote Functional Component.
  */
-export default function Herodote({ query, filters, setFilters }) {
+export default function Herodote({
+  query,
+  filters,
+  dates,
+  setFilters,
+  setDates,
+}) {
   const [pending, setPending] = useState(true);
   const [morePending, setMorePending] = useState(false);
   const [error, setError] = useState('');
 
+  const [q, setQ] = useState('');
   const [page, setPage] = useState(0);
   const [results, setResults] = useState([]);
   const [pagination, setPagination] = useState({ next: 0, count: 0 });
 
   useEffect(() => {
+    const [newQuery, newFilters, newDates] = parseQuery(query);
+    setDates(newDates);
+    setFilters(newFilters);
+    setQ(newQuery);
     setPending(true);
     setPage(0);
 
     urlPush({ query });
-  }, [query]);
+  }, [setFilters, setDates, query]);
 
   useDebounce(async () => {
     try {
-      const [newQuery, newFilters] = parseQuery(query);
-      setFilters(newFilters);
-
       const [items, newPagination] = await fetchCommits(
-        newQuery,
-        newFilters,
+        q,
+        filters,
+        dates,
         page,
       );
 
@@ -86,7 +110,7 @@ export default function Herodote({ query, filters, setFilters }) {
     } catch (e) {
       setError(e);
     }
-  }, [query, filters, page]);
+  }, [q, filters, dates, page]);
 
   if (error) {
     return <Error error={error} />;

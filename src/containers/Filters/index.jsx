@@ -7,6 +7,7 @@ import { filters as apiFilters, enabled as apiEnabled } from 'services/Backend';
 import PropTypes from 'prop-types';
 import AlgoliaLogo from 'components/AlgoliaLogo';
 import ListFilter from 'components/ListFilter';
+import DateFilter from 'components/DateFilter';
 import Error from 'components/Error';
 import Throbber from 'components/Throbber';
 import './index.css';
@@ -40,7 +41,7 @@ async function loadFacets() {
 /**
  * Filters Functional Component.
  */
-export default function Filters({ query, onChange, filters }) {
+export default function Filters({ query, onChange, filters, dates }) {
   const [pending, setPending] = useState(true);
   const [error, setError] = useState('');
 
@@ -68,6 +69,26 @@ export default function Filters({ query, onChange, filters }) {
   if (pending) {
     return <Throbber label="Loading filters..." />;
   }
+
+  /**
+   * Handle date change click event
+   * @param  {Object} e     Click event on a checkbox
+   * @param  {String} name  Facet's name
+   * @param  {String} value Facet's value
+   */
+  const onDateChange = (name, value) => {
+    if (value) {
+      const filterValue = `${name}:${value}`;
+
+      if (query.indexOf(`${name}:`) !== -1) {
+        onChange(query.replace(new RegExp(`${name}:[^\\s]+`), filterValue));
+      } else {
+        onChange(`${query} ${filterValue}`.trim());
+      }
+    } else {
+      onChange(query.replace(new RegExp(`${name}:[^\\s]+`), '').trim());
+    }
+  };
 
   /**
    * Handle filter change click event
@@ -105,6 +126,8 @@ export default function Filters({ query, onChange, filters }) {
         value={query}
       />
 
+      <DateFilter onChange={onDateChange} dates={dates} />
+
       {Object.entries(facets)
         .filter(([_, values]) => values && values.length)
         .map(([key, values]) => (
@@ -123,6 +146,7 @@ export default function Filters({ query, onChange, filters }) {
 Filters.displayName = 'Filters';
 
 Filters.propTypes = {
+  dates: PropTypes.shape({}).isRequired,
   filters: PropTypes.arrayOf(PropTypes.string).isRequired,
   onChange: PropTypes.func.isRequired,
   query: PropTypes.string.isRequired,
