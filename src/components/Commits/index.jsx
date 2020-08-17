@@ -19,7 +19,7 @@ function getDateDistance(date) {
 /**
  * Commits Functional Component.
  */
-export default function Commits({ commits }) {
+export default function Commits({ commits, onClick }) {
   if (!commits.length) {
     return <p>No entry found</p>;
   }
@@ -43,14 +43,15 @@ export default function Commits({ commits }) {
 
     commitsItems.push(
       <li key={commit.hash}>
-        <span
-          className="label"
+        <button
+          className="button button-rounded padding-half"
           style={{ backgroundColor: getColor(commit.repository) }}
+          onClick={() => onClick(commit.repository)}
         >
           {commit.repository}
-        </span>
+        </button>
 
-        <pre className="label no-margin success">
+        <pre className="label padding-half no-margin success">
           {commit.type}
           {commit.component && (
             <strong className="primary">({commit.component})</strong>
@@ -86,4 +87,5 @@ Commits.propTypes = {
       repository: PropTypes.string.isRequired,
     }),
   ).isRequired,
+  onClick: PropTypes.func.isRequired,
 };

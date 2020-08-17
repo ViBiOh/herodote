@@ -47,12 +47,14 @@ export default function App() {
             dates={dates}
           />
         )}
+
         {config && (
           <Herodote
             query={query}
+            onChange={setQuery}
             filters={filters}
-            dates={dates}
             setFilters={setFilters}
+            dates={dates}
             setDates={setDates}
           />
         )}

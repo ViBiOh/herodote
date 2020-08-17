@@ -19,7 +19,7 @@ export default function ListFilter({ name, values, onChange, selected }) {
               id={id}
               type="checkbox"
               value={value}
-              onChange={(e) => onChange(e, name, value)}
+              onChange={() => onChange(value)}
               checked={selected.includes(id)}
             />
             <label htmlFor={id} className="filter__label ellipsis">
