@@ -14,11 +14,12 @@
 
 .filter__values {
   display: none;
+  left: 0;
   list-style: none;
   max-height: 20rem;
+  max-width: 25rem;
   overflow: auto;
   position: absolute;
-  left: 0;
   top: 4.2rem;
   z-index: 5;
 }

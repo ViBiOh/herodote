@@ -77,3 +77,14 @@ build:
 run:
 	$(MAIN_RUNNER) \
 		-httpSecret "herodote"
+
+.PHONY: run-database
+run-database:
+	docker rm -f -v herodote_database || true
+	docker run -d --name $(APP_NAME)_database \
+		-p 5432:5432/tcp \
+		-e "POSTGRES_USER=$(HERODOTE_DB_USER)" \
+		-e "POSTGRES_DB=$(HERODOTE_DB_NAME)" \
+		-e "POSTGRES_PASSWORD=$(HERODOTE_DB_PASS)" \
+		-v "$(PWD)/sql/ddl.sql:/docker-entrypoint-initdb.d/ddl.sql:ro" \
+		postgres:12-alpine
