@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import PropTypes from 'prop-types';
 import isValid from 'date-fns/isValid';
 import parseISO from 'date-fns/parseISO';
 import {
@@ -6,6 +7,7 @@ import {
   enabled as algoliaEnabled,
 } from 'services/Algolia';
 import { search as apiSearch, enabled as apiEnabled } from 'services/Backend';
+import toggleFilter from 'helpers/Utils';
 import { push as urlPush } from 'helpers/URL';
 import { useDebounce } from 'helpers/Hooks';
 import Commits from 'components/Commits';
@@ -68,6 +70,7 @@ export default function Herodote({
   dates,
   setFilters,
   setDates,
+  onChange,
 }) {
   const [pending, setPending] = useState(true);
   const [morePending, setMorePending] = useState(false);
@@ -122,7 +125,10 @@ export default function Herodote({
 
   return (
     <article>
-      <Commits commits={results} />
+      <Commits
+        commits={results}
+        onClick={(value) => onChange(toggleFilter(query, 'repository', value))}
+      />
 
       {pagination.next < pagination.count && (
         <ThrobberButton
@@ -139,3 +145,7 @@ export default function Herodote({
 }
 
 Herodote.displayName = 'Herodote';
+
+Herodote.propTypes = {
+  onChange: PropTypes.func.isRequired,
+};

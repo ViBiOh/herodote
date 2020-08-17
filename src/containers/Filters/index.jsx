@@ -1,18 +1,17 @@
 import React, { useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
 import {
   facets as algoliaFacets,
   enabled as algoliaEnabled,
 } from 'services/Algolia';
 import { filters as apiFilters, enabled as apiEnabled } from 'services/Backend';
-import PropTypes from 'prop-types';
+import toggleFilter from 'helpers/Utils';
 import AlgoliaLogo from 'components/AlgoliaLogo';
 import ListFilter from 'components/ListFilter';
 import DateFilter from 'components/DateFilter';
 import Error from 'components/Error';
 import Throbber from 'components/Throbber';
 import './index.css';
-
-const doubleSpaces = /\s{2,}/gim;
 
 async function fetchFacets(name) {
   if (apiEnabled()) {
@@ -70,43 +69,6 @@ export default function Filters({ query, onChange, filters, dates }) {
     return <Throbber label="Loading filters..." />;
   }
 
-  /**
-   * Handle date change click event
-   * @param  {Object} e     Click event on a checkbox
-   * @param  {String} name  Facet's name
-   * @param  {String} value Facet's value
-   */
-  const onDateChange = (name, value) => {
-    if (value) {
-      const filterValue = `${name}:${value}`;
-
-      if (query.indexOf(`${name}:`) !== -1) {
-        onChange(query.replace(new RegExp(`${name}:[^\\s]+`), filterValue));
-      } else {
-        onChange(`${query} ${filterValue}`.trim());
-      }
-    } else {
-      onChange(query.replace(new RegExp(`${name}:[^\\s]+`), '').trim());
-    }
-  };
-
-  /**
-   * Handle filter change click event
-   * @param  {Object} e     Click event on a checkbox
-   * @param  {String} name  Facet's name
-   * @param  {String} value Facet's value
-   */
-  const onFilterChange = (e, name, value) => {
-    const filterValue = `${name}:${value}`;
-    if (e.target.checked) {
-      onChange(`${query} ${filterValue}`.trim());
-    } else {
-      onChange(
-        query.replace(filterValue, '').replace(doubleSpaces, ' ').trim(),
-      );
-    }
-  };
-
   return (
     <aside id="filters" className="flex full">
       {!apiEnabled() && algoliaEnabled() && (
@@ -126,7 +88,12 @@ export default function Filters({ query, onChange, filters, dates }) {
         value={query}
       />
 
-      <DateFilter onChange={onDateChange} dates={dates} />
+      <DateFilter
+        onChange={(key, value) =>
+          onChange(toggleFilter(query, key, value, true))
+        }
+        dates={dates}
+      />
 
       {Object.entries(facets)
         .filter(([_, values]) => values && values.length)
@@ -135,7 +102,7 @@ export default function Filters({ query, onChange, filters, dates }) {
             key={key}
             name={key}
             values={values}
-            onChange={onFilterChange}
+            onChange={(value) => onChange(toggleFilter(query, key, value))}
             selected={filters}
           />
         ))}
