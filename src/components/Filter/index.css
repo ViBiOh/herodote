@@ -25,6 +25,7 @@
 }
 
 .filter:last-of-type .filter__values {
+  left: unset;
   right: 0;
 }
 
