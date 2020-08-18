@@ -94,6 +94,7 @@ export default function Herodote({
 
   useDebounce(async () => {
     try {
+      setError('');
       const [items, newPagination] = await fetchCommits(
         q,
         filters,

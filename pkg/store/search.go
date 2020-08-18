@@ -3,6 +3,7 @@ package store
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"fmt"
 	"strings"
 	"time"
@@ -41,6 +42,10 @@ func (a app) SearchCommit(ctx context.Context, query string, filters map[string]
 	words, err := a.findSimilarWords(ctx, query)
 	if err != nil {
 		return nil, 0, fmt.Errorf("unable to find similar words: %s", err)
+	}
+
+	if len(query) > 0 && len(words) == 0 {
+		return nil, 0, errors.New("query doesn't match any known words")
 	}
 
 	var totalCount uint

@@ -193,19 +193,37 @@ walk_log() {
   local count=1
   IFS=$'\n'
 
+  local SCOPES
+  SCOPES="$(printf "%s|" "${!CONVENTIONAL_COMMIT_SCOPES[@]}")"
+  SCOPES="${SCOPES%|}"
+
   shopt -s nocasematch
-  for hash in $(git log --no-merges --pretty=format:'%h' "$(latest_commit)"); do
-    if [[ $(git show -s --format='%h %at %s' "${hash}") =~ ^([0-9a-f]{1,16})\ ([0-9]+)\ (revert )?($(
-      IFS='|'
-      echo "${!CONVENTIONAL_COMMIT_SCOPES[*]}"
-    ))(\((.+)\))?(\!)?:\ (.*)$ ]]; then
+  for hash in $(git log --pretty=format:'%h' "$(latest_commit)"); do
+    if [[ $(git show -s --format='%h %at %s' "${hash}") =~ ^([0-9a-f]{1,16})\ ([0-9]+)\ (.*)$ ]]; then
       local HASH="${BASH_REMATCH[1]}"
       local DATE="${BASH_REMATCH[2]}"
-      local REVERT="${BASH_REMATCH[3]}"
-      local TYPE="${BASH_REMATCH[4]}"
-      local COMPONENT="${BASH_REMATCH[6]}"
-      local BREAK="${BASH_REMATCH[7]}"
-      local CONTENT="${BASH_REMATCH[8]}"
+      local DESCRIPTION="${BASH_REMATCH[3]}"
+
+      local CONTENT=""
+      local TYPE=""
+      local REVERT=""
+      local COMPONENT=""
+      local BREAK=""
+
+      if [[ ${DESCRIPTION} =~ ^(revert )?(${SCOPES})(\((.+)\))?(\!)?:\ (.*)$ ]]; then
+        REVERT="${BASH_REMATCH[1]}"
+        TYPE="${BASH_REMATCH[2]}"
+        COMPONENT="${BASH_REMATCH[4]}"
+        BREAK="${BASH_REMATCH[5]}"
+        CONTENT="${BASH_REMATCH[6]}"
+      elif [[ ${DESCRIPTION} =~ Merge\ (pull\ request|branch) ]]; then
+        TYPE="merge"
+        CONTENT="${DESCRIPTION}"
+      fi
+
+      if [[ -z ${CONTENT:-} ]]; then
+        continue
+      fi
 
       if [[ -n ${REVERT} ]]; then
         REVERT="true"
@@ -249,8 +267,8 @@ walk_log() {
       insert_commit "${PAYLOAD}"
       printf "%b%s inserted!%b\n" "${BLUE}" "${HASH}" "${RESET}"
 
-      if [[ ${count} -gt 50 ]]; then
-        printf "%bLimiting first insert to 50 commits%b\n" "${YELLOW}" "${RESET}"
+      if [[ ${count} -gt 500 ]]; then
+        printf "%bLimiting first insert to 500 commits%b\n" "${YELLOW}" "${RESET}"
 
         if [[ -n ${HERODOTE_API} ]]; then
           printf "%bRefreshing materialized view%b\n" "${BLUE}" "${RESET}"

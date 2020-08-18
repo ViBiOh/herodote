@@ -39,5 +39,6 @@
 }
 
 .filter__label {
+  flex: 1 1;
   margin-left: 0.5rem;
 }
