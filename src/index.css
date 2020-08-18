@@ -162,6 +162,10 @@ a:hover {
   white-space: nowrap;
 }
 
+.clickable {
+  cursor: pointer;
+}
+
 .full {
   width: 100%;
 }

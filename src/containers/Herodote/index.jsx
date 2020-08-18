@@ -128,7 +128,7 @@ export default function Herodote({
     <article>
       <Commits
         commits={results}
-        onClick={(value) => onChange(toggleFilter(query, 'repository', value))}
+        onClick={(key, value) => onChange(toggleFilter(query, key, value))}
       />
 
       {pagination.next < pagination.count && (

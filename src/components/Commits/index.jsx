@@ -46,13 +46,18 @@ export default function Commits({ commits, onClick }) {
         <button
           className="button button-rounded padding-half"
           style={{ backgroundColor: getColor(commit.repository) }}
-          onClick={() => onClick(commit.repository)}
+          onClick={() => onClick('repository', commit.repository)}
         >
           {commit.repository}
         </button>
 
         <pre className="label padding-half no-margin success">
-          {commit.type}
+          <span
+            className="clickable"
+            onClick={() => onClick('type', commit.type)}
+          >
+            {commit.type}
+          </span>
           {commit.component && (
             <strong className="primary">({commit.component})</strong>
           )}
