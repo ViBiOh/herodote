@@ -159,6 +159,16 @@ Usage of herodote:
         [herodote] HTTP Secret Key for Update {HERODOTE_HTTP_SECRET}
   -key string
         [http] Key file {HERODOTE_KEY}
+  -loggerJson
+        [logger] Log format as JSON {HERODOTE_LOGGER_JSON}
+  -loggerLevel string
+        [logger] Logger level {HERODOTE_LOGGER_LEVEL} (default "INFO")
+  -loggerLevelKey string
+        [logger] Key for level in JSON {HERODOTE_LOGGER_LEVEL_KEY} (default "level")
+  -loggerMessageKey string
+        [logger] Key for message in JSON {HERODOTE_LOGGER_MESSAGE_KEY} (default "message")
+  -loggerTimeKey string
+        [logger] Key for timestam in JSON {HERODOTE_LOGGER_TIME_KEY} (default "time")
   -okStatus int
         [http] Healthy HTTP Status code {HERODOTE_OK_STATUS} (default 204)
   -port uint
