@@ -88,7 +88,7 @@ jobs:
           ALGOLIA_KEY: ${{ secrets.HERODOTE_ALGOLIA_KEY }}
           GIT_HOST: github.com
           GIT_REPOSITORY: ${{ github.repository }}
-          SCRIPTS_NO_INTERACTIVE: '1'
+          SCRIPTS_NO_INTERACTIVE: "1"
 ```
 
 You **have to** add secrets in your repository in the repository's settings: https://github.com/YOUR_NAME/YOUR_REPOSITORY/settings/secrets
@@ -168,7 +168,7 @@ Usage of herodote:
   -loggerMessageKey string
         [logger] Key for message in JSON {HERODOTE_LOGGER_MESSAGE_KEY} (default "message")
   -loggerTimeKey string
-        [logger] Key for timestam in JSON {HERODOTE_LOGGER_TIME_KEY} (default "time")
+        [logger] Key for timestamp in JSON {HERODOTE_LOGGER_TIME_KEY} (default "time")
   -okStatus int
         [http] Healthy HTTP Status code {HERODOTE_OK_STATUS} (default 204)
   -port uint
