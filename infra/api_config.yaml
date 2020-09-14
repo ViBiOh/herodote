@@ -1,0 +1,15 @@
+---
+nameOverride: herodote-api
+
+image:
+  repository: vibioh/herodote-api
+
+config:
+  HERODOTE_LOGGER_JSON: 'true'
+
+secretRef: herodote
+
+ingress:
+  enabled: true
+  hosts:
+    - herodote-api.vibioh.fr
