@@ -32,6 +32,7 @@ func main() {
 
 	alcotest.DoAndExit(alcotestConfig)
 	logger.Global(logger.New(loggerConfig))
+	defer logger.Close()
 
 	herodoteDb, err := db.New(dbConfig)
 	logger.Fatal(err)
