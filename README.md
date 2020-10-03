@@ -88,7 +88,7 @@ jobs:
           ALGOLIA_KEY: ${{ secrets.HERODOTE_ALGOLIA_KEY }}
           GIT_HOST: github.com
           GIT_REPOSITORY: ${{ github.repository }}
-          SCRIPTS_NO_INTERACTIVE: "1"
+          SCRIPTS_NO_INTERACTIVE: '1'
 ```
 
 You **have to** add secrets in your repository in the repository's settings: https://github.com/YOUR_NAME/YOUR_REPOSITORY/settings/secrets
@@ -152,7 +152,7 @@ Usage of herodote:
   -frameOptions string
         [owasp] X-Frame-Options {HERODOTE_FRAME_OPTIONS} (default "deny")
   -graceDuration string
-        [http] Grace duration when SIGTERM received {HERODOTE_GRACE_DURATION} (default "15s")
+        [http] Grace duration when SIGTERM received {HERODOTE_GRACE_DURATION} (default "30s")
   -hsts
         [owasp] Indicate Strict Transport Security {HERODOTE_HSTS} (default true)
   -httpSecret string
