@@ -11,6 +11,7 @@ import (
 	"github.com/ViBiOh/httputils/v3/pkg/db"
 	"github.com/ViBiOh/httputils/v3/pkg/httputils"
 	"github.com/ViBiOh/httputils/v3/pkg/logger"
+	"github.com/ViBiOh/httputils/v3/pkg/model"
 	"github.com/ViBiOh/httputils/v3/pkg/owasp"
 	"github.com/ViBiOh/httputils/v3/pkg/prometheus"
 )
@@ -41,12 +42,10 @@ func main() {
 	herodoteApp, err := herodote.New(herodoteConfig, storeApp)
 	logger.Fatal(err)
 
-	server := httputils.New(serverConfig)
-	server.Health(herodoteDb.Ping)
-	server.Middleware(prometheus.New(prometheusConfig).Middleware)
-	server.Middleware(owasp.New(owaspConfig).Middleware)
-	server.Middleware(cors.New(corsConfig).Middleware)
-
 	go herodoteApp.Start()
-	server.ListenServeWait(herodoteApp.Handler())
+	httputils.New(serverConfig).ListenAndServe(herodoteApp.Handler(), []model.Middleware{
+		prometheus.New(prometheusConfig).Middleware,
+		owasp.New(owaspConfig).Middleware,
+		cors.New(corsConfig).Middleware,
+	}, herodoteDb.Ping)
 }
