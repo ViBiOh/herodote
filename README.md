@@ -157,6 +157,8 @@ Usage of herodote:
         [owasp] Indicate Strict Transport Security {HERODOTE_HSTS} (default true)
   -httpSecret string
         [herodote] HTTP Secret Key for Update {HERODOTE_HTTP_SECRET}
+  -idleTimeout string
+        [http] Idle Timeout {HERODOTE_IDLE_TIMEOUT} (default "2m")
   -key string
         [http] Key file {HERODOTE_KEY}
   -loggerJson
@@ -175,8 +177,14 @@ Usage of herodote:
         [http] Listen port {HERODOTE_PORT} (default 1080)
   -prometheusPath string
         [prometheus] Path for exposing metrics {HERODOTE_PROMETHEUS_PATH} (default "/metrics")
+  -readTimeout string
+        [http] Read Timeout {HERODOTE_READ_TIMEOUT} (default "5s")
+  -shutdownTimeout string
+        [http] Shutdown Timeout {HERODOTE_SHUTDOWN_TIMEOUT} (default "10s")
   -url string
         [alcotest] URL to check {HERODOTE_URL}
   -userAgent string
         [alcotest] User-Agent for check {HERODOTE_USER_AGENT} (default "Alcotest")
+  -writeTimeout string
+        [http] Write Timeout {HERODOTE_WRITE_TIMEOUT} (default "10s")
 ```
