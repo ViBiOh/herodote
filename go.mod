@@ -3,7 +3,7 @@ module github.com/ViBiOh/herodote
 go 1.15
 
 require (
-	github.com/ViBiOh/httputils/v3 v3.31.1
+	github.com/ViBiOh/httputils/v3 v3.32.0
 	github.com/lib/pq v1.8.0
 	github.com/prometheus/common v0.14.0 // indirect
 	github.com/prometheus/procfs v0.2.0 // indirect

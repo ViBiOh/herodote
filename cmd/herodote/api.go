@@ -43,9 +43,5 @@ func main() {
 	logger.Fatal(err)
 
 	go herodoteApp.Start()
-	httputils.New(serverConfig).ListenAndServe(herodoteApp.Handler(), []model.Middleware{
-		prometheus.New(prometheusConfig).Middleware,
-		owasp.New(owaspConfig).Middleware,
-		cors.New(corsConfig).Middleware,
-	}, herodoteDb.Ping)
+	httputils.New(serverConfig).ListenAndServe(herodoteApp.Handler(), []model.Pinger{herodoteDb.Ping}, prometheus.New(prometheusConfig).Middleware, owasp.New(owaspConfig).Middleware, cors.New(corsConfig).Middleware)
 }
