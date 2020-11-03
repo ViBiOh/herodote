@@ -51,7 +51,7 @@ jobs:
           DOCKER_IMAGE="${{ secrets.DOCKER_USER }}/$(make name)-api" IMAGE_VERSION="$(make version)" DOCKERFILE=Dockerfile_api ./scripts/release build docker
 
   front:
-    name: React
+    name: Javascript
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
