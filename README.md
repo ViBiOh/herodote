@@ -8,7 +8,7 @@ Git [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) histo
 - Light shell script for loading data into backend
 - Github Actions provided for integration
 
-[![Build Status](https://travis-ci.com/ViBiOh/herodote.svg?branch=master)](https://travis-ci.com/ViBiOh/herodote)
+[![Build](https://github.com/ViBiOh/herodote/workflows/Build/badge.svg)](https://github.com/ViBiOh/herodote/actions)
 [![codecov](https://codecov.io/gh/ViBiOh/herodote/branch/master/graph/badge.svg)](https://codecov.io/gh/ViBiOh/herodote)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=ViBiOh_herodote&metric=alert_status)](https://sonarcloud.io/dashboard?id=ViBiOh_herodote)
 
