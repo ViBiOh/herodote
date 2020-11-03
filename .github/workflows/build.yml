@@ -76,7 +76,7 @@ jobs:
       - name: Docker
         run: |
           curl -q -sSL --max-time 30 "https://raw.githubusercontent.com/ViBiOh/scripts/master/bootstrap" | bash -s "release"
-          DOCKER_IMAGE="${{ secrets.DOCKER_USER }}/$(make name)-ui" IMAGE_VERSION="$(make version)" DOCKERFILE=Dockerfile_ui ./scripts/release release docker
+          DOCKER_IMAGE="${{ secrets.DOCKER_USER }}/$(make name)-ui" IMAGE_VERSION="$(make version)" DOCKERFILE=Dockerfile_ui ./scripts/release docker
 
   publish:
     name: Publish
