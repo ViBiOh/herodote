@@ -9,7 +9,7 @@ spec:
   chart:
     spec:
       chart: app
-      version: "0.0.20"
+      version: '0.0.24'
       sourceRef:
         kind: HelmRepository
         name: vibioh
@@ -24,7 +24,7 @@ spec:
 
     config:
       HERODOTE_API: https://herodote-api.vibioh.fr
-      VIWS_LOGGER_JSON: "true"
+      VIWS_LOGGER_JSON: 'true'
 
     ingress:
       enabled: true

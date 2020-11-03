@@ -9,7 +9,7 @@ spec:
   chart:
     spec:
       chart: app
-      version: "0.0.20"
+      version: '0.0.24'
       sourceRef:
         kind: HelmRepository
         name: vibioh
@@ -23,7 +23,7 @@ spec:
       repository: vibioh/herodote-api
 
     config:
-      HERODOTE_LOGGER_JSON: "true"
+      HERODOTE_LOGGER_JSON: 'true'
 
     secrets:
       HERODOTE_DB_HOST: AgALW6V9uvjB8q3YcjYtzvqfbaJygUh+DIhwe8+ZMDzquQ+ZI5zAKrK1kDFMTmTx2RGmqAQ7OhmbIJwltO4eejaTp2IX4iAe/B4q8RCK/oJLw29zsYpCWD5kAy5BLeJ2wrLf3IsLOPoKF1T2QSxqZc85Wqw2B1w+sMfmPviEJcSWuiZ72MK5F1HDNhqGmDk1LvlTJNsBEI1mYFiTOajPusapr+J1OJUUgAuDjHs2l8/mHRrS/C3/OtchnAJULsOdagfCoHwUcdpkLLxj9lLUrYXFqADpHnX+z/rUcVQXLplMQW7HE29skO9RGnfjgJo7dBB+p5WHt/+4hyLt1fViOra7+Js7JamNbfpV6sZuhNFSMhUvfcRUNWtXUBdE14bZXelPq2HvJ+hVb3B0qo8Tf4UF0fNHAdYighaYqrTQk84P28bj/MDy34fyzLpoW7f3VE74w5im5T9nnrIrTIvKCjX459Ab0CSo12JCLlh3QZJ+RKMGtGJTIzyCbq8GTdiGCECoaboAiaL+NKfSUPDFtSumuaegKGFbSIOQNKcB8toNWjQnV/1YUhnKDjZ+5kG7whXN1q1f67egYujdeXWoNlYVZ/QCsTYUR7sfAMoGg/tC1ZXZu64DyI7KhqwtMOJYcjGKQB6skdQ0d175ngXmQlzIeV0J1gDXOX592SuYzfSC4Ny5nTaEnQ9lIyK3ZCh6jpGNJUgNX7dl6A3+dDFP8nHc90V1mXThcJUxCls=
