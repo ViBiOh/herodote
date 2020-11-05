@@ -52,7 +52,7 @@ git_is_inside() {
 }
 
 git_remote_repository() {
-  if [[ $(git_is_inside) != "true" ]]; then
+  if ! git_is_inside; then
     return
   fi
 
@@ -65,7 +65,7 @@ git_remote_repository() {
 }
 
 git_remote_host() {
-  if [[ $(git_is_inside) != "true" ]]; then
+  if ! git_is_inside; then
     return
   fi
 
@@ -284,7 +284,7 @@ walk_log() {
 main() {
   var_color
 
-  if [[ $(git_is_inside) != "true" ]]; then
+  if ! git_is_inside; then
     printf "%bnot inside a git tree%b\n" "${YELLOW}" "${RESET}"
     return 2
   fi
