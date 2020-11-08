@@ -175,6 +175,8 @@ Usage of herodote:
         [http] Healthy HTTP Status code {HERODOTE_OK_STATUS} (default 204)
   -port uint
         [http] Listen port {HERODOTE_PORT} (default 1080)
+  -prometheusIgnore string
+        [prometheus] Ignored path prefixes for metrics, comma separated {HERODOTE_PROMETHEUS_IGNORE}
   -prometheusPath string
         [prometheus] Path for exposing metrics {HERODOTE_PROMETHEUS_PATH} (default "/metrics")
   -readTimeout string
