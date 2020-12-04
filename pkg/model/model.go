@@ -10,12 +10,12 @@ type Commit struct {
 	Hash       string `json:"hash"`
 	Type       string `json:"type"`
 	Component  string `json:"component"`
-	Revert     bool   `json:"revert"`
-	Breaking   bool   `json:"breaking"`
 	Content    string `json:"content"`
-	Date       uint64 `json:"date"`
 	Remote     string `json:"remote"`
 	Repository string `json:"repository"`
+	Date       uint64 `json:"date"`
+	Breaking   bool   `json:"breaking"`
+	Revert     bool   `json:"revert"`
 }
 
 // Sanitize cleans value of a commit

@@ -46,9 +46,8 @@ type Config struct {
 }
 
 type app struct {
+	store  store.App
 	secret string
-
-	store store.App
 }
 
 // Flags adds flags for configuring package
