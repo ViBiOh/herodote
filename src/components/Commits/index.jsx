@@ -66,8 +66,6 @@ export default function Commits({ commits, onClick }) {
         <a
           className="commit-link ellipsis"
           href={`https://${commit.remote}/${commit.repository}/commit/${commit.hash}`}
-          target="_blank"
-          rel="noopener noreferrer"
         >
           {commit.content}
         </a>
