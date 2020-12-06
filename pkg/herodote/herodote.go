@@ -6,6 +6,7 @@ import (
 	"errors"
 	"flag"
 	"fmt"
+	"html/template"
 	"net/http"
 	"strings"
 	"time"
@@ -32,11 +33,32 @@ const (
 var (
 	// ErrAuthentificationFailed occurs when secret is invalid
 	ErrAuthentificationFailed = errors.New("invalid secret provided")
+
+	repositoriesColors = []string{
+		"#006E6D",
+		"#2A4B7C",
+		"#3F69AA",
+		"#77212E",
+		"#577284",
+		"#6C4F3D",
+		"#797B3A",
+		"#935529",
+		"#BD3D3A",
+		"#9B1B30",
+		"#E08119",
+		"#6B5B95",
+		"#F96714",
+		"#485167",
+		"#2E4A62",
+		"#264E36",
+	}
 )
 
 // App of package
 type App interface {
 	Handler() http.Handler
+	GetData(*http.Request) (interface{}, error)
+	GetFuncs() template.FuncMap
 	Start()
 }
 
@@ -48,6 +70,7 @@ type Config struct {
 type app struct {
 	store  store.App
 	secret string
+	colors map[string]string
 }
 
 // Flags adds flags for configuring package
@@ -71,6 +94,7 @@ func New(config Config, store store.App) (App, error) {
 	return app{
 		secret: secret,
 		store:  store,
+		colors: make(map[string]string),
 	}, nil
 }
 
@@ -114,14 +138,67 @@ func (a app) Handler() http.Handler {
 	})
 }
 
+func (a app) GetData(r *http.Request) (interface{}, error) {
+	commits, _, err := a.listCommits(r)
+	if err != nil {
+		return nil, err
+	}
+
+	return map[string]interface{}{
+		"Commits": commits,
+	}, nil
+}
+
+func (a app) GetFuncs() template.FuncMap {
+	return template.FuncMap{
+		"colors": func(commit model.Commit) string {
+			if color, ok := a.colors[commit.Repository]; ok {
+				return color
+			}
+
+			nextColor := repositoriesColors[len(a.colors)%len(repositoriesColors)]
+			a.colors[commit.Repository] = nextColor
+
+			return nextColor
+		},
+	}
+}
+
+func (a app) listCommits(r *http.Request) ([]model.Commit, uint, error) {
+	pagination, err := query.ParsePagination(r, 1, 20, 100)
+	if err != nil {
+		return nil, 0, model.WrapInvalid(err)
+	}
+
+	params := r.URL.Query()
+
+	query := strings.TrimSpace(params.Get("q"))
+	filters := map[string][]string{
+		"repository": params["repository"],
+		"type":       params["type"],
+		"component":  params["component"],
+	}
+
+	before := strings.TrimSpace(params.Get("before"))
+	if err := checkDate(before); err != nil {
+		return nil, 0, model.WrapInvalid(err)
+	}
+
+	after := strings.TrimSpace(params.Get("after"))
+	if err := checkDate(after); err != nil {
+		return nil, 0, model.WrapInvalid(err)
+	}
+
+	return a.store.SearchCommit(r.Context(), query, filters, before, after, pagination.Page, pagination.PageSize)
+}
+
 func (a app) handleCommits(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodPost {
-		a.handlePostCommits(w, r)
-	} else if r.Method == http.MethodGet {
-		a.handleGetCommits(w, r)
-	} else {
 		w.WriteHeader(http.StatusMethodNotAllowed)
+		return
 	}
+
+	a.handlePostCommits(w, r)
 }
 
 func (a app) handlePostCommits(w http.ResponseWriter, r *http.Request) {
@@ -149,43 +226,6 @@ func (a app) handlePostCommits(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.WriteHeader(http.StatusCreated)
-}
-
-func (a app) handleGetCommits(w http.ResponseWriter, r *http.Request) {
-	pagination, err := query.ParsePagination(r, 1, 20, 100)
-	if err != nil {
-		httperror.BadRequest(w, err)
-		return
-	}
-
-	params := r.URL.Query()
-
-	query := strings.TrimSpace(params.Get("q"))
-	filters := map[string][]string{
-		"repository": params["repository"],
-		"type":       params["type"],
-		"component":  params["component"],
-	}
-
-	before := strings.TrimSpace(params.Get("before"))
-	if err := checkDate(before); err != nil {
-		httperror.BadRequest(w, err)
-		return
-	}
-
-	after := strings.TrimSpace(params.Get("after"))
-	if err := checkDate(after); err != nil {
-		httperror.BadRequest(w, err)
-		return
-	}
-
-	commits, totalCount, err := a.store.SearchCommit(r.Context(), query, filters, before, after, pagination.Page, pagination.PageSize)
-	if err != nil {
-		httperror.InternalServerError(w, err)
-		return
-	}
-
-	httpjson.ResponsePaginatedJSON(w, http.StatusOK, pagination.Page, pagination.PageSize, totalCount, commits, httpjson.IsPretty(r))
 }
 
 func (a app) handleFilters(w http.ResponseWriter, r *http.Request) {

@@ -1,0 +1,73 @@
+{{ define "herodote" }}
+  <style type="text/css">
+    .label {
+      border-radius: 4px;
+    }
+
+    #commits {
+      list-style: none;
+      overflow: auto;
+    }
+
+    #commits li {
+      align-items: center;
+      display: flex;
+      flex-wrap: wrap;
+      padding-bottom: 0.5rem;
+      padding-top: 0.5rem;
+    }
+
+    .separator {
+      align-items: center;
+      color: var(--white);
+      display: flex;
+    }
+
+    .separator::before,
+    .separator::after {
+      background: var(--white);
+      content: "";
+      flex-grow: 1;
+      font-size: 0;
+      height: 1px;
+      line-height: 0;
+    }
+
+    .separator::before {
+      margin-right: 1rem;
+      max-width: 5rem;
+    }
+
+    .separator::after {
+      margin-left: 1rem;
+    }
+
+    @media screen and (max-width: 767px) {
+      .commit-link {
+        flex-basis: 100%;
+      }
+    }
+  </style>
+
+  <article>
+    <ol id="commits" class="no-padding no-margin">
+      {{ range .Commits }}
+        <li>
+          <button class="button padding-half" style="background-color: {{ colors . }};">
+            {{ .Repository }}
+          </button>
+
+          <pre class="label padding-half no-margin"><span class="success">{{ .Type }}</span>
+            {{- if .Component -}}
+              <strong class="primary">({{ .Component }})</strong>
+            {{- end -}}
+          </pre>
+
+          <a class="commit-link ellipsis" href="https://{{ .Remote }}/{{ .Repository }}/commit/{{ .Hash }}">
+            {{ .Content }}
+          </a>
+        </li>
+      {{ end }}
+    </ol>
+  </article>
+{{ end }}

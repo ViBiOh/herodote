@@ -88,7 +88,7 @@ jobs:
           ALGOLIA_KEY: ${{ secrets.HERODOTE_ALGOLIA_KEY }}
           GIT_HOST: github.com
           GIT_REPOSITORY: ${{ github.repository }}
-          SCRIPTS_NO_INTERACTIVE: '1'
+          SCRIPTS_NO_INTERACTIVE: "1"
 ```
 
 You **have to** add secrets in your repository in the repository's settings: https://github.com/YOUR_NAME/YOUR_REPOSITORY/settings/secrets
@@ -103,7 +103,7 @@ or
 
 ### Frontend
 
-You can deploy Herodote's frontend by using the given Docker container: [vibioh/herodote-ui](https://hub.docker.com/r/vibioh/herodote-ui/tags?page=1&name=latest)
+You can deploy Herodote's frontend by using the given Docker container: [vibioh/herodote](https://hub.docker.com/r/vibioh/herodote/tags?page=1&name=latest)
 
 Your **have to** provide environment variable in order to make it work:
 
@@ -136,7 +136,7 @@ Usage of herodote:
   -corsOrigin string
         [cors] Access-Control-Allow-Origin {HERODOTE_CORS_ORIGIN} (default "*")
   -csp string
-        [owasp] Content-Security-Policy {HERODOTE_CSP} (default "default-src 'self'; base-uri 'self'")
+        [owasp] Content-Security-Policy {HERODOTE_CSP} (default "default-src 'self'; base-uri 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'")
   -dbHost string
         [db] Host {HERODOTE_DB_HOST}
   -dbName string
@@ -183,6 +183,8 @@ Usage of herodote:
         [http] Read Timeout {HERODOTE_READ_TIMEOUT} (default "5s")
   -shutdownTimeout string
         [http] Shutdown Timeout {HERODOTE_SHUTDOWN_TIMEOUT} (default "10s")
+  -templates string
+        [herodote] HTML Templates folder {HERODOTE_TEMPLATES} (default "./templates/")
   -url string
         [alcotest] URL to check {HERODOTE_URL}
   -userAgent string

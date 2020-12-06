@@ -11,8 +11,3 @@ profile.out
 # Files
 ca-certificates.crt
 zoneinfo.zip
-
-# Javascript
-node_modules/
-coverage/
-build/

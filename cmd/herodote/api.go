@@ -2,13 +2,16 @@ package main
 
 import (
 	"flag"
+	"net/http"
 	"os"
 
 	"github.com/ViBiOh/herodote/pkg/herodote"
+	"github.com/ViBiOh/herodote/pkg/renderer"
 	"github.com/ViBiOh/herodote/pkg/store"
 	"github.com/ViBiOh/httputils/v3/pkg/alcotest"
 	"github.com/ViBiOh/httputils/v3/pkg/cors"
 	"github.com/ViBiOh/httputils/v3/pkg/db"
+	"github.com/ViBiOh/httputils/v3/pkg/flags"
 	"github.com/ViBiOh/httputils/v3/pkg/httputils"
 	"github.com/ViBiOh/httputils/v3/pkg/logger"
 	"github.com/ViBiOh/httputils/v3/pkg/model"
@@ -23,8 +26,9 @@ func main() {
 	alcotestConfig := alcotest.Flags(fs, "")
 	loggerConfig := logger.Flags(fs, "logger")
 	prometheusConfig := prometheus.Flags(fs, "prometheus")
-	owaspConfig := owasp.Flags(fs, "")
+	owaspConfig := owasp.Flags(fs, "", flags.NewOverride("Csp", "default-src 'self'; base-uri 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'"))
 	corsConfig := cors.Flags(fs, "cors")
+	rendererConfig := renderer.Flags(fs, "")
 
 	herodoteConfig := herodote.Flags(fs, "")
 	dbConfig := db.Flags(fs, "db")
@@ -42,6 +46,21 @@ func main() {
 	herodoteApp, err := herodote.New(herodoteConfig, storeApp)
 	logger.Fatal(err)
 
+	rendererApp, err := renderer.New(rendererConfig, herodoteApp)
+	logger.Fatal(err)
+
+	herodoteHandler := herodoteApp.Handler()
+	rendererHandler := rendererApp.Handler()
+
+	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if rendererApp.IsHandled(r) {
+			rendererHandler.ServeHTTP(w, r)
+			return
+		}
+
+		herodoteHandler.ServeHTTP(w, r)
+	})
+
 	go herodoteApp.Start()
-	httputils.New(serverConfig).ListenAndServe(herodoteApp.Handler(), []model.Pinger{herodoteDb.Ping}, prometheus.New(prometheusConfig).Middleware, owasp.New(owaspConfig).Middleware, cors.New(corsConfig).Middleware)
+	httputils.New(serverConfig).ListenAndServe(handler, []model.Pinger{herodoteDb.Ping}, prometheus.New(prometheusConfig).Middleware, owasp.New(owaspConfig).Middleware, cors.New(corsConfig).Middleware)
 }

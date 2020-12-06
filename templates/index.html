@@ -1,0 +1,290 @@
+{{ define "seo" }}
+  <title>Herodote - Git historian</title>
+  <meta name="description" content="Herodote allows you to explore my git history accross multiple repositories, like a changelog.">
+  <meta property="og:title" content="Herodote - Git historian" />
+  <meta property="og:description" content="Herodote allows you to explore my git history accross multiple repositories, like a changelog." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://herodote.vibioh.fr" />
+  <meta property="og:image" content="https://herodote.vibioh.fr/favicon/android-chrome-512x512.png" />
+  <meta property="og:image:height" content="512" />
+  <meta property="og:image:width" content="512" />
+{{ end }}
+
+{{ define "favicon" }}
+  <link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon/favicon-16x16.png">
+  <link rel="manifest" href="/favicon/site.webmanifest">
+  <link rel="mask-icon" href="/favicon/safari-pinned-tab.svg" color="#5bbad5">
+  <link rel="shortcut icon" href="/favicon/favicon.ico">
+  <meta name="msapplication-TileColor" content="#da532c">
+  <meta name="msapplication-config" content="/favicon/browserconfig.xml">
+  <meta name="theme-color" content="#ffffff">
+{{ end}}
+
+{{ define "header" }}
+  <!doctype html>
+  <html lang="en">
+    <head>
+      <meta charset="utf-8" />
+      <meta name="format-detection" content="telephone=no">
+      <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+
+      {{ template "seo" }}
+      {{ template "favicon" }}
+
+      <style>
+        :root {
+          --primary: royalblue;
+          --success: limegreen;
+          --danger: crimson;
+          --dark: #272727;
+          --grey: #3b3b3b;
+          --white: silver;
+
+          --icon-size: 2.4rem;
+          --icon-large: 4.8rem;
+
+          --space-size: 1rem;
+        }
+
+        * {
+          box-sizing: border-box;
+        }
+
+        html {
+          font-size: 62.5%;
+        }
+
+        body {
+          -webkit-overflow-scrolling: touch;
+          background-color: var(--dark);
+          height: 100vh;
+        }
+
+        body,
+        button,
+        input {
+          color: var(--white);
+          font-family:
+            -apple-system,
+            'Segoe UI',
+            'Roboto',
+            'Oxygen-Sans',
+            'Ubuntu',
+            'Cantarell',
+            'Helvetica Nue',
+            sans-serif;
+          font-size: 1.6rem;
+          font-style: normal;
+          font-weight: 400;
+        }
+
+        input {
+          color: var(--dark);
+        }
+
+        a {
+          color: var(--white);
+          text-decoration: none;
+        }
+
+        a:hover {
+          color: var(--primary);
+          text-decoration: underline;
+        }
+
+        .primary {
+          color: var(--primary);
+        }
+
+        .success {
+          color: var(--success);
+        }
+
+        .danger {
+          color: var(--danger);
+        }
+
+        .grey {
+          color: var(--grey);
+        }
+
+        .white {
+          color: var(--white);
+        }
+
+        .bg-primary,
+        .bg-primary:hover {
+          background-color: var(--primary);
+          color: var(--white);
+          text-decoration: none;
+        }
+
+        .bg-success,
+        .bg-success:hover {
+          background-color: var(--success);
+          color: var(--white);
+          text-decoration: none;
+        }
+
+        .bg-danger,
+        .bg-danger:hover {
+          background-color: var(--danger);
+          color: var(--white);
+          text-decoration: none;
+        }
+
+        .bg-grey,
+        .bg-grey:hover {
+          background-color: var(--grey);
+          color: var(--white);
+          text-decoration: none;
+        }
+
+        .button {
+          border-radius: 4px;
+          border: 0;
+          cursor: pointer;
+          display: inline-block;
+          margin: 0;
+          padding: var(--space-size);
+          text-decoration: none;
+        }
+
+        .button-icon {
+          background-color: transparent;
+        }
+
+        .icon {
+          background-position: center center;
+          background-repeat: no-repeat;
+          color: var(--white);
+          display: inline-block;
+          height: var(--icon-size);
+          text-decoration: none;
+          vertical-align: middle;
+          width: var(--icon-size);
+        }
+
+        .icon-large {
+          height: var(--icon-large);
+          width: var(--icon-large);
+        }
+
+        .icon-overlay {
+          height: var(--icon-large);
+          left: calc((100% - var(--icon-large)) / 2);
+          position: absolute;
+          top: calc((100% - var(--icon-large)) / 2);
+          width: var(--icon-large);
+          pointer-events: none;
+        }
+
+        .header {
+          background-color: var(--grey);
+          margin-top: 0;
+          padding: calc(var(--space-size) / 2) var(--space-size);
+          text-align: left;
+        }
+
+        .center {
+          text-align: center;
+        }
+
+        .padding {
+          padding: var(--space-size);
+        }
+
+        .padding-half {
+          padding: calc(var(--space-size) / 2);
+        }
+
+        .no-padding {
+          padding: 0;
+        }
+
+        .margin {
+          margin: var(--space-size);
+        }
+
+        .margin-half {
+          margin: calc(var(--space-size) / 2);
+        }
+
+        .no-margin {
+          margin: 0;
+        }
+
+        .ellipsis {
+          overflow: hidden;
+          text-align: left;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
+
+        @media print {
+          body::after {
+            content: 'Save ink, share link. https://herodote.vibioh.fr';
+          }
+
+          body > * {
+            display: none !important;
+          }
+        }
+      </style>
+    </head>
+
+    <body class="no-margin">
+      <div class="content">
+        <header class="padding">
+          <h1 class="no-margin no-padding">
+            <a href="/{{- if .Root -}}{{- .Root -}}{{- end -}}" class="no-style clear">Herodote</a>
+          </h1>
+        </header>
+{{ end }}
+
+{{ define "footer" }}
+    </div>
+  </body>
+
+</html>
+{{ end }}
+
+{{ define "message" }}
+  {{ if . }}
+    {{ if gt (len .Content) 0 }}
+      <p class="message no-margin padding center {{ if eq .Level "error" }}bg-danger{{ else }}success{{ end }}">
+        {{ .Content }}
+      </p>
+    {{ end }}
+  {{ end }}
+{{ end }}
+
+{{ define "public" }}
+  {{ template "header" . }}
+
+  {{ template "message" .Message }}
+  {{ template "herodote" .Data }}
+
+  {{ template "footer" . }}
+{{ end }}
+
+{{ define "error" }}
+  {{ template "header" . }}
+  {{ template "message" .Message }}
+
+  {{ if .Errors }}
+    {{ range .Errors }}
+      <p class="padding no-margin center">
+        {{ . }}
+      </p>
+    {{ end }}
+  {{ end }}
+
+  <h3 class="center">
+    <a href="javascript:history.back()">Go Back</a>
+  </h3>
+
+  {{ template "footer" . }}
+{{ end }}
