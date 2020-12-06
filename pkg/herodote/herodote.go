@@ -139,7 +139,7 @@ func (a app) Handler() http.Handler {
 }
 
 func (a app) GetData(r *http.Request) (interface{}, error) {
-	commits, _, err := a.listCommits(r)
+	commits, _, _, err := a.listCommits(r)
 	if err != nil {
 		return nil, err
 	}
@@ -164,10 +164,10 @@ func (a app) GetFuncs() template.FuncMap {
 	}
 }
 
-func (a app) listCommits(r *http.Request) ([]model.Commit, uint, error) {
+func (a app) listCommits(r *http.Request) ([]model.Commit, uint, query.Pagination, error) {
 	pagination, err := query.ParsePagination(r, 1, 20, 100)
 	if err != nil {
-		return nil, 0, model.WrapInvalid(err)
+		return nil, 0, pagination, model.WrapInvalid(err)
 	}
 
 	params := r.URL.Query()
@@ -181,24 +181,30 @@ func (a app) listCommits(r *http.Request) ([]model.Commit, uint, error) {
 
 	before := strings.TrimSpace(params.Get("before"))
 	if err := checkDate(before); err != nil {
-		return nil, 0, model.WrapInvalid(err)
+		return nil, 0, pagination, model.WrapInvalid(err)
 	}
 
 	after := strings.TrimSpace(params.Get("after"))
 	if err := checkDate(after); err != nil {
-		return nil, 0, model.WrapInvalid(err)
+		return nil, 0, pagination, model.WrapInvalid(err)
 	}
 
-	return a.store.SearchCommit(r.Context(), query, filters, before, after, pagination.Page, pagination.PageSize)
+	commits, totalCount, err := a.store.SearchCommit(r.Context(), query, filters, before, after, pagination.Page, pagination.PageSize)
+	return commits, totalCount, pagination, err
 }
 
 func (a app) handleCommits(w http.ResponseWriter, r *http.Request) {
-	if r.Method == http.MethodPost {
-		w.WriteHeader(http.StatusMethodNotAllowed)
+	commits, totalCount, pagination, err := a.listCommits(r)
+	if err != nil {
+		if errors.Is(err, model.ErrInvalid) {
+			httperror.BadRequest(w, err)
+		} else {
+			httperror.InternalServerError(w, err)
+		}
 		return
 	}
 
-	a.handlePostCommits(w, r)
+	httpjson.ResponsePaginatedJSON(w, http.StatusOK, pagination.Page, pagination.PageSize, totalCount, commits, httpjson.IsPretty(r))
 }
 
 func (a app) handlePostCommits(w http.ResponseWriter, r *http.Request) {
