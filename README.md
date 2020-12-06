@@ -82,7 +82,7 @@ jobs:
 
       - name: Push history
         run: |
-          curl -q -sSL --max-time 30 "https://raw.githubusercontent.com/ViBiOh/herodote/master/herodote.sh" | bash
+          curl --disable --silent --show-error --location --max-time 30 "https://raw.githubusercontent.com/ViBiOh/herodote/master/herodote.sh" | bash
         env:
           ALGOLIA_APP: ${{ secrets.HERODOTE_ALGOLIA_APP }}
           ALGOLIA_KEY: ${{ secrets.HERODOTE_ALGOLIA_KEY }}
