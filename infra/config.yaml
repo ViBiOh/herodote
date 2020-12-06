@@ -2,7 +2,7 @@
 apiVersion: helm.toolkit.fluxcd.io/v2beta1
 kind: HelmRelease
 metadata:
-  name: herodote-api
+  name: herodote
   namespace: default
 spec:
   interval: 120m
@@ -17,10 +17,10 @@ spec:
       interval: 120m
 
   values:
-    nameOverride: herodote-api
+    nameOverride: herodote
 
     image:
-      repository: vibioh/herodote-api
+      repository: vibioh/herodote
 
     config:
       HERODOTE_LOGGER_JSON: "true"

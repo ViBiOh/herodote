@@ -47,7 +47,7 @@ The script needs the following variables to be set (or will prompt you for):
 
 You also **have to** provide a backend configuration (depending on your choise between Postgres and Algolia):
 
-- `HERODOTE_API`: URL of your Herodote API (e.g. https://herodote-api.vibioh.fr)
+- `HERODOTE_API`: URL of your Herodote API (e.g. https://herodote.vibioh.fr)
 - `HERODOTE_SECRET`: `httpSecret` or your Herodote API (cf. [API Usage](#api-usage) section)
 
 or
