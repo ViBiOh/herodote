@@ -194,6 +194,16 @@ func (a app) listCommits(r *http.Request) ([]model.Commit, uint, query.Paginatio
 }
 
 func (a app) handleCommits(w http.ResponseWriter, r *http.Request) {
+	if r.Method == http.MethodGet {
+		a.handlePostCommits(w, r)
+	} else if r.Method == http.MethodGet {
+		a.handleGetCommits(w, r)
+	} else {
+		w.WriteHeader(http.StatusMethodNotAllowed)
+	}
+}
+
+func (a app) handleGetCommits(w http.ResponseWriter, r *http.Request) {
 	commits, totalCount, pagination, err := a.listCommits(r)
 	if err != nil {
 		if errors.Is(err, model.ErrInvalid) {

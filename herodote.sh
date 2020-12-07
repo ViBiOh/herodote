@@ -48,7 +48,11 @@ git_conventionnal_commits() {
 }
 
 git_is_inside() {
-  git rev-parse --is-inside-work-tree 2>&1
+  if [[ $(git rev-parse --is-inside-work-tree 2>&1) == "true" ]]; then
+    return 0
+  fi
+
+  return 1
 }
 
 git_remote_repository() {
@@ -184,6 +188,7 @@ insert_commit() {
     return 1
   fi
 
+  cat "${HTTP_OUTPUT}"
   rm "${HTTP_OUTPUT}"
 }
 
