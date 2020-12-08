@@ -49,15 +49,28 @@
     }
   </style>
 
+  {{ $root := . }}
+
   <article>
     <ol id="commits" class="no-padding no-margin">
-      {{ range .Commits }}
-        <li>
-          <button class="button padding-half" style="background-color: {{ colors . }};">
-            {{ .Repository }}
-          </button>
+      {{ $now := now }}
+      {{ $previousDistance := "" }}
 
-          <pre class="label padding-half no-margin"><span class="success">{{ .Type }}</span>
+      {{ range .Commits }}
+        {{ $distance := dateDistanceInDays .Date $now }}
+        {{ if ne $previousDistance $distance }}
+          {{ $previousDistance = $distance }}
+          <li>
+            <div class="separator full">{{ $distance }}</div>
+          </li>
+        {{ end }}
+
+        <li>
+          <a class="bg-primary button padding-half" style="background-color: {{ colors . }};" href="{{ getURL $root.Path $root.Params "repository" .Repository }}">
+            {{ .Repository }}
+          </a>
+
+          <pre class="label padding-half no-margin"><a class="success" href="{{ getURL $root.Path $root.Params "type" .Type }}">{{ .Type }}</a>
             {{- if .Component -}}
               <strong class="primary">({{ .Component }})</strong>
             {{- end -}}

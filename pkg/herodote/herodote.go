@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"html/template"
 	"net/http"
+	"net/url"
 	"strings"
 	"time"
 
@@ -144,7 +145,14 @@ func (a app) GetData(r *http.Request) (interface{}, error) {
 		return nil, err
 	}
 
+	params, err := url.ParseQuery(r.URL.RawQuery)
+	if err != nil {
+		return nil, fmt.Errorf("unable to parse query: %s", err)
+	}
+
 	return map[string]interface{}{
+		"Path":    r.URL.Path,
+		"Params":  params,
 		"Commits": commits,
 	}, nil
 }
@@ -160,6 +168,63 @@ func (a app) GetFuncs() template.FuncMap {
 			a.colors[commit.Repository] = nextColor
 
 			return nextColor
+		},
+		"now": func() time.Time {
+			return time.Now()
+		},
+		"dateDistanceInDays": func(date, now time.Time) string {
+			distance := now.Sub(date).Truncate(time.Hour * 24)
+			count := distance.Hours() / 24
+
+			if count == 0 {
+				return "Today"
+			}
+
+			count++
+			if count < 7 {
+				if count < 2 {
+					return "1 day ago"
+				}
+
+				return fmt.Sprintf("%.f days ago", count)
+			}
+
+			count = count / 7
+			if count < 4 {
+				if count < 2 {
+					return "1 week ago"
+				}
+
+				return fmt.Sprintf("%.f weeks ago", count)
+			}
+
+			count = count / 4
+			if count < 12 {
+				if count < 2 {
+					return "1 month ago"
+				}
+
+				return fmt.Sprintf("%.f months ago", count)
+			}
+
+			count = count / 12
+			if count < 2 {
+				return "1 year ago"
+			}
+
+			return fmt.Sprintf("%.f years ago", count)
+		},
+		"getURL": func(path string, params url.Values, name, value string) string {
+			safeValues := url.Values{}
+			for key := range params {
+				if key != name {
+					safeValues.Set(key, params.Get(key))
+				}
+			}
+
+			safeValues.Set(name, value)
+
+			return fmt.Sprintf("%s?%s", path, safeValues.Encode())
 		},
 	}
 }

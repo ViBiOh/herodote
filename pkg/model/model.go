@@ -3,19 +3,20 @@ package model
 import (
 	"fmt"
 	"strings"
+	"time"
 )
 
 // Commit describes a commit on a repository
 type Commit struct {
-	Hash       string `json:"hash"`
-	Type       string `json:"type"`
-	Component  string `json:"component"`
-	Content    string `json:"content"`
-	Remote     string `json:"remote"`
-	Repository string `json:"repository"`
-	Date       uint64 `json:"date"`
-	Breaking   bool   `json:"breaking"`
-	Revert     bool   `json:"revert"`
+	Hash       string    `json:"hash"`
+	Type       string    `json:"type"`
+	Component  string    `json:"component"`
+	Content    string    `json:"content"`
+	Remote     string    `json:"remote"`
+	Repository string    `json:"repository"`
+	Date       time.Time `json:"date"`
+	Breaking   bool      `json:"breaking"`
+	Revert     bool      `json:"revert"`
 }
 
 // Sanitize cleans value of a commit
@@ -43,7 +44,7 @@ func (c Commit) Check() error {
 		return fmt.Errorf("commit's content is required (e.g. `Add README.md`)")
 	}
 
-	if c.Date == 0 {
+	if c.Date.IsZero() {
 		return fmt.Errorf("commit's date is required (e.g. `1596913344`)")
 	}
 
