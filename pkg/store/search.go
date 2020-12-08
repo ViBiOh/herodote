@@ -85,9 +85,17 @@ func computeSearchQuery(page, pageSize uint, words []string, filters map[string]
 			continue
 		}
 
-		sqlValues := make([]string, len(values))
-		for index, value := range values {
-			sqlValues[index] = strings.ToLower(value)
+		sqlValues := make([]string, 0)
+		for _, value := range values {
+			if len(value) == 0 {
+				continue
+			}
+
+			sqlValues = append(sqlValues, strings.ToLower(value))
+		}
+
+		if len(sqlValues) == 0 {
+			continue
 		}
 
 		args = append(args, pq.Array(sqlValues))

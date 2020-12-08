@@ -80,7 +80,7 @@
 
           <pre class="label padding-half no-margin"><a class="success" href="{{ toggleParam $root.Path $root.Filters "type" .Type }}">{{ .Type }}</a>
             {{- if .Component -}}
-              <strong class="primary">({{ .Component }})</strong>
+              <a href="{{ toggleParam $root.Path $root.Filters "component" .Component }}"><strong class="primary">({{ .Component }})</strong></a>
             {{- end -}}
           </pre>
 

@@ -121,11 +121,6 @@ func (a app) Handler() http.Handler {
 			return
 		}
 
-		if strings.HasPrefix(r.URL.Path, filtersPath) {
-			a.handleFilters(w, r)
-			return
-		}
-
 		if r.Method == http.MethodPost && strings.HasPrefix(r.URL.Path, refreshPath) {
 			if err := a.store.Refresh(r.Context()); err != nil {
 				httperror.InternalServerError(w, err)
@@ -150,10 +145,28 @@ func (a app) GetData(r *http.Request) (interface{}, error) {
 		return nil, fmt.Errorf("unable to parse query: %s", err)
 	}
 
+	repositories, err := a.store.ListFilters(r.Context(), "repository")
+	if err != nil {
+		return nil, fmt.Errorf("unable to list repositories: %s", err)
+	}
+
+	types, err := a.store.ListFilters(r.Context(), "type")
+	if err != nil {
+		return nil, fmt.Errorf("unable to list types: %s", err)
+	}
+
+	components, err := a.store.ListFilters(r.Context(), "component")
+	if err != nil {
+		return nil, fmt.Errorf("unable to list components: %s", err)
+	}
+
 	return map[string]interface{}{
-		"Path":    r.URL.Path,
-		"Filters": params,
-		"Commits": commits,
+		"Path":         r.URL.Path,
+		"Filters":      params,
+		"Repositories": repositories,
+		"Types":        types,
+		"Components":   components,
+		"Commits":      commits,
 	}, nil
 }
 
@@ -323,26 +336,6 @@ func (a app) handlePostCommits(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.WriteHeader(http.StatusCreated)
-}
-
-func (a app) handleFilters(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodGet {
-		w.WriteHeader(http.StatusMethodNotAllowed)
-		return
-	}
-
-	values, err := a.store.ListFilters(r.Context(), r.URL.Query().Get("name"))
-	if err != nil {
-		if errors.Is(err, store.ErrNotFound) {
-			httperror.NotFound(w)
-		} else {
-			httperror.InternalServerError(w, err)
-		}
-
-		return
-	}
-
-	httpjson.ResponseArrayJSON(w, http.StatusOK, values, httpjson.IsPretty(r))
 }
 
 func checkDate(raw string) error {
