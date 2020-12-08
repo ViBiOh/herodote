@@ -70,9 +70,16 @@ func New(config Config, input Input) (App, error) {
 }
 
 func (a app) Handler() http.Handler {
+	svgHandler := http.StripPrefix(svgPath, a.svg())
+
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if strings.HasPrefix(r.URL.Path, faviconPath) || r.URL.Path == "/robots.txt" || r.URL.Path == "/sitemap.xml" {
 			http.ServeFile(w, r, path.Join(staticDir, r.URL.Path))
+			return
+		}
+
+		if strings.HasPrefix(r.URL.Path, svgPath) {
+			svgHandler.ServeHTTP(w, r)
 			return
 		}
 
@@ -86,5 +93,5 @@ func (a app) Handler() http.Handler {
 }
 
 func (a app) IsHandled(r *http.Request) bool {
-	return strings.HasPrefix(r.URL.Path, faviconPath) || r.URL.Path == "/robots.txt" || r.URL.Path == "/sitemap.xml" || query.IsRoot(r)
+	return strings.HasPrefix(r.URL.Path, faviconPath) || strings.HasPrefix(r.URL.Path, svgPath) || r.URL.Path == "/robots.txt" || r.URL.Path == "/sitemap.xml" || query.IsRoot(r)
 }

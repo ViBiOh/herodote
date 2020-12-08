@@ -181,11 +181,42 @@
           pointer-events: none;
         }
 
+        .modal {
+          align-items: center;
+          background-color: rgba(84, 84, 84, 0.75);
+          display: none;
+          height: 100vh;
+          justify-content: center;
+          left: 0;
+          pointer-events: none;
+          position: fixed;
+          top: 0;
+          width: 100vw;
+        }
+
+        .modal-content {
+          background-color: var(--dark);
+          display: flex;
+          flex-direction: column;
+          max-height: 100%;
+          max-width: 100%;
+          pointer-events: auto;
+        }
+
         .header {
           background-color: var(--grey);
           margin-top: 0;
           padding: calc(var(--space-size) / 2) var(--space-size);
           text-align: left;
+        }
+
+        .flex {
+          align-items: center;
+          display: flex;
+        }
+
+        .flex-grow {
+          flex: 1 1;
         }
 
         .center {
@@ -237,14 +268,41 @@
           }
         }
       </style>
+
+      <script>
+          /**
+           * Go back from state.
+           */
+          function goBack() {
+            const previousHash = document.location.hash;
+            document.location.hash = '';
+
+            if (/success$/gim.test(previousHash)) {
+              window.location.reload(true);
+            }
+          }
+
+          /**
+           * Handle Previous/next.
+           */
+          window.onkeyup = e => {
+            switch(e.key) {
+              case 'Escape':
+                goBack();
+                break;
+            }
+          };
+      </script>
     </head>
 
     <body class="no-margin">
       <div class="content">
-        <header class="padding">
+        <header class="flex padding">
           <h1 class="no-margin no-padding">
-            <a href="/{{- if .Root -}}{{- .Root -}}{{- end -}}" class="no-style clear">Herodote</a>
+            <a href="/{{ with .Root }}{{ . }}{{ end }}" class="no-style clear">Herodote</a>
           </h1>
+          <span class="flex-grow"></span>
+          {{ template "header-part"}}
         </header>
 {{ end }}
 
@@ -256,7 +314,7 @@
 {{ end }}
 
 {{ define "message" }}
-  {{ if . }}
+  {{ with . }}
     {{ if gt (len .Content) 0 }}
       <p class="message no-margin padding center {{ if eq .Level "error" }}bg-danger{{ else }}success{{ end }}">
         {{ .Content }}
@@ -278,7 +336,7 @@
   {{ template "header" . }}
   {{ template "message" .Message }}
 
-  {{ if .Errors }}
+  {{ with .Errors }}
     {{ range .Errors }}
       <p class="padding no-margin center">
         {{ . }}

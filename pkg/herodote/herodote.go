@@ -152,7 +152,7 @@ func (a app) GetData(r *http.Request) (interface{}, error) {
 
 	return map[string]interface{}{
 		"Path":    r.URL.Path,
-		"Params":  params,
+		"Filters": params,
 		"Commits": commits,
 	}, nil
 }
@@ -219,11 +219,16 @@ func (a app) GetFuncs() template.FuncMap {
 			done := false
 
 			for key := range params {
-				currentValue := params.Get(key)
-				if key != name {
-					safeValues.Set(key, currentValue)
-				} else if currentValue == value {
+				currentValue := strings.TrimSpace(params.Get(key))
+
+				if len(currentValue) == 0 {
+					continue
+				}
+
+				if key == name {
 					done = true
+				} else {
+					safeValues.Set(key, currentValue)
 				}
 			}
 

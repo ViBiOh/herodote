@@ -1,3 +1,9 @@
+{{ define "header-part" }}
+  <a href="#filters" class="button bg-primary" title="Filter">
+    <img class="icon" src="/svg/filter?fill=silver" alt="Filter icon">
+  </a>
+{{ end }}
+
 {{ define "herodote" }}
   <style type="text/css">
     .label {
@@ -51,6 +57,8 @@
 
   {{ $root := . }}
 
+  {{ template "filters" . }}
+
   <article>
     <ol id="commits" class="no-padding no-margin">
       {{ $now := now }}
@@ -65,12 +73,12 @@
           </li>
         {{ end }}
 
-        <li>
-          <a class="bg-primary button padding-half" style="background-color: {{ colors . }};" href="{{ toggleParam $root.Path $root.Params "repository" .Repository }}">
+        <li class="padding">
+          <a class="bg-primary button padding-half" style="background-color: {{ colors . }};" href="{{ toggleParam $root.Path $root.Filters "repository" .Repository }}">
             {{ .Repository }}
           </a>
 
-          <pre class="label padding-half no-margin"><a class="success" href="{{ toggleParam $root.Path $root.Params "type" .Type }}">{{ .Type }}</a>
+          <pre class="label padding-half no-margin"><a class="success" href="{{ toggleParam $root.Path $root.Filters "type" .Type }}">{{ .Type }}</a>
             {{- if .Component -}}
               <strong class="primary">({{ .Component }})</strong>
             {{- end -}}

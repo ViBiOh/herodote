@@ -1,0 +1,43 @@
+{{ define "modal-buttons" }}
+  <p class="padding no-margin center">
+    <a href="#" class="button white">Cancel</a>
+    <button type="submit" class="button bg-primary">{{ . }}</button>
+  </p>
+{{ end }}
+
+{{ define "filters" }}
+  <style type="text/css">
+    #filters:target {
+      display: flex;
+      z-index: 5;
+    }
+
+    #filters:target ~ .content {
+      display: flex;
+      z-index: 5;
+    }
+
+    .block {
+      display: block;
+    }
+  </style>
+
+  {{ $root := . }}
+
+  <aside id="filters" class="modal">
+    <div class="modal-content">
+      <h2 class="header">Filters</h2>
+
+      <form method="GET" action="/">
+        <p class="padding no-margin">
+          <label for="after" class="block">After</label>
+          <input id="after" name="after" type="date" placeholder="2020-01-31" value="{{ with .Filters.after }}{{ index . 0 }}{{ end }}">
+          <label for="before" class="block">Before</label>
+          <input id="before" name="before" type="date" placeholder="2020-12-31" value="{{ with .Filters.before }}{{ index . 0 }}{{ end }}">
+        </p>
+
+        {{ template "modal-buttons" "Filter" }}
+      </form>
+    </div>
+  </aside>
+{{ end }}
