@@ -82,7 +82,7 @@ git_remote_host() {
 }
 
 configure_algolia() {
-  curl -q -sSL --max-time 10 \
+  curl --disable --silent --show-error --location --max-time 10 \
     -X PUT \
     -H "X-Algolia-Application-Id: ${ALGOLIA_APP}" \
     -H "X-Algolia-API-Key: ${ALGOLIA_KEY}" \
@@ -119,7 +119,7 @@ latest_commit() {
   local LATEST_HASH
 
   if [[ -n ${HERODOTE_API} ]]; then
-    HTTP_STATUS="$(curl -q -sSL --max-time 10 \
+    HTTP_STATUS="$(curl --disable --silent --show-error --location --max-time 10 \
       -o "${HTTP_OUTPUT}" \
       -w "%{http_code}" \
       --get \
@@ -131,7 +131,7 @@ latest_commit() {
       LATEST_HASH="$(jq --raw-output '.results[0].hash' "${HTTP_OUTPUT}")"
     fi
   else
-    HTTP_STATUS="$(curl -q -sSL --max-time 10 \
+    HTTP_STATUS="$(curl --disable --silent --show-error --location --max-time 10 \
       -o "${HTTP_OUTPUT}" \
       -w "%{http_code}" \
       -H "X-Algolia-Application-Id: ${ALGOLIA_APP}" \
@@ -163,7 +163,7 @@ insert_commit() {
   local PAYLOAD="${1:-}"
 
   if [[ -n ${HERODOTE_API} ]]; then
-    HTTP_STATUS="$(curl -q -sSL --max-time 10 \
+    HTTP_STATUS="$(curl --disable --silent --show-error --location --max-time 10 \
       -X POST \
       -o "${HTTP_OUTPUT}" \
       -w "%{http_code}" \
@@ -172,7 +172,7 @@ insert_commit() {
       "${HERODOTE_API}/commits" \
       -d "${PAYLOAD}")"
   else
-    HTTP_STATUS="$(curl -q -sSL --max-time 10 \
+    HTTP_STATUS="$(curl --disable --silent --show-error --location --max-time 10 \
       -X POST \
       -o "${HTTP_OUTPUT}" \
       -w "%{http_code}" \
@@ -280,7 +280,7 @@ walk_log() {
 
         if [[ -n ${HERODOTE_API} ]]; then
           printf "%bRefreshing materialized view%b\n" "${BLUE}" "${RESET}"
-          curl -q -sSL --max-time 30 -X POST -H "Authorization: ${HERODOTE_SECRET}" "${HERODOTE_API}/refresh"
+          curl --disable --silent --show-error --location --max-time 30 -X POST -H "Authorization: ${HERODOTE_SECRET}" "${HERODOTE_API}/refresh"
         fi
 
         break
