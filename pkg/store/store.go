@@ -63,7 +63,7 @@ INSERT INTO
 
 func (a app) SaveCommit(ctx context.Context, o model.Commit) error {
 	return db.DoAtomic(ctx, a.db, func(ctx context.Context) error {
-		return db.Exec(ctx, insertCommitQuery, o.Hash, o.Type, o.Component, o.Revert, o.Breaking, o.Content, o.Date, o.Remote, o.Repository)
+		return db.Exec(ctx, insertCommitQuery, o.Hash, o.Type, o.Component, o.Revert, o.Breaking, o.Content, o.Date.Unix(), o.Remote, o.Repository)
 	})
 }
 

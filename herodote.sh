@@ -113,7 +113,7 @@ insert_commit() {
   local PAYLOAD="${1:-}"
 
   HTTP_STATUS="$(curl --disable --silent --show-error --location --max-time 10 \
-    -method POST \
+    --request POST \
     -o "${HTTP_OUTPUT}" \
     -w "%{http_code}" \
     --header "Authorization: ${HERODOTE_SECRET}" \
@@ -146,7 +146,7 @@ walk_log() {
 
   shopt -s nocasematch
   for hash in ${COMMITS}; do
-    if [[ $(git show -s --format='%h %aI %s' "${hash}") =~ ^([0-9a-f]{1,16})\ (.*?)\ (.*)$ ]]; then
+    if [[ $(git show -s --format='%h %aI %s' "${hash}") =~ ^([0-9a-f]{1,16})\ ([^\ ]+)\ (.*)$ ]]; then
       local HASH="${BASH_REMATCH[1]}"
       local DATE="${BASH_REMATCH[2]}"
       local DESCRIPTION="${BASH_REMATCH[3]}"
@@ -219,7 +219,7 @@ walk_log() {
 
         if [[ -n ${HERODOTE_API} ]]; then
           printf "%bRefreshing materialized view%b\n" "${BLUE}" "${RESET}"
-          curl --disable --silent --show-error --location --max-time 30 --method POST --header "Authorization: ${HERODOTE_SECRET}" "${HERODOTE_API}/refresh"
+          curl --disable --silent --show-error --location --max-time 30 --request POST --header "Authorization: ${HERODOTE_SECRET}" "${HERODOTE_API}/refresh"
         fi
 
         break
