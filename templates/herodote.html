@@ -66,11 +66,11 @@
         {{ end }}
 
         <li>
-          <a class="bg-primary button padding-half" style="background-color: {{ colors . }};" href="{{ getURL $root.Path $root.Params "repository" .Repository }}">
+          <a class="bg-primary button padding-half" style="background-color: {{ colors . }};" href="{{ toggleParam $root.Path $root.Params "repository" .Repository }}">
             {{ .Repository }}
           </a>
 
-          <pre class="label padding-half no-margin"><a class="success" href="{{ getURL $root.Path $root.Params "type" .Type }}">{{ .Type }}</a>
+          <pre class="label padding-half no-margin"><a class="success" href="{{ toggleParam $root.Path $root.Params "type" .Type }}">{{ .Type }}</a>
             {{- if .Component -}}
               <strong class="primary">({{ .Component }})</strong>
             {{- end -}}

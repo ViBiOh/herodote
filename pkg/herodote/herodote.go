@@ -214,15 +214,26 @@ func (a app) GetFuncs() template.FuncMap {
 
 			return fmt.Sprintf("%.f years ago", count)
 		},
-		"getURL": func(path string, params url.Values, name, value string) string {
+		"toggleParam": func(path string, params url.Values, name, value string) string {
 			safeValues := url.Values{}
+			done := false
+
 			for key := range params {
+				currentValue := params.Get(key)
 				if key != name {
-					safeValues.Set(key, params.Get(key))
+					safeValues.Set(key, currentValue)
+				} else if currentValue == value {
+					done = true
 				}
 			}
 
-			safeValues.Set(name, value)
+			if !done {
+				safeValues.Set(name, value)
+			}
+
+			if len(safeValues) == 0 {
+				return path
+			}
 
 			return fmt.Sprintf("%s?%s", path, safeValues.Encode())
 		},
@@ -230,7 +241,7 @@ func (a app) GetFuncs() template.FuncMap {
 }
 
 func (a app) listCommits(r *http.Request) ([]model.Commit, uint, query.Pagination, error) {
-	pagination, err := query.ParsePagination(r, 1, 20, 100)
+	pagination, err := query.ParsePagination(r, 1, 50, 100)
 	if err != nil {
 		return nil, 0, pagination, model.WrapInvalid(err)
 	}

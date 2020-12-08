@@ -2,7 +2,7 @@
 
 Git [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) historian accross repositories.
 
-- Full-text search with the help of Postgresql or Algolia as a backend
+- Full-text search with Postgresql as a backend
 - Light frontend (<60kb gzipped) with desktop and responsive UI
 - Filters on repository, type or component
 - Light shell script for loading data into backend
@@ -24,19 +24,23 @@ Herodote loads data with its own script, which is idempotent. On cold start, wit
 
 ### Postgres
 
-Herodote use a Postgres database as a backend storage. You need a Postgres database for storing your datas. I personnaly use free tier of [ElephantSQL](https://www.elephantsql.com).
+Herodote use a Postgres database as a backend storage. You need a Postgres database for storing your datas. You can use free tier of [ElephantSQL](https://www.elephantsql.com).
 
-Once setup, you _have to_ to create schema with [Herodote DDL](sql/ddl.sql) and start the Herodote API. Configuration is done by passing `-dbHost`, `-dbName`, `-dbUser`, `-dbPass` arg or setting equivalent environment variables (cf. [API Usage](#api-usage) section).
+Once setup, you _have to_ to create schema with [Herodote DDL](sql/ddl.sql) and start the Herodote API. Configuration is done by passing `-dbHost`, `-dbName`, `-dbUser`, `-dbPass` arg or setting equivalent environment variables (cf. [API Usage](#usage) section).
 
-### Algolia
+### Installation
 
-Herodote can use an [Algolia](https://www.algolia.com) index as an alternative to Postgres. You need to [create an application](https://www.algolia.com/account/applications) in your account.
+Golang binary is built with static link. You can download it directly from the [Github Release page](https://github.com/ViBiOh/herodote/releases) or build it by yourself by cloning this repo and running `make`.
 
-For a personnal use, the free-tier is enough with 10k search and index by month. You don't need the Herodote API with this backend.
+A Docker image is available for `amd64`, `arm` and `arm64` platforms on Docker Hub: [vibioh/herodote](https://hub.docker.com/r/vibioh/herodote/tags).
+
+You can configure app by passing CLI args or environment variables (cf. [Usage](#usage) section). CLI override environment variables.
+
+You'll find a Kubernetes exemple in the [`infra/`](infra/) folder, using my [`app chart`](https://github.com/ViBiOh/charts/tree/master/app)
 
 ### CI Integration
 
-Herodote is fed by its own script: [herodote.sh](herodote.sh). The script automatically configure the Algolia index.
+Herodote is fed by its own script: [herodote.sh](herodote.sh).
 
 It automatically detects last commit's SHA in index and add only new ones of repository.
 
@@ -44,23 +48,14 @@ The script needs the following variables to be set (or will prompt you for):
 
 - `GIT_HOST`: Name of your git provider (e.g. `github.com`). It's guessed from `git remote get-url --push origin` if you are in a git folder
 - `GIT_REPOSITORY`: Name of your repository (e.g. `ViBiOh/herodote`). It's guessed from `git remote get-url --push origin` if you are in a git folder
-
-You also **have to** provide a backend configuration (depending on your choise between Postgres and Algolia):
-
 - `HERODOTE_API`: URL of your Herodote API (e.g. https://herodote.vibioh.fr)
-- `HERODOTE_SECRET`: `httpSecret` or your Herodote API (cf. [API Usage](#api-usage) section)
+- `HERODOTE_SECRET`: `httpSecret` or your Herodote API (cf. [API Usage](#usage) section)
 
-or
-
-- `ALGOLIA_APP`: Application ID of Algolia, can be found from the _API Keys_ section on your app's dashboard
-- `ALGOLIA_KEY`: Admin API Key of Algolia, can be found from the _API Keys_ section on your app's dashboard
-- `ALGOLIA_INDEX`: Index name when commits will be written (default to `herodote`)
-
-If you execute your script in a non-interactive environment, set the `SCRIPTS_NO_INTERACTIVE=1` for disabling prompt.
+If you execute your script in a non-interactive environment, set the `SCRIPTS_NO_INTERACTIVE=1` for disabling prompt, guessed value will be used.
 
 #### Github Actions
 
-You can use the following Github Actions for pushing your commits to Algolia index on merge to `master`.
+You can use the following Github Actions for pushing your commits to Herodote index on merge to `master`.
 
 ```yaml
 ---
@@ -84,8 +79,8 @@ jobs:
         run: |
           curl --disable --silent --show-error --location --max-time 30 "https://raw.githubusercontent.com/ViBiOh/herodote/master/herodote.sh" | bash
         env:
-          ALGOLIA_APP: ${{ secrets.HERODOTE_ALGOLIA_APP }}
-          ALGOLIA_KEY: ${{ secrets.HERODOTE_ALGOLIA_KEY }}
+          HERODOTE_API: https://herodote.vibioh.fr
+          HERODOTE_SECRET: ${{ secrets.HERODOTE_SECRET }}
           GIT_HOST: github.com
           GIT_REPOSITORY: ${{ github.repository }}
           SCRIPTS_NO_INTERACTIVE: "1"
@@ -96,28 +91,7 @@ You **have to** add secrets in your repository in the repository's settings: htt
 - `HERODOTE_API`: `HERODOTE_API` from [#ci-integration](#ci-integration)
 - `HERODOTE_SECRET`: `HERODOTE_SECRET` from [#ci-integration](#ci-integration)
 
-or
-
-- `HERODOTE_ALGOLIA_APP`: `ALGOLIA_APP` from [#ci-integration](#ci-integration)
-- `HERODOTE_ALGOLIA_KEY`: `ALGOLIA_KEY` from [#ci-integration](#ci-integration)
-
-### Frontend
-
-You can deploy Herodote's frontend by using the given Docker container: [vibioh/herodote](https://hub.docker.com/r/vibioh/herodote/tags?page=1&name=latest)
-
-Your **have to** provide environment variable in order to make it work:
-
-- `HERODOTE_API`: Same value as in [#ci-integration](#ci-integration)
-
-or
-
-- `ALGOLIA_APP`: Same value as in [#ci-integration](#ci-integration)
-- `ALGOLIA_INDEX`: Same value as in [#ci-integration](#ci-integration) (there is no default here, you have to provide value)
-- `ALGOLIA_KEY`: Search-Only API Key of Algolia, can be found from the _API Keys_ section on your app's dashboard. **⚠️ don't provide the admin key, the variable is sent to the client, it's public! ⚠️**
-
-For more detailed configuration of container, you can have a look at the [`ViBiOh/viws`](https://github.com/ViBiOh/viws) project.
-
-### API Usage
+### Usage
 
 ```bash
 Usage of herodote:
