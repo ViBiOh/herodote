@@ -202,8 +202,11 @@ walk_log() {
   SCOPES="$(printf "%s|" "${!CONVENTIONAL_COMMIT_SCOPES[@]}")"
   SCOPES="${SCOPES%|}"
 
+  local COMMITS
+  COMMITS="$(git log --pretty=format:'%h' "$(latest_commit)")"
+
   shopt -s nocasematch
-  for hash in $(git log --pretty=format:'%h' "$(latest_commit)"); do
+  for hash in ${COMMITS}; do
     if [[ $(git show -s --format='%h %at %s' "${hash}") =~ ^([0-9a-f]{1,16})\ ([0-9]+)\ (.*)$ ]]; then
       local HASH="${BASH_REMATCH[1]}"
       local DATE="${BASH_REMATCH[2]}"
