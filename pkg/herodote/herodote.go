@@ -187,7 +187,7 @@ func (a app) GetFuncs() template.FuncMap {
 			return time.Now()
 		},
 		"dateDistanceInDays": func(date, now time.Time) string {
-			if now.Truncate(dayDuration) == date.Truncate(dayDuration) {
+			if now.Truncate(dayDuration).Unix() == date.Truncate(dayDuration).Unix() {
 				return "Today"
 			}
 
