@@ -31,7 +31,7 @@
       <form method="GET" action="/">
         <p class="padding no-margin">
           <label for="repository" class="block">Repository</label>
-          <select id="repository" name="repository">
+          <select id="repository" name="repository" class="full" multiple>
             <option value="">-</option>
             {{ range .Repositories }}
               <option value="{{ . }}" {{ if $root.Filters.repository }}{{ if eq (index $root.Filters.repository 0) . }}selected{{ end }}{{ end }}>{{ . }}</option>
@@ -41,7 +41,7 @@
 
         <p class="padding no-margin">
           <label for="type" class="block">Type</label>
-          <select id="type" name="type">
+          <select id="type" name="type" class="full" multiple>
             <option value="">-</option>
             {{ range .Types }}
               <option value="{{ . }}" {{ if $root.Filters.type }}{{ if eq (index $root.Filters.type 0) . }}selected{{ end }}{{ end }}>{{ . }}</option>
@@ -51,7 +51,7 @@
 
         <p class="padding no-margin">
           <label for="component" class="block">Component</label>
-          <select id="component" name="component">
+          <select id="component" name="component" class="full" multiple>
             <option value="">-</option>
             {{ range .Components }}
               <option value="{{ . }}" {{ if $root.Filters.component }}{{ if eq (index $root.Filters.component 0) . }}selected{{ end }}{{ end }}>{{ . }}</option>
