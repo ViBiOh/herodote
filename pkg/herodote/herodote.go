@@ -25,6 +25,7 @@ import (
 
 const (
 	isoDateLayout = "2006-01-02"
+	dayDuration   = time.Hour * 24
 
 	commitsPath = "/commits"
 	filtersPath = "/filters"
@@ -186,15 +187,17 @@ func (a app) GetFuncs() template.FuncMap {
 			return time.Now()
 		},
 		"dateDistanceInDays": func(date, now time.Time) string {
-			distance := now.Sub(date).Truncate(time.Hour * 24)
-			count := distance.Hours() / 24
-
-			if count == 0 {
+			if now.Truncate(dayDuration) == date.Truncate(dayDuration) {
 				return "Today"
 			}
 
-			count++
-			if count < 7 {
+			count := (now.Sub(date).Truncate(dayDuration).Hours() / 24) + 1
+
+			daysInWeek := float64(7)
+			weeksInMonth := float64(4)
+			monthsInYear := float64(12)
+
+			if count < daysInWeek {
 				if count < 2 {
 					return "1 day ago"
 				}
@@ -202,8 +205,8 @@ func (a app) GetFuncs() template.FuncMap {
 				return fmt.Sprintf("%.f days ago", count)
 			}
 
-			count = count / 7
-			if count < 4 {
+			count = count / daysInWeek
+			if count < weeksInMonth {
 				if count < 2 {
 					return "1 week ago"
 				}
@@ -211,8 +214,8 @@ func (a app) GetFuncs() template.FuncMap {
 				return fmt.Sprintf("%.f weeks ago", count)
 			}
 
-			count = count / 4
-			if count < 12 {
+			count = count / weeksInMonth
+			if count < monthsInYear {
 				if count < 2 {
 					return "1 month ago"
 				}
@@ -220,7 +223,7 @@ func (a app) GetFuncs() template.FuncMap {
 				return fmt.Sprintf("%.f months ago", count)
 			}
 
-			count = count / 12
+			count = count / monthsInYear
 			if count < 2 {
 				return "1 year ago"
 			}
