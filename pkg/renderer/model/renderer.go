@@ -18,6 +18,9 @@ var (
 	ErrInternalError = errors.New("internal error")
 )
 
+// TemplateFunc handle a request and returns which template to render with which status and datas
+type TemplateFunc = func(*http.Request) (string, int, map[string]interface{}, error)
+
 // Message for render
 type Message struct {
 	Level   string
@@ -26,9 +29,11 @@ type Message struct {
 
 // ParseMessage parses messages from request
 func ParseMessage(r *http.Request) Message {
+	values := r.URL.Query()
+
 	return Message{
-		Level:   r.URL.Query().Get("messageLevel"),
-		Content: r.URL.Query().Get("messageContent"),
+		Level:   values.Get("messageLevel"),
+		Content: values.Get("messageContent"),
 	}
 }
 
@@ -62,17 +67,21 @@ func ConcatError(errs []error) error {
 	return errors.New(strings.Join(values, ", "))
 }
 
+func wrapError(err, wrapper error) error {
+	return fmt.Errorf("%s: %w", err, wrapper)
+}
+
 // WrapInvalid wraps given error with invalid err
 func WrapInvalid(err error) error {
-	return fmt.Errorf("%s: %w", err, ErrInvalid)
+	return wrapError(err, ErrInvalid)
 }
 
 // WrapInternal wraps given error with internal err
 func WrapInternal(err error) error {
-	return fmt.Errorf("%s: %w", err, ErrInternalError)
+	return wrapError(err, ErrInternalError)
 }
 
 // WrapNotFound wraps given error with not found err
 func WrapNotFound(err error) error {
-	return fmt.Errorf("%s: %w", err, ErrNotFound)
+	return wrapError(err, ErrNotFound)
 }

@@ -90,7 +90,7 @@ latest_commit() {
     --get \
     --data-urlencode "repository=${GIT_REPOSITORY}" \
     --data-urlencode "pageSize=1" \
-    "${HERODOTE_API}/commits")"
+    "${HERODOTE_API}/api/commits")"
 
   if [[ ${HTTP_STATUS} -eq 200 ]] && [[ $(jq --raw-output '.total' "${HTTP_OUTPUT}") -gt 0 ]]; then
     LATEST_HASH="$(jq --raw-output '.results[0].hash' "${HTTP_OUTPUT}")"
@@ -118,7 +118,7 @@ insert_commit() {
     -w "%{http_code}" \
     --header "Authorization: ${HERODOTE_SECRET}" \
     --header "Content-Type: application/json" \
-    "${HERODOTE_API}/commits" \
+    "${HERODOTE_API}/api/commits" \
     -d "${PAYLOAD}")"
 
   if [[ ${HTTP_STATUS} -gt 299 ]]; then

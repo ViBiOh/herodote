@@ -4,6 +4,7 @@ import (
 	"flag"
 	"net/http"
 	"os"
+	"strings"
 
 	"github.com/ViBiOh/herodote/pkg/herodote"
 	"github.com/ViBiOh/herodote/pkg/renderer"
@@ -17,6 +18,10 @@ import (
 	"github.com/ViBiOh/httputils/v3/pkg/model"
 	"github.com/ViBiOh/httputils/v3/pkg/owasp"
 	"github.com/ViBiOh/httputils/v3/pkg/prometheus"
+)
+
+const (
+	apiPath = "/api"
 )
 
 func main() {
@@ -46,19 +51,19 @@ func main() {
 	herodoteApp, err := herodote.New(herodoteConfig, storeApp)
 	logger.Fatal(err)
 
-	rendererApp, err := renderer.New(rendererConfig, herodoteApp)
+	rendererApp, err := renderer.New(rendererConfig, herodoteApp.GetFuncs())
 	logger.Fatal(err)
 
-	herodoteHandler := herodoteApp.Handler()
-	rendererHandler := rendererApp.Handler()
+	herodoteHandler := http.StripPrefix(apiPath, herodoteApp.Handler())
+	rendererHandler := rendererApp.Handler(herodoteApp.TemplateFunc)
 
 	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if rendererApp.IsHandled(r) {
-			rendererHandler.ServeHTTP(w, r)
+		if strings.HasPrefix(r.URL.Path, apiPath) {
+			herodoteHandler.ServeHTTP(w, r)
 			return
 		}
 
-		herodoteHandler.ServeHTTP(w, r)
+		rendererHandler.ServeHTTP(w, r)
 	})
 
 	go herodoteApp.Start()

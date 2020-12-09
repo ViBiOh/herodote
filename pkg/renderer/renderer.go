@@ -9,10 +9,9 @@ import (
 	"path"
 	"strings"
 
-	"github.com/ViBiOh/herodote/pkg/model"
+	"github.com/ViBiOh/herodote/pkg/renderer/model"
 	"github.com/ViBiOh/httputils/v3/pkg/flags"
 	"github.com/ViBiOh/httputils/v3/pkg/httperror"
-	"github.com/ViBiOh/httputils/v3/pkg/query"
 	"github.com/ViBiOh/httputils/v3/pkg/templates"
 )
 
@@ -22,59 +21,69 @@ const (
 )
 
 var (
+	rootPaths = []string{"/robots.txt", "/sitemap.xml"}
 	staticDir = "static"
 )
 
-// Input for the renderer
-type Input interface {
-	GetData(*http.Request) (interface{}, error)
-	GetFuncs() template.FuncMap
-}
-
 // App of package
 type App interface {
-	Handler() http.Handler
-	IsHandled(*http.Request) bool
+	Handler(model.TemplateFunc) http.Handler
 }
 
 // Config of package
 type Config struct {
 	templates *string
+	statics   *string
 }
 
 type app struct {
-	tpl     *template.Template
-	version string
-	input   Input
+	tpl        *template.Template
+	version    string
+	staticsDir string
 }
 
 // Flags adds flags for configuring package
 func Flags(fs *flag.FlagSet, prefix string) Config {
 	return Config{
-		templates: flags.New(prefix, "herodote").Name("Templates").Default("./templates/").Label("HTML Templates folder").ToString(fs),
+		templates: flags.New(prefix, "").Name("Templates").Default("./templates/").Label("HTML Templates folder").ToString(fs),
+		statics:   flags.New(prefix, "").Name("Static").Default("./static/").Label("Static folder, content served directly").ToString(fs),
 	}
 }
 
 // New creates new App from Config
-func New(config Config, input Input) (App, error) {
+func New(config Config, funcMap template.FuncMap) (App, error) {
 	filesTemplates, err := templates.GetTemplates(strings.TrimSpace(*config.templates), ".html")
 	if err != nil {
 		return nil, fmt.Errorf("unable to get templates: %s", err)
 	}
 
 	return app{
-		tpl:     template.Must(template.New("herodote").Funcs(input.GetFuncs()).ParseFiles(filesTemplates...)),
+		tpl:     template.Must(template.New("app").Funcs(funcMap).ParseFiles(filesTemplates...)),
 		version: os.Getenv("VERSION"),
-		input:   input,
 	}, nil
 }
 
-func (a app) Handler() http.Handler {
+func isRootPaths(requestPath string) bool {
+	for _, rootPath := range rootPaths {
+		if strings.EqualFold(rootPath, requestPath) {
+			return true
+		}
+	}
+
+	return false
+}
+
+func (a app) Handler(templateFunc model.TemplateFunc) http.Handler {
 	svgHandler := http.StripPrefix(svgPath, a.svg())
 
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if strings.HasPrefix(r.URL.Path, faviconPath) || r.URL.Path == "/robots.txt" || r.URL.Path == "/sitemap.xml" {
-			http.ServeFile(w, r, path.Join(staticDir, r.URL.Path))
+		if strings.HasPrefix(r.URL.Path, faviconPath) || isRootPaths(r.URL.Path) {
+			http.ServeFile(w, r, path.Join(a.staticsDir, r.URL.Path))
+			return
+		}
+
+		if a.tpl == nil {
+			httperror.NotFound(w)
 			return
 		}
 
@@ -83,15 +92,21 @@ func (a app) Handler() http.Handler {
 			return
 		}
 
-		if a.tpl != nil && query.IsRoot(r) {
-			a.publicHandler(w, r, http.StatusOK, model.ParseMessage(r))
+		templateName, status, content, err := templateFunc(r)
+		if err != nil {
+			a.error(w, err)
 			return
 		}
 
-		httperror.NotFound(w)
-	})
-}
+		content["Version"] = a.version
 
-func (a app) IsHandled(r *http.Request) bool {
-	return strings.HasPrefix(r.URL.Path, faviconPath) || strings.HasPrefix(r.URL.Path, svgPath) || r.URL.Path == "/robots.txt" || r.URL.Path == "/sitemap.xml" || query.IsRoot(r)
+		message := model.ParseMessage(r)
+		if len(message.Content) > 0 {
+			content["Message"] = message
+		}
+
+		if err := templates.ResponseHTMLTemplate(a.tpl.Lookup(templateName), w, content, status); err != nil {
+			httperror.InternalServerError(w, err)
+		}
+	})
 }

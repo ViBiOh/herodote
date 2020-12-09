@@ -13,6 +13,7 @@ import (
 	"time"
 
 	"github.com/ViBiOh/herodote/pkg/model"
+	rendererModel "github.com/ViBiOh/herodote/pkg/renderer/model"
 	"github.com/ViBiOh/herodote/pkg/store"
 	"github.com/ViBiOh/httputils/v3/pkg/cron"
 	"github.com/ViBiOh/httputils/v3/pkg/flags"
@@ -59,8 +60,8 @@ var (
 // App of package
 type App interface {
 	Handler() http.Handler
-	GetData(*http.Request) (interface{}, error)
 	GetFuncs() template.FuncMap
+	TemplateFunc(*http.Request) (string, int, map[string]interface{}, error)
 	Start()
 }
 
@@ -135,33 +136,33 @@ func (a app) Handler() http.Handler {
 	})
 }
 
-func (a app) GetData(r *http.Request) (interface{}, error) {
+func (a app) TemplateFunc(r *http.Request) (string, int, map[string]interface{}, error) {
 	commits, _, _, err := a.listCommits(r)
 	if err != nil {
-		return nil, err
+		return "", http.StatusInternalServerError, nil, err
 	}
 
 	params, err := url.ParseQuery(r.URL.RawQuery)
 	if err != nil {
-		return nil, fmt.Errorf("unable to parse query: %s", err)
+		return "", http.StatusInternalServerError, nil, fmt.Errorf("unable to parse query: %s", err)
 	}
 
 	repositories, err := a.store.ListFilters(r.Context(), "repository")
 	if err != nil {
-		return nil, fmt.Errorf("unable to list repositories: %s", err)
+		return "", http.StatusInternalServerError, nil, fmt.Errorf("unable to list repositories: %s", err)
 	}
 
 	types, err := a.store.ListFilters(r.Context(), "type")
 	if err != nil {
-		return nil, fmt.Errorf("unable to list types: %s", err)
+		return "", http.StatusInternalServerError, nil, fmt.Errorf("unable to list types: %s", err)
 	}
 
 	components, err := a.store.ListFilters(r.Context(), "component")
 	if err != nil {
-		return nil, fmt.Errorf("unable to list components: %s", err)
+		return "", http.StatusInternalServerError, nil, fmt.Errorf("unable to list components: %s", err)
 	}
 
-	return map[string]interface{}{
+	return "public", http.StatusOK, map[string]interface{}{
 		"Path":         r.URL.Path,
 		"Filters":      params,
 		"Repositories": repositories,
@@ -264,7 +265,7 @@ func (a app) GetFuncs() template.FuncMap {
 func (a app) listCommits(r *http.Request) ([]model.Commit, uint, query.Pagination, error) {
 	pagination, err := query.ParsePagination(r, 1, 50, 100)
 	if err != nil {
-		return nil, 0, pagination, model.WrapInvalid(err)
+		return nil, 0, pagination, rendererModel.WrapInvalid(err)
 	}
 
 	params := r.URL.Query()
@@ -278,12 +279,12 @@ func (a app) listCommits(r *http.Request) ([]model.Commit, uint, query.Paginatio
 
 	before := strings.TrimSpace(params.Get("before"))
 	if err := checkDate(before); err != nil {
-		return nil, 0, pagination, model.WrapInvalid(err)
+		return nil, 0, pagination, rendererModel.WrapInvalid(err)
 	}
 
 	after := strings.TrimSpace(params.Get("after"))
 	if err := checkDate(after); err != nil {
-		return nil, 0, pagination, model.WrapInvalid(err)
+		return nil, 0, pagination, rendererModel.WrapInvalid(err)
 	}
 
 	commits, totalCount, err := a.store.SearchCommit(r.Context(), query, filters, before, after, pagination.Page, pagination.PageSize)
@@ -303,7 +304,7 @@ func (a app) handleCommits(w http.ResponseWriter, r *http.Request) {
 func (a app) handleGetCommits(w http.ResponseWriter, r *http.Request) {
 	commits, totalCount, pagination, err := a.listCommits(r)
 	if err != nil {
-		if errors.Is(err, model.ErrInvalid) {
+		if errors.Is(err, rendererModel.ErrInvalid) {
 			httperror.BadRequest(w, err)
 		} else {
 			httperror.InternalServerError(w, err)
