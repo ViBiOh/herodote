@@ -33,7 +33,7 @@ func main() {
 	prometheusConfig := prometheus.Flags(fs, "prometheus")
 	owaspConfig := owasp.Flags(fs, "", flags.NewOverride("Csp", "default-src 'self'; base-uri 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'"))
 	corsConfig := cors.Flags(fs, "cors")
-	rendererConfig := renderer.Flags(fs, "")
+	rendererConfig := renderer.Flags(fs, "", flags.NewOverride("Title", "Herodote"), flags.NewOverride("PublicURL", "https://herodote.vibioh.fr"))
 
 	herodoteConfig := herodote.Flags(fs, "")
 	dbConfig := db.Flags(fs, "db")

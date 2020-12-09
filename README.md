@@ -153,12 +153,18 @@ Usage of herodote:
         [prometheus] Ignored path prefixes for metrics, comma separated {HERODOTE_PROMETHEUS_IGNORE}
   -prometheusPath string
         [prometheus] Path for exposing metrics {HERODOTE_PROMETHEUS_PATH} (default "/metrics")
+  -publicURL string
+        [] Public URL {HERODOTE_PUBLIC_URL} (default "https://herodote.vibioh.fr")
   -readTimeout string
         [http] Read Timeout {HERODOTE_READ_TIMEOUT} (default "5s")
   -shutdownTimeout string
         [http] Shutdown Timeout {HERODOTE_SHUTDOWN_TIMEOUT} (default "10s")
+  -static string
+        [] Static folder, content served directly {HERODOTE_STATIC} (default "./static/")
   -templates string
-        [herodote] HTML Templates folder {HERODOTE_TEMPLATES} (default "./templates/")
+        [] HTML Templates folder {HERODOTE_TEMPLATES} (default "./templates/")
+  -title string
+        [] Application title {HERODOTE_TITLE} (default "Herodote")
   -url string
         [alcotest] URL to check {HERODOTE_URL}
   -userAgent string

@@ -1,27 +1,3 @@
-{{ define "seo" }}
-  <title>Herodote - Git historian</title>
-  <meta name="description" content="Herodote allows you to explore my git history accross multiple repositories, like a changelog.">
-  <meta property="og:title" content="Herodote - Git historian" />
-  <meta property="og:description" content="Herodote allows you to explore my git history accross multiple repositories, like a changelog." />
-  <meta property="og:type" content="website" />
-  <meta property="og:url" content="https://herodote.vibioh.fr" />
-  <meta property="og:image" content="https://herodote.vibioh.fr/favicon/android-chrome-512x512.png" />
-  <meta property="og:image:height" content="512" />
-  <meta property="og:image:width" content="512" />
-{{ end }}
-
-{{ define "favicon" }}
-  <link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="/favicon/favicon-32x32.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="/favicon/favicon-16x16.png">
-  <link rel="manifest" href="/favicon/site.webmanifest">
-  <link rel="mask-icon" href="/favicon/safari-pinned-tab.svg" color="#5bbad5">
-  <link rel="shortcut icon" href="/favicon/favicon.ico">
-  <meta name="msapplication-TileColor" content="#da532c">
-  <meta name="msapplication-config" content="/favicon/browserconfig.xml">
-  <meta name="theme-color" content="#ffffff">
-{{ end}}
-
 {{ define "main-style" }}
   <style>
     :root {
@@ -165,10 +141,10 @@
     .icon-overlay {
       height: var(--icon-large);
       left: calc((100% - var(--icon-large)) / 2);
+      pointer-events: none;
       position: absolute;
       top: calc((100% - var(--icon-large)) / 2);
       width: var(--icon-large);
-      pointer-events: none;
     }
 
     .modal {
@@ -250,7 +226,7 @@
 
     @media print {
       body::after {
-        content: 'Save ink, share link. https://herodote.vibioh.fr';
+        content: 'Save ink, share link. {{ .PublicURL }}';
       }
 
       body > * {
@@ -295,21 +271,23 @@
       <meta name="format-detection" content="telephone=no">
       <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
 
-      {{ template "seo" }}
-      {{ template "favicon" }}
+      {{ template "seo" . }}
+      {{ template "favicon" . }}
 
-      {{ template "main-style" }}
-      {{ template "main-script" }}
+      {{ template "main-style" . }}
+      {{ template "main-script" . }}
     </head>
 
     <body class="no-margin">
       <div class="content">
         <header class="flex padding">
           <h1 class="no-margin no-padding">
-            <a href="/{{ with .Root }}{{ . }}{{ end }}" class="no-style clear">Herodote</a>
+            <a href="/{{ with .Root }}{{ . }}{{ end }}" class="no-style clear">{{ .Title }}</a>
           </h1>
+
           <span class="flex-grow"></span>
-          {{ template "header-part"}}
+
+          {{ template "header-part" . }}
         </header>
 {{ end }}
 
