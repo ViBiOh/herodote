@@ -187,6 +187,15 @@ func (a app) GetFuncs() template.FuncMap {
 		"now": func() time.Time {
 			return time.Now()
 		},
+		"contains": func(arr []string, value string) bool {
+			for _, item := range arr {
+				if strings.EqualFold(item, value) {
+					return true
+				}
+			}
+
+			return false
+		},
 		"dateDistanceInDays": func(date, now time.Time) string {
 			if now.Truncate(dayDuration).Unix() == date.Truncate(dayDuration).Unix() {
 				return "Today"
