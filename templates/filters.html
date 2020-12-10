@@ -20,15 +20,19 @@
     .block {
       display: block;
     }
+
+    #filters-form {
+      min-width: 25rem;
+    }
   </style>
 
   {{ $root := . }}
 
   <aside id="filters" class="modal">
     <div class="modal-content">
-      <h2 class="header">Filters</h2>
+      <h2 class="header no-margin">Filters</h2>
 
-      <form method="GET" action="/">
+      <form method="GET" id="filters-form" action="/">
         <p class="padding no-margin">
           <label for="repository" class="block">Repository</label>
           <select id="repository" name="repository" class="full" multiple>
