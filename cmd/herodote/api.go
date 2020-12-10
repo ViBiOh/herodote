@@ -51,7 +51,7 @@ func main() {
 	herodoteApp, err := herodote.New(herodoteConfig, storeApp)
 	logger.Fatal(err)
 
-	rendererApp, err := renderer.New(rendererConfig, herodoteApp.GetFuncs())
+	rendererApp, err := renderer.New(rendererConfig, herodote.FuncMap)
 	logger.Fatal(err)
 
 	herodoteHandler := http.StripPrefix(apiPath, herodoteApp.Handler())
