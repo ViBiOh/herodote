@@ -12,7 +12,6 @@ import (
 	"time"
 
 	"github.com/ViBiOh/herodote/pkg/model"
-	rendererModel "github.com/ViBiOh/herodote/pkg/renderer/model"
 	"github.com/ViBiOh/herodote/pkg/store"
 	"github.com/ViBiOh/httputils/v3/pkg/cron"
 	"github.com/ViBiOh/httputils/v3/pkg/flags"
@@ -20,6 +19,7 @@ import (
 	"github.com/ViBiOh/httputils/v3/pkg/httpjson"
 	"github.com/ViBiOh/httputils/v3/pkg/logger"
 	"github.com/ViBiOh/httputils/v3/pkg/query"
+	rendererModel "github.com/ViBiOh/httputils/v3/pkg/renderer/model"
 	"github.com/ViBiOh/httputils/v3/pkg/request"
 )
 

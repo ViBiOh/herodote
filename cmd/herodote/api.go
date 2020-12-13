@@ -7,7 +7,6 @@ import (
 	"strings"
 
 	"github.com/ViBiOh/herodote/pkg/herodote"
-	"github.com/ViBiOh/herodote/pkg/renderer"
 	"github.com/ViBiOh/herodote/pkg/store"
 	"github.com/ViBiOh/httputils/v3/pkg/alcotest"
 	"github.com/ViBiOh/httputils/v3/pkg/cors"
@@ -18,6 +17,7 @@ import (
 	"github.com/ViBiOh/httputils/v3/pkg/model"
 	"github.com/ViBiOh/httputils/v3/pkg/owasp"
 	"github.com/ViBiOh/httputils/v3/pkg/prometheus"
+	"github.com/ViBiOh/httputils/v3/pkg/renderer"
 )
 
 const (
