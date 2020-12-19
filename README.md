@@ -91,6 +91,12 @@ You **have to** add secrets in your repository in the repository's settings: htt
 - `HERODOTE_API`: `HERODOTE_API` from [#ci-integration](#ci-integration)
 - `HERODOTE_SECRET`: `HERODOTE_SECRET` from [#ci-integration](#ci-integration)
 
+## Endpoints
+
+- `GET /health`: healthcheck of server, respond [`okStatus (default 204)`](#usage) or `503` during [`graceDuration`](#usage) when SIGTERM is received
+- `GET /version`: value of `VERSION` environment variable
+- `GET /metrics`: Prometheus metrics values
+
 ### Usage
 
 ```bash
