@@ -53,15 +53,7 @@ var (
 
 			return nextColor
 		},
-		"contains": func(arr []string, value string) bool {
-			for _, item := range arr {
-				if strings.EqualFold(item, value) {
-					return true
-				}
-			}
-
-			return false
-		},
+		"contains":           contains,
 		"dateDistanceInDays": diffInDays,
 		"toggleParam": func(path string, params url.Values, name, value string) string {
 			safeValues := url.Values{}
@@ -93,6 +85,16 @@ var (
 		},
 	}
 )
+
+func contains(arr []string, value string) bool {
+	for _, item := range arr {
+		if strings.EqualFold(item, value) {
+			return true
+		}
+	}
+
+	return false
+}
 
 func diffInDays(date, now time.Time) string {
 	beginNow := now.Truncate(dayDuration)

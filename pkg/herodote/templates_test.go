@@ -5,6 +5,52 @@ import (
 	"time"
 )
 
+func TestContains(t *testing.T) {
+	type args struct {
+		arr   []string
+		value string
+	}
+
+	var cases = []struct {
+		intention string
+		args      args
+		want      bool
+	}{
+		{
+			"nil",
+			args{
+				arr:   nil,
+				value: "hello",
+			},
+			false,
+		},
+		{
+			"simple",
+			args{
+				arr:   []string{"hello", "world"},
+				value: "hello",
+			},
+			true,
+		},
+		{
+			"absent",
+			args{
+				arr:   []string{"world"},
+				value: "hello",
+			},
+			false,
+		},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.intention, func(t *testing.T) {
+			if got := contains(tc.args.arr, tc.args.value); got != tc.want {
+				t.Errorf("contains() = %t, want %t", got, tc.want)
+			}
+		})
+	}
+}
+
 func TestDiffInDays(t *testing.T) {
 	type args struct {
 		date time.Time
