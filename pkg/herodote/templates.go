@@ -59,11 +59,14 @@ var (
 			return false
 		},
 		"dateDistanceInDays": func(date, now time.Time) string {
-			if now.Truncate(dayDuration).Unix() == date.Truncate(dayDuration).Unix() {
+			beginNow := now.Truncate(dayDuration)
+			beginDate := date.Truncate(dayDuration)
+
+			if beginNow.Unix() == beginDate.Unix() {
 				return "Today"
 			}
 
-			count := (now.Sub(date).Truncate(dayDuration).Hours() / 24) + 1
+			count := beginNow.Sub(beginDate).Truncate(dayDuration).Hours() / 24
 
 			daysInWeek := float64(7)
 			weeksInMonth := float64(4)
@@ -71,7 +74,7 @@ var (
 
 			if count < daysInWeek {
 				if count < 2 {
-					return "1 day ago"
+					return "Yesterday"
 				}
 
 				return fmt.Sprintf("%.f days ago", count)
