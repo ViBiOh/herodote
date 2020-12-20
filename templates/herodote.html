@@ -88,11 +88,10 @@
 
   <article>
     <ol id="commits" class="no-padding no-margin">
-      {{ $now := now }}
       {{ $previousDistance := "" }}
 
       {{ range .Commits }}
-        {{ $distance := dateDistanceInDays .Date $now }}
+        {{ $distance := dateDistanceInDays .Date $root.Now }}
         {{ if ne $previousDistance $distance }}
           {{ $previousDistance = $distance }}
           <li>

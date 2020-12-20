@@ -148,6 +148,7 @@ func (a app) TemplateFunc(r *http.Request) (string, int, map[string]interface{},
 		"Types":        types,
 		"Components":   components,
 		"Commits":      commits,
+		"Now":          time.Now(),
 	}, nil
 }
 

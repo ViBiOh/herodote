@@ -3,12 +3,19 @@ package herodote
 import (
 	"fmt"
 	"html/template"
+	"math"
 	"net/url"
 	"strings"
 	"sync"
 	"time"
 
 	"github.com/ViBiOh/herodote/pkg/model"
+)
+
+const (
+	daysInWeek   = float64(7)
+	weeksInMonth = float64(4)
+	monthsInYear = float64(12)
 )
 
 var (
@@ -46,9 +53,6 @@ var (
 
 			return nextColor
 		},
-		"now": func() time.Time {
-			return time.Now()
-		},
 		"contains": func(arr []string, value string) bool {
 			for _, item := range arr {
 				if strings.EqualFold(item, value) {
@@ -58,53 +62,7 @@ var (
 
 			return false
 		},
-		"dateDistanceInDays": func(date, now time.Time) string {
-			beginNow := now.Truncate(dayDuration)
-			beginDate := date.Truncate(dayDuration)
-
-			if beginNow.Unix() == beginDate.Unix() {
-				return "Today"
-			}
-
-			count := beginNow.Sub(beginDate).Truncate(dayDuration).Hours() / 24
-
-			daysInWeek := float64(7)
-			weeksInMonth := float64(4)
-			monthsInYear := float64(12)
-
-			if count < daysInWeek {
-				if count < 2 {
-					return "Yesterday"
-				}
-
-				return fmt.Sprintf("%.f days ago", count)
-			}
-
-			count = count / daysInWeek
-			if count < weeksInMonth {
-				if count < 2 {
-					return "1 week ago"
-				}
-
-				return fmt.Sprintf("%.f weeks ago", count)
-			}
-
-			count = count / weeksInMonth
-			if count < monthsInYear {
-				if count < 2 {
-					return "1 month ago"
-				}
-
-				return fmt.Sprintf("%.f months ago", count)
-			}
-
-			count = count / monthsInYear
-			if count < 2 {
-				return "1 year ago"
-			}
-
-			return fmt.Sprintf("%.f years ago", count)
-		},
+		"dateDistanceInDays": diffInDays,
 		"toggleParam": func(path string, params url.Values, name, value string) string {
 			safeValues := url.Values{}
 			done := false
@@ -135,3 +93,47 @@ var (
 		},
 	}
 )
+
+func diffInDays(date, now time.Time) string {
+	beginNow := now.Truncate(dayDuration)
+	beginDate := date.Truncate(dayDuration)
+
+	if beginNow.Unix() == beginDate.Unix() {
+		return "Today"
+	}
+
+	count := math.Abs(beginNow.Sub(beginDate).Truncate(dayDuration).Hours()) / 24
+
+	if count < daysInWeek {
+		if count < 2 {
+			return "Yesterday"
+		}
+
+		return fmt.Sprintf("%.f days ago", count)
+	}
+
+	count = count / daysInWeek
+	if count < weeksInMonth {
+		if count < 2 {
+			return "1 week ago"
+		}
+
+		return fmt.Sprintf("%.f weeks ago", count)
+	}
+
+	count = count / weeksInMonth
+	if count < monthsInYear {
+		if count < 2 {
+			return "1 month ago"
+		}
+
+		return fmt.Sprintf("%.f months ago", count)
+	}
+
+	count = count / monthsInYear
+	if count < 2 {
+		return "1 year ago"
+	}
+
+	return fmt.Sprintf("%.f years ago", count)
+}
