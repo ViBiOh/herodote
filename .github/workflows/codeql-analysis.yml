@@ -8,8 +8,8 @@ on:
   - cron: "0 0 * * 6"
 jobs:
   analyze:
-    if: "! contains(toJSON(github.event.commits.*.message), '[skip-ci]')"
     name: Analyze
+    if: "! contains(toJSON(github.event.commits.*.message), '[skip-ci]')"
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
