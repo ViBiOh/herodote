@@ -18,8 +18,8 @@ import (
 	"github.com/ViBiOh/httputils/v3/pkg/httperror"
 	"github.com/ViBiOh/httputils/v3/pkg/httpjson"
 	"github.com/ViBiOh/httputils/v3/pkg/logger"
+	httpModel "github.com/ViBiOh/httputils/v3/pkg/model"
 	"github.com/ViBiOh/httputils/v3/pkg/query"
-	rendererModel "github.com/ViBiOh/httputils/v3/pkg/renderer/model"
 	"github.com/ViBiOh/httputils/v3/pkg/request"
 )
 
@@ -155,7 +155,7 @@ func (a app) TemplateFunc(r *http.Request) (string, int, map[string]interface{},
 func (a app) listCommits(r *http.Request) ([]model.Commit, uint, query.Pagination, error) {
 	pagination, err := query.ParsePagination(r, 1, 50, 100)
 	if err != nil {
-		return nil, 0, pagination, rendererModel.WrapInvalid(err)
+		return nil, 0, pagination, httpModel.WrapInvalid(err)
 	}
 
 	params := r.URL.Query()
@@ -169,12 +169,12 @@ func (a app) listCommits(r *http.Request) ([]model.Commit, uint, query.Paginatio
 
 	before := strings.TrimSpace(params.Get("before"))
 	if err := checkDate(before); err != nil {
-		return nil, 0, pagination, rendererModel.WrapInvalid(err)
+		return nil, 0, pagination, httpModel.WrapInvalid(err)
 	}
 
 	after := strings.TrimSpace(params.Get("after"))
 	if err := checkDate(after); err != nil {
-		return nil, 0, pagination, rendererModel.WrapInvalid(err)
+		return nil, 0, pagination, httpModel.WrapInvalid(err)
 	}
 
 	commits, totalCount, err := a.store.SearchCommit(r.Context(), query, filters, before, after, pagination.Page, pagination.PageSize)
@@ -194,7 +194,7 @@ func (a app) handleCommits(w http.ResponseWriter, r *http.Request) {
 func (a app) handleGetCommits(w http.ResponseWriter, r *http.Request) {
 	commits, totalCount, pagination, err := a.listCommits(r)
 	if err != nil {
-		if errors.Is(err, rendererModel.ErrInvalid) {
+		if errors.Is(err, httpModel.ErrInvalid) {
 			httperror.BadRequest(w, err)
 		} else {
 			httperror.InternalServerError(w, err)
