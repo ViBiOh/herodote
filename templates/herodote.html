@@ -107,7 +107,7 @@
           <pre class="label padding-half no-margin"><a class="success" href="{{ toggleParam $root.Path $root.Filters "type" .Type }}">{{ .Type }}</a>
             {{- if .Component -}}
               <a href="{{ toggleParam $root.Path $root.Filters "component" .Component }}"><strong class="primary">({{ .Component }})</strong></a>
-            {{- end -}}
+            {{- end -}}{{- if .Revert }} <span class="bg-danger padding-half label">Revert</span>{{- end -}}
           </pre>
 
           <a class="commit-link ellipsis" href="https://{{ .Remote }}/{{ .Repository }}/commit/{{ .Hash }}">
