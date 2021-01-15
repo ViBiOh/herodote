@@ -157,7 +157,7 @@ walk_log() {
       local COMPONENT=""
       local BREAK=""
 
-      if [[ ${DESCRIPTION} =~ ^(revert )?(${SCOPES})(\((.+)\))?(\!)?:\ (.*)$ ]]; then
+      if [[ ${DESCRIPTION} =~ ^(revert: )?(${SCOPES})(\((.+)\))?(\!)?:\ (.*)$ ]]; then
         REVERT="${BASH_REMATCH[1]}"
         TYPE="${BASH_REMATCH[2]}"
         COMPONENT="${BASH_REMATCH[4]}"
