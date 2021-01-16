@@ -27,7 +27,7 @@
 
 {{ define "header-part" }}
   <a href="#filters" class="button bg-primary" title="Filter">
-    <img class="icon" src="/svg/filter?fill=silver" alt="Filter icon">
+    <img class="icon" src="/svg/filter?fill=#272727" alt="Filter icon">
   </a>
 {{ end }}
 
@@ -35,6 +35,10 @@
   <style type="text/css">
     .label {
       border-radius: 4px;
+    }
+
+    .revert {
+      margin-left: calc(var(--space-size) / 2);
     }
 
     #commits {
@@ -104,10 +108,14 @@
             {{ .Repository }}
           </a>
 
+          {{- if .Revert }}
+            <span class="bg-danger padding-half revert label">Revert</span>
+          {{- end -}}
+
           <pre class="label padding-half no-margin"><a class="success" href="{{ toggleParam $root.Path $root.Filters "type" .Type }}">{{ .Type }}</a>
             {{- if .Component -}}
               <a href="{{ toggleParam $root.Path $root.Filters "component" .Component }}"><strong class="primary">({{ .Component }})</strong></a>
-            {{- end -}}{{- if .Revert }} <span class="bg-danger padding-half label">Revert</span>{{- end -}}
+            {{- end -}}
           </pre>
 
           <a class="commit-link ellipsis" href="https://{{ .Remote }}/{{ .Repository }}/commit/{{ .Hash }}">
