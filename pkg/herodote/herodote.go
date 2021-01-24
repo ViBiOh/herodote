@@ -81,12 +81,12 @@ func New(config Config, store store.App) (App, error) {
 }
 
 func (a app) Start() {
-	cron.New().Days().At("06:00").In("Europe/Paris").Start(func(_ time.Time) error {
+	cron.New().Days().At("06:00").In("Europe/Paris").OnError(func(err error) {
+		logger.Error("unable to refresh lexeme: %s", err)
+	}).Start(func(_ time.Time) error {
 		logger.Info("Refreshing lexeme")
 		return a.store.Refresh(context.Background())
-	}, func(err error) {
-		logger.Error("unable to refresh lexeme: %s", err)
-	})
+	}, nil)
 }
 
 // Handler for request. Should be use with net/http
