@@ -9,14 +9,14 @@ Git [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) histo
 - Github Actions provided for integration
 
 [![Build](https://github.com/ViBiOh/herodote/workflows/Build/badge.svg)](https://github.com/ViBiOh/herodote/actions)
-[![codecov](https://codecov.io/gh/ViBiOh/herodote/branch/master/graph/badge.svg)](https://codecov.io/gh/ViBiOh/herodote)
+[![codecov](https://codecov.io/gh/ViBiOh/herodote/branch/main/graph/badge.svg)](https://codecov.io/gh/ViBiOh/herodote)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=ViBiOh_herodote&metric=alert_status)](https://sonarcloud.io/dashboard?id=ViBiOh_herodote)
 
 ## Concepts
 
 Herodote aims to provide a quick view of activitiy of all your repositories. It's the changelog of your organizations.
 
-Herodote only understands conventionnal commits. Commits that don't match expectations are ignored. To ensure you have conventionnal commits, you can use [`commit-msg hooks`](https://github.com/ViBiOh/scripts/blob/master/hooks/commit-msg) and/or a [simple Github Action that checks it](.github/workflows/branch_clean.yml).
+Herodote only understands conventionnal commits. Commits that don't match expectations are ignored. To ensure you have conventionnal commits, you can use [`commit-msg hooks`](https://github.com/ViBiOh/scripts/blob/main/hooks/commit-msg) and/or a [simple Github Action that checks it](.github/workflows/branch_clean.yml).
 
 Herodote loads data with its own script, which is idempotent. On cold start, with an empty index, it only loads last 50 commits.
 
@@ -36,7 +36,7 @@ A Docker image is available for `amd64`, `arm` and `arm64` platforms on Docker H
 
 You can configure app by passing CLI args or environment variables (cf. [Usage](#usage) section). CLI override environment variables.
 
-You'll find a Kubernetes exemple in the [`infra/`](infra/) folder, using my [`app chart`](https://github.com/ViBiOh/charts/tree/master/app)
+You'll find a Kubernetes exemple in the [`infra/`](infra/) folder, using my [`app chart`](https://github.com/ViBiOh/charts/tree/main/app)
 
 ### CI Integration
 
@@ -55,7 +55,7 @@ If you execute your script in a non-interactive environment, set the `SCRIPTS_NO
 
 #### Github Actions
 
-You can use the following Github Actions for pushing your commits to Herodote index on merge to `master`.
+You can use the following Github Actions for pushing your commits to Herodote index on merge to `main`.
 
 ```yaml
 ---
@@ -63,7 +63,7 @@ name: Herodote
 on:
   push:
     branches:
-      - master
+      - main
 jobs:
   build:
     name: Feed
@@ -77,7 +77,7 @@ jobs:
 
       - name: Push history
         run: |
-          curl --disable --silent --show-error --location --max-time 30 "https://raw.githubusercontent.com/ViBiOh/herodote/master/herodote.sh" | bash
+          curl --disable --silent --show-error --location --max-time 30 "https://raw.githubusercontent.com/ViBiOh/herodote/main/herodote.sh" | bash
         env:
           HERODOTE_API: https://herodote.vibioh.fr
           HERODOTE_SECRET: ${{ secrets.HERODOTE_SECRET }}
