@@ -34,6 +34,11 @@
 
       <form method="GET" id="filters-form" action="/">
         <p class="padding no-margin">
+          <label for="q" class="block">Text</label>
+          <input id="q" type="text" name="q" value="{{ if $root.Filters.q }}{{ index $root.Filters.q 0 }}{{ end }}" placeholder="Searched string..." class="full">
+        </p>
+
+        <p class="padding no-margin">
           <label for="repository" class="block">Repository</label>
           <select id="repository" name="repository" class="full" multiple>
             {{ range .Repositories }}
