@@ -84,7 +84,7 @@ func TestCheck(t *testing.T) {
 			Commit{
 				Hash:    "1ab2c3f4d",
 				Type:    "feat",
-				Content: "Add README.md",
+				Content: "Add CONTRIBUTING.md",
 				Date:    time.Now(),
 			},
 			errors.New("repository's remote is required"),
@@ -94,7 +94,7 @@ func TestCheck(t *testing.T) {
 			Commit{
 				Hash:    "1ab2c3f4d",
 				Type:    "feat",
-				Content: "Add README.md",
+				Content: "Add LICENSE",
 				Date:    time.Now(),
 				Remote:  "github.com",
 			},
@@ -105,7 +105,7 @@ func TestCheck(t *testing.T) {
 			Commit{
 				Hash:       "1ab2c3f4d",
 				Type:       "feat",
-				Content:    "Add README.md",
+				Content:    "Add main.go",
 				Date:       time.Now(),
 				Remote:     "github.com",
 				Repository: "vibioh/herodote",
