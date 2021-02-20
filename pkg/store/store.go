@@ -6,7 +6,7 @@ import (
 	"errors"
 
 	"github.com/ViBiOh/herodote/pkg/model"
-	"github.com/ViBiOh/httputils/v3/pkg/db"
+	"github.com/ViBiOh/httputils/v4/pkg/db"
 )
 
 var (

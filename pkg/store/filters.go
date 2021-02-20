@@ -5,7 +5,7 @@ import (
 	"database/sql"
 	"fmt"
 
-	"github.com/ViBiOh/httputils/v3/pkg/db"
+	"github.com/ViBiOh/httputils/v4/pkg/db"
 )
 
 const listRepositoryFiltersQuery = `

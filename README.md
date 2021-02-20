@@ -95,16 +95,16 @@ You **have to** add secrets in your repository in the repository's settings: htt
 
 - `GET /health`: healthcheck of server, respond [`okStatus (default 204)`](#usage) or `503` during [`graceDuration`](#usage) when SIGTERM is received
 - `GET /version`: value of `VERSION` environment variable
-- `GET /metrics`: Prometheus metrics values
+- `GET /metrics`: Prometheus metrics values on a dedicated port
 
 ### Usage
 
 ```bash
 Usage of herodote:
   -address string
-        [http] Listen address {HERODOTE_ADDRESS}
+        [server] Listen address {HERODOTE_ADDRESS}
   -cert string
-        [http] Certificate file {HERODOTE_CERT}
+        [server] Certificate file {HERODOTE_CERT}
   -corsCredentials
         [cors] Access-Control-Allow-Credentials {HERODOTE_CORS_CREDENTIALS}
   -corsExpose string
@@ -138,9 +138,9 @@ Usage of herodote:
   -httpSecret string
         [herodote] HTTP Secret Key for Update {HERODOTE_HTTP_SECRET}
   -idleTimeout string
-        [http] Idle Timeout {HERODOTE_IDLE_TIMEOUT} (default "2m")
+        [server] Idle Timeout {HERODOTE_IDLE_TIMEOUT} (default "2m")
   -key string
-        [http] Key file {HERODOTE_KEY}
+        [server] Key file {HERODOTE_KEY}
   -loggerJson
         [logger] Log format as JSON {HERODOTE_LOGGER_JSON}
   -loggerLevel string
@@ -154,27 +154,41 @@ Usage of herodote:
   -okStatus int
         [http] Healthy HTTP Status code {HERODOTE_OK_STATUS} (default 204)
   -port uint
-        [http] Listen port {HERODOTE_PORT} (default 1080)
+        [server] Listen port {HERODOTE_PORT} (default 1080)
+  -prometheusAddress string
+        [prometheus] Listen address {HERODOTE_PROMETHEUS_ADDRESS}
+  -prometheusCert string
+        [prometheus] Certificate file {HERODOTE_PROMETHEUS_CERT}
+  -prometheusIdleTimeout string
+        [prometheus] Idle Timeout {HERODOTE_PROMETHEUS_IDLE_TIMEOUT} (default "10s")
   -prometheusIgnore string
         [prometheus] Ignored path prefixes for metrics, comma separated {HERODOTE_PROMETHEUS_IGNORE}
-  -prometheusPath string
-        [prometheus] Path for exposing metrics {HERODOTE_PROMETHEUS_PATH} (default "/metrics")
+  -prometheusKey string
+        [prometheus] Key file {HERODOTE_PROMETHEUS_KEY}
+  -prometheusPort uint
+        [prometheus] Listen port {HERODOTE_PROMETHEUS_PORT} (default 9090)
+  -prometheusReadTimeout string
+        [prometheus] Read Timeout {HERODOTE_PROMETHEUS_READ_TIMEOUT} (default "5s")
+  -prometheusShutdownTimeout string
+        [prometheus] Shutdown Timeout {HERODOTE_PROMETHEUS_SHUTDOWN_TIMEOUT} (default "5s")
+  -prometheusWriteTimeout string
+        [prometheus] Write Timeout {HERODOTE_PROMETHEUS_WRITE_TIMEOUT} (default "10s")
   -publicURL string
-        [] Public URL {HERODOTE_PUBLIC_URL} (default "https://herodote.vibioh.fr")
+        Public URL {HERODOTE_PUBLIC_URL} (default "https://herodote.vibioh.fr")
   -readTimeout string
-        [http] Read Timeout {HERODOTE_READ_TIMEOUT} (default "5s")
+        [server] Read Timeout {HERODOTE_READ_TIMEOUT} (default "5s")
   -shutdownTimeout string
-        [http] Shutdown Timeout {HERODOTE_SHUTDOWN_TIMEOUT} (default "10s")
+        [server] Shutdown Timeout {HERODOTE_SHUTDOWN_TIMEOUT} (default "10s")
   -static string
-        [] Static folder, content served directly {HERODOTE_STATIC} (default "./static/")
+        Static folder, content served directly {HERODOTE_STATIC} (default "./static/")
   -templates string
-        [] HTML Templates folder {HERODOTE_TEMPLATES} (default "./templates/")
+        HTML Templates folder {HERODOTE_TEMPLATES} (default "./templates/")
   -title string
-        [] Application title {HERODOTE_TITLE} (default "Herodote")
+        Application title {HERODOTE_TITLE} (default "Herodote")
   -url string
         [alcotest] URL to check {HERODOTE_URL}
   -userAgent string
         [alcotest] User-Agent for check {HERODOTE_USER_AGENT} (default "Alcotest")
   -writeTimeout string
-        [http] Write Timeout {HERODOTE_WRITE_TIMEOUT} (default "10s")
+        [server] Write Timeout {HERODOTE_WRITE_TIMEOUT} (default "10s")
 ```

@@ -11,7 +11,7 @@ import (
 	"testing"
 
 	"github.com/ViBiOh/herodote/pkg/store"
-	"github.com/ViBiOh/httputils/v3/pkg/request"
+	"github.com/ViBiOh/httputils/v4/pkg/request"
 )
 
 func TestFlags(t *testing.T) {
