@@ -50,9 +50,9 @@ type Config struct {
 }
 
 type app struct {
+	colors map[string]string
 	store  store.App
 	secret string
-	colors map[string]string
 }
 
 // Flags adds flags for configuring package

@@ -8,13 +8,13 @@ import (
 
 // Commit describes a commit on a repository
 type Commit struct {
+	Date       time.Time `json:"date"`
 	Hash       string    `json:"hash"`
 	Type       string    `json:"type"`
 	Component  string    `json:"component"`
 	Content    string    `json:"content"`
 	Remote     string    `json:"remote"`
 	Repository string    `json:"repository"`
-	Date       time.Time `json:"date"`
 	Breaking   bool      `json:"breaking"`
 	Revert     bool      `json:"revert"`
 }
