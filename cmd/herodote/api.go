@@ -1,6 +1,7 @@
 package main
 
 import (
+	"embed"
 	"flag"
 	"net/http"
 	"os"
@@ -24,6 +25,9 @@ import (
 const (
 	apiPath = "/api"
 )
+
+//go:embed templates static
+var content embed.FS
 
 func main() {
 	fs := flag.NewFlagSet("herodote", flag.ExitOnError)
@@ -61,7 +65,7 @@ func main() {
 	herodoteApp, err := herodote.New(herodoteConfig, storeApp)
 	logger.Fatal(err)
 
-	rendererApp, err := renderer.New(rendererConfig, herodote.FuncMap)
+	rendererApp, err := renderer.New(rendererConfig, content, herodote.FuncMap)
 	logger.Fatal(err)
 
 	herodoteHandler := http.StripPrefix(apiPath, herodoteApp.Handler())

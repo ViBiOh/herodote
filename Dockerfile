@@ -16,6 +16,4 @@ ENV VERSION=${VERSION}
 ARG TARGETOS
 ARG TARGETARCH
 
-COPY templates/ templates/
-COPY static/ static/
 COPY release/herodote_${TARGETOS}_${TARGETARCH} /herodote

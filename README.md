@@ -179,10 +179,6 @@ Usage of herodote:
         [server] Read Timeout {HERODOTE_READ_TIMEOUT} (default "5s")
   -shutdownTimeout string
         [server] Shutdown Timeout {HERODOTE_SHUTDOWN_TIMEOUT} (default "10s")
-  -static string
-        Static folder, content served directly {HERODOTE_STATIC} (default "./static/")
-  -templates string
-        HTML Templates folder {HERODOTE_TEMPLATES} (default "./templates/")
   -title string
         Application title {HERODOTE_TITLE} (default "Herodote")
   -url string
