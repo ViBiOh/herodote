@@ -108,6 +108,10 @@
             {{ .Repository }}
           </a>
 
+          {{- if .Breaking }}
+            <span class="bg-danger padding-half revert label">BREAKING CHANGE</span>
+          {{- end -}}
+
           {{- if .Revert }}
             <span class="bg-danger padding-half revert label">Revert</span>
           {{- end -}}
