@@ -24,7 +24,7 @@ spec:
   values:
     nameOverride: herodote
     image:
-      repository: vibioh/herodote:202102230938 # {"$imagepolicy": "default:herodote"}
+      repository: vibioh/herodote:202102231030 # {"$imagepolicy": "default:herodote"}
     config:
       HERODOTE_LOGGER_JSON: "true"
       HERODOTE_DB_HOST: herodote-db
