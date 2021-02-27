@@ -37,7 +37,7 @@ spec:
     ingress:
       enabled: true
       hosts:
-        - herodote.vibioh.fr
+      - herodote.vibioh.fr
 ---
 apiVersion: helm.toolkit.fluxcd.io/v2beta1
 kind: HelmRelease
