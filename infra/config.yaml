@@ -24,7 +24,7 @@ spec:
   values:
     nameOverride: herodote
     image:
-      repository: vibioh/herodote:202102231612 # {"$imagepolicy": "default:flux-herodote-web"}
+      repository: vibioh/herodote:202102271712 # {"$imagepolicy": "default:flux-herodote-web"}
     config:
       HERODOTE_LOGGER_JSON: "true"
       HERODOTE_DB_HOST: herodote-db
