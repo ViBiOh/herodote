@@ -9,6 +9,7 @@ import (
 
 	"github.com/ViBiOh/herodote/pkg/model"
 	"github.com/ViBiOh/httputils/v4/pkg/db"
+	httpModel "github.com/ViBiOh/httputils/v4/pkg/model"
 	"github.com/lib/pq"
 )
 
@@ -40,11 +41,11 @@ OFFSET $2
 func (a app) SearchCommit(ctx context.Context, query string, filters map[string][]string, before, after string, page, pageSize uint) ([]model.Commit, uint, error) {
 	words, err := a.findSimilarWords(ctx, query)
 	if err != nil {
-		return nil, 0, fmt.Errorf("unable to find similar words: %s", err)
+		return nil, 0, httpModel.WrapNotFound(fmt.Errorf("unable to find similar words: %s", err))
 	}
 
 	if len(query) > 0 && len(words) == 0 {
-		return nil, 0, errors.New("query doesn't match any known words")
+		return nil, 0, httpModel.WrapNotFound(errors.New("query doesn't match any known words"))
 	}
 
 	var totalCount uint
