@@ -4,5 +4,5 @@ go 1.16
 
 require (
 	github.com/ViBiOh/httputils/v4 v4.3.0
-	github.com/lib/pq v1.9.0
+	github.com/lib/pq v1.10.0
 )
