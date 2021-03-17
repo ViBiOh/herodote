@@ -8,7 +8,7 @@ spec:
   chart:
     spec:
       chart: app
-      version: "0.0.55"
+      version: "0.0.58"
       sourceRef:
         kind: HelmRepository
         name: vibioh
@@ -39,36 +39,6 @@ spec:
       enabled: true
       hosts:
       - herodote.vibioh.fr
----
-apiVersion: helm.toolkit.fluxcd.io/v2beta1
-kind: HelmRelease
-metadata:
-  name: herodote-db
-  namespace: default
-spec:
-  interval: 120m
-  chart:
-    spec:
-      chart: postgres
-      version: "0.0.19"
-      sourceRef:
-        kind: HelmRepository
-        name: vibioh
-        namespace: default
-      interval: 120m
-  install:
-    skipCRDs: true
-  maxHistory: 3
-  upgrade:
-    remediation:
-      retries: 3
-  rollback:
-    cleanupOnFail: true
-  values:
-    nameOverride: herodote-db
-    config:
-      POSTGRES_USER: herodote
-      POSTGRES_DB: herodote
-    secrets:
-      POSTGRES_PASSWORD: AgDNu66oPoh4UsOhaTFuZL8CXH9urhqCUTNKwmUsK9TS8PGY+WI0yhRIMcQ0zGeZnPALHsEv58HtBzhDHH5bbTcE6t0CxvFeWjLh788aBZBWtyCq5q9G0OlWQSIWJBluZuNHoNAQzWYFQ0hZFmEAuD1OgBRDXpeKVbuFgU0Wz8P4+ILF/Q3WyADF728wch4KJRAlk9A3ZS2jCE7U/5pwrvsn/6AIJ1Sbn9/BVz5vRQR73Gj5g2+dluPs1TokB/da7Sv1aO4w/bapB7dz4Ervhyyla5DuenqRxoftPKVDgI7rWUCzgGSbOpKb+XsJZ4eRQ9iDI4yMk8vNujJxxgQOlmWqzxm+oAKzdBAt5+uBMG7a7daHdZq2cnlR+hveSwVnfFo0z6LbGrONpmvX47NBP+ZmteKNBmU+IcNuUmIIip8vccPGH3ecBLfrvyk3pedOLMYUh3VzpX70CAnzCxEbXveD6fybWmqjvind3xtYQ7VEZvgBBOGGCwgLDNzfHpK6Q7zjJeNRXGcNdaB+C8vuF5beIR7RORrdjCn27kSS82BKyLhUoK+caEoBQLEpSKecQtyl63sV8wwdd/zZk/unk7V/vnfHMmWPuUpRuypdlXOkpqNm0WvVe6TgSMQfN5A6IVbJ/McarmkcnKsf6svMd3ONCA+X0iH2VQ9MxDFaQFUZaQL14rrM11sl9VRj2gAJRVbHg3SwjNicsyyfVrSOBE2t5nfi6LCiAo7QwjpFtjjtDYgigtA3EbXKeMjoFpL/UccTUwINJ/jsLxDssNs=
-      FIBR_BACKUP_PASSWORD: AgCpMJUPrqpPRfWCG6ytb1Fp0Ts5MYCzLTv36xdStHMMxQ+kag6q8oIBkGqEdn/lIaa6+X0I/DNRsKIiWoGUgyDKSsigbfBV+Zd9YAei2zYyLjAH9nQPUuVjeWYJHUBWUA4JCYsQJdRF/GJw2+eULVK/VABj8Ng49tOzB6CnjMRX9z/qfbnI4HlYp41BSkvGkjWyXaiHbQvq0Z0K/LciWlyRJazA81h5qPbyNAF4OdtMWd7Id1wF92fizcFW/1+WJ7aAARNRMUIjghq0CHPsI6jWh8bU/RRvUVwtG3okJtAd2ZJMDP+Mv2wM7O8xpfiJVoTUW/nZ4QgiVpJkraJHk/I4HrGBBwm9LmpCHDeseBhVvlU6Wn8+jT0XWvshWLmOq134/b/t2kZ4jaE9rIev6JMl52TZ0y9S5rhnDdgwqu5mNEtxS8Fn0wZtWjMxuJvMl2y+wL1GNz3t8+ju5bTS2GreJV1UvPzfJkN1kx2RJCDFEBkUKU2mcuK/YSIkyDPhSCorGrKYCtT4NHyUAL4FWJDVEMOvaKECo+bKv18HPcGtCZy04uV2n7JsY+h9XEFqJJ70O1iRf1Jv7UwJm4T2LZCwWcqubE9o6DE/GFAz+abVWoEwWvBBFHB1fWR9fWiCyicfo13yDmCUVOaXqsZRN3Fdcjmc/kfjSqHY7w0cUpWyZUlfao1f7na15gSCmb6Wa6ZjmUj6GD6P4E+Dt6svVIrPSQtZslePeLLubpX2fmkiBmFaKXyQJnf67fn+xqml/rMvPIwSeV4rt3/yYX8=
+    canary:
+      enabled: true
+      url: https://herodote.vibioh.fr
