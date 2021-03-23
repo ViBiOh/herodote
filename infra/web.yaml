@@ -38,17 +38,17 @@ spec:
     affinity:
       podAffinity:
         requiredDuringSchedulingIgnoredDuringExecution:
-          - labelSelector:
-              topologyKey: kubernetes.io/hostname
-              matchExpressions:
-                - key: app.kubernetes.io/name
-                  operator: In
-                  values:
-                    - herodote-db
+        - labelSelector:
+            topologyKey: kubernetes.io/hostname
+            matchExpressions:
+            - key: app.kubernetes.io/name
+              operator: In
+              values:
+              - herodote-db
     ingress:
       enabled: true
       hosts:
-        - herodote.vibioh.fr
+      - herodote.vibioh.fr
     canary:
       enabled: true
       url: https://herodote.vibioh.fr
