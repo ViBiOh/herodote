@@ -39,12 +39,12 @@ spec:
       podAffinity:
         requiredDuringSchedulingIgnoredDuringExecution:
         - labelSelector:
-            topologyKey: kubernetes.io/hostname
             matchExpressions:
             - key: app.kubernetes.io/name
               operator: In
               values:
               - herodote-db
+          topologyKey: kubernetes.io/hostname
     ingress:
       enabled: true
       hosts:
