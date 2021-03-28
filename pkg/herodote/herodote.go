@@ -202,7 +202,7 @@ func (a app) handleGetCommits(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	httpjson.ResponsePaginatedJSON(w, http.StatusOK, pagination.Page, pagination.PageSize, totalCount, commits, httpjson.IsPretty(r))
+	httpjson.WritePagination(w, http.StatusOK, pagination.Page, pagination.PageSize, totalCount, commits, httpjson.IsPretty(r))
 }
 
 func (a app) handlePostCommits(w http.ResponseWriter, r *http.Request) {
