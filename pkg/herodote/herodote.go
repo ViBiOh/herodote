@@ -83,9 +83,9 @@ func New(config Config, store store.App) (App, error) {
 func (a app) Start() {
 	cron.New().Days().At("06:00").In("Europe/Paris").OnError(func(err error) {
 		logger.Error("unable to refresh lexeme: %s", err)
-	}).Start(func(_ time.Time) error {
+	}).Start(func(ctx context.Context) error {
 		logger.Info("Refreshing lexeme")
-		return a.store.Refresh(context.Background())
+		return a.store.Refresh(ctx)
 	}, nil)
 }
 
