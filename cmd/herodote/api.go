@@ -84,8 +84,6 @@ func main() {
 		rendererHandler.ServeHTTP(w, r)
 	})
 
-	go herodoteApp.Start()
-
 	go promServer.Start("prometheus", healthApp.End(), prometheusApp.Handler())
 	go appServer.Start("http", healthApp.End(), httputils.Handler(appHandler, healthApp, prometheusApp.Middleware, owasp.New(owaspConfig).Middleware, cors.New(corsConfig).Middleware))
 

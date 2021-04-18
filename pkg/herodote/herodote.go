@@ -1,7 +1,6 @@
 package herodote
 
 import (
-	"context"
 	"encoding/json"
 	"errors"
 	"flag"
@@ -13,11 +12,9 @@ import (
 
 	"github.com/ViBiOh/herodote/pkg/model"
 	"github.com/ViBiOh/herodote/pkg/store"
-	"github.com/ViBiOh/httputils/v4/pkg/cron"
 	"github.com/ViBiOh/httputils/v4/pkg/flags"
 	"github.com/ViBiOh/httputils/v4/pkg/httperror"
 	"github.com/ViBiOh/httputils/v4/pkg/httpjson"
-	"github.com/ViBiOh/httputils/v4/pkg/logger"
 	httpModel "github.com/ViBiOh/httputils/v4/pkg/model"
 	"github.com/ViBiOh/httputils/v4/pkg/query"
 	"github.com/ViBiOh/httputils/v4/pkg/request"
@@ -41,7 +38,6 @@ var (
 type App interface {
 	Handler() http.Handler
 	TemplateFunc(*http.Request) (string, int, map[string]interface{}, error)
-	Start()
 }
 
 // Config of package
@@ -50,9 +46,9 @@ type Config struct {
 }
 
 type app struct {
-	colors map[string]string
-	store  store.App
-	secret string
+	colors   map[string]string
+	storeApp store.App
+	secret   string
 }
 
 // Flags adds flags for configuring package
@@ -63,30 +59,21 @@ func Flags(fs *flag.FlagSet, prefix string) Config {
 }
 
 // New creates new App from Config
-func New(config Config, store store.App) (App, error) {
+func New(config Config, storeApp store.App) (App, error) {
 	secret := strings.TrimSpace(*config.secret)
 	if len(secret) == 0 {
 		return nil, errors.New("http secret is required")
 	}
 
-	if store == nil {
+	if storeApp == nil {
 		return nil, errors.New("store is required")
 	}
 
 	return app{
-		secret: secret,
-		store:  store,
-		colors: make(map[string]string),
+		secret:   secret,
+		storeApp: storeApp,
+		colors:   make(map[string]string),
 	}, nil
-}
-
-func (a app) Start() {
-	cron.New().Days().At("06:00").In("Europe/Paris").OnError(func(err error) {
-		logger.Error("unable to refresh lexeme: %s", err)
-	}).Start(func(ctx context.Context) error {
-		logger.Info("Refreshing lexeme")
-		return a.store.Refresh(ctx)
-	}, nil)
 }
 
 // Handler for request. Should be use with net/http
@@ -99,15 +86,6 @@ func (a app) Handler() http.Handler {
 
 		if strings.HasPrefix(r.URL.Path, commitsPath) {
 			a.handleCommits(w, r)
-			return
-		}
-
-		if r.Method == http.MethodPost && strings.HasPrefix(r.URL.Path, refreshPath) {
-			if err := a.store.Refresh(r.Context()); err != nil {
-				httperror.InternalServerError(w, err)
-				return
-			}
-
 			return
 		}
 
@@ -126,17 +104,17 @@ func (a app) TemplateFunc(r *http.Request) (string, int, map[string]interface{},
 		return "", http.StatusInternalServerError, nil, fmt.Errorf("unable to parse query: %s", err)
 	}
 
-	repositories, err := a.store.ListFilters(r.Context(), "repository")
+	repositories, err := a.storeApp.ListFilters(r.Context(), "repository")
 	if err != nil {
 		return "", http.StatusInternalServerError, nil, fmt.Errorf("unable to list repositories: %s", err)
 	}
 
-	types, err := a.store.ListFilters(r.Context(), "type")
+	types, err := a.storeApp.ListFilters(r.Context(), "type")
 	if err != nil {
 		return "", http.StatusInternalServerError, nil, fmt.Errorf("unable to list types: %s", err)
 	}
 
-	components, err := a.store.ListFilters(r.Context(), "component")
+	components, err := a.storeApp.ListFilters(r.Context(), "component")
 	if err != nil {
 		return "", http.StatusInternalServerError, nil, fmt.Errorf("unable to list components: %s", err)
 	}
@@ -177,7 +155,7 @@ func (a app) listCommits(r *http.Request) ([]model.Commit, uint, query.Paginatio
 		return nil, 0, pagination, httpModel.WrapInvalid(err)
 	}
 
-	commits, totalCount, err := a.store.SearchCommit(r.Context(), query, filters, before, after, pagination.Page, pagination.PageSize)
+	commits, totalCount, err := a.storeApp.SearchCommit(r.Context(), query, filters, before, after, pagination.Page, pagination.PageSize)
 	return commits, totalCount, pagination, err
 }
 
@@ -224,7 +202,7 @@ func (a app) handlePostCommits(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := a.store.SaveCommit(r.Context(), commit); err != nil {
+	if err := a.storeApp.SaveCommit(r.Context(), commit); err != nil {
 		httperror.InternalServerError(w, err)
 		return
 	}

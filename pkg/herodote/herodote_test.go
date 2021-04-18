@@ -81,9 +81,9 @@ func TestNew(t *testing.T) {
 				store:  store.New(nil),
 			},
 			app{
-				secret: "testing",
-				store:  store.New(nil),
-				colors: make(map[string]string),
+				secret:   "testing",
+				storeApp: store.New(nil),
+				colors:   make(map[string]string),
 			},
 			nil,
 		},

@@ -17,3 +17,4 @@ ARG TARGETOS
 ARG TARGETARCH
 
 COPY release/herodote_${TARGETOS}_${TARGETARCH} /herodote
+COPY release/indexer_${TARGETOS}_${TARGETARCH} /indexer
