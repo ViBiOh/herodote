@@ -1,7 +1,6 @@
 package herodote
 
 import (
-	"encoding/json"
 	"errors"
 	"flag"
 	"fmt"
@@ -17,7 +16,6 @@ import (
 	"github.com/ViBiOh/httputils/v4/pkg/httpjson"
 	httpModel "github.com/ViBiOh/httputils/v4/pkg/model"
 	"github.com/ViBiOh/httputils/v4/pkg/query"
-	"github.com/ViBiOh/httputils/v4/pkg/request"
 )
 
 const (
@@ -184,14 +182,8 @@ func (a app) handleGetCommits(w http.ResponseWriter, r *http.Request) {
 }
 
 func (a app) handlePostCommits(w http.ResponseWriter, r *http.Request) {
-	data, err := request.ReadBodyRequest(r)
-	if err != nil {
-		httperror.BadRequest(w, err)
-		return
-	}
-
 	var commit model.Commit
-	if err := json.Unmarshal(data, &commit); err != nil {
+	if err := httpjson.Parse(r, &commit, "commit"); err != nil {
 		httperror.BadRequest(w, err)
 		return
 	}
