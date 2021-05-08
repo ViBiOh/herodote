@@ -23,8 +23,6 @@ const (
 	dayDuration   = time.Hour * 24
 
 	commitsPath = "/commits"
-	filtersPath = "/filters"
-	refreshPath = "/refresh"
 )
 
 var (
