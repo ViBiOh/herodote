@@ -217,11 +217,6 @@ walk_log() {
       if [[ ${count} -gt 500 ]]; then
         printf "%bLimiting first insert to 500 commits%b\n" "${YELLOW}" "${RESET}"
 
-        if [[ -n ${HERODOTE_API} ]]; then
-          printf "%bRefreshing materialized view%b\n" "${BLUE}" "${RESET}"
-          curl --disable --silent --show-error --location --max-time 30 --request POST --header "Authorization: ${HERODOTE_SECRET}" "${HERODOTE_API}/refresh"
-        fi
-
         break
       fi
     fi
