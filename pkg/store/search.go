@@ -39,13 +39,18 @@ OFFSET $2
 `
 
 func (a app) SearchCommit(ctx context.Context, query string, filters map[string][]string, before, after string, page, pageSize uint) ([]model.Commit, uint, error) {
-	words, err := a.findSimilarWords(ctx, query)
-	if err != nil {
-		return nil, 0, httpModel.WrapNotFound(fmt.Errorf("unable to find similar words: %s", err))
-	}
+	var words []string
+	var err error
 
-	if len(query) > 0 && len(words) == 0 {
-		return nil, 0, httpModel.WrapNotFound(errors.New("query doesn't match any known words"))
+	if len(query) > 0 {
+		words, err = a.findSimilarWords(ctx, query)
+		if err != nil {
+			return nil, 0, httpModel.WrapNotFound(fmt.Errorf("unable to find similar words: %s", err))
+		}
+
+		if len(words) == 0 {
+			return nil, 0, httpModel.WrapNotFound(errors.New("query doesn't match any known words"))
+		}
 	}
 
 	var totalCount uint
