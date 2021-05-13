@@ -1,4 +1,5 @@
 --- clean
+DROP MATERIALIZED VIEW IF EXISTS herodote.filters;
 DROP MATERIALIZED VIEW IF EXISTS herodote.lexeme;
 
 DROP TABLE IF EXISTS herodote.commit;
@@ -40,3 +41,12 @@ CREATE MATERIALIZED VIEW herodote.lexeme AS
   SELECT word FROM ts_stat('SELECT search_vector FROM herodote.commit');
 
 CREATE INDEX words ON herodote.lexeme USING gin(word gin_trgm_ops);
+
+-- filters
+CREATE MATERIALIZED VIEW herodote.filters (
+  kind,
+  value
+) AS
+  SELECT DISTINCT 'repository', repository FROM herodote.commit
+  UNION SELECT DISTINCT 'type', type FROM herodote.commit
+  UNION SELECT DISTINCT 'component', component FROM herodote.commit WHERE component <> '';

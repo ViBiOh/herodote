@@ -100,27 +100,17 @@ func (a app) TemplateFunc(r *http.Request) (string, int, map[string]interface{},
 		return "", http.StatusInternalServerError, nil, fmt.Errorf("unable to parse query: %s", err)
 	}
 
-	repositories, err := a.storeApp.ListFilters(r.Context(), "repository")
+	filters, err := a.storeApp.ListFilters(r.Context())
 	if err != nil {
-		return "", http.StatusInternalServerError, nil, fmt.Errorf("unable to list repositories: %s", err)
-	}
-
-	types, err := a.storeApp.ListFilters(r.Context(), "type")
-	if err != nil {
-		return "", http.StatusInternalServerError, nil, fmt.Errorf("unable to list types: %s", err)
-	}
-
-	components, err := a.storeApp.ListFilters(r.Context(), "component")
-	if err != nil {
-		return "", http.StatusInternalServerError, nil, fmt.Errorf("unable to list components: %s", err)
+		return "", http.StatusInternalServerError, nil, fmt.Errorf("unable to list filters: %s", err)
 	}
 
 	return "public", http.StatusOK, map[string]interface{}{
 		"Path":         r.URL.Path,
 		"Filters":      params,
-		"Repositories": repositories,
-		"Types":        types,
-		"Components":   components,
+		"Repositories": filters["repository"],
+		"Types":        filters["type"],
+		"Components":   filters["component"],
 		"Commits":      commits,
 		"Now":          time.Now(),
 	}, nil

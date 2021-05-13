@@ -18,7 +18,7 @@ var (
 type App interface {
 	SaveCommit(context.Context, model.Commit) error
 	SearchCommit(context.Context, string, map[string][]string, string, string, uint, uint) ([]model.Commit, uint, error)
-	ListFilters(context.Context, string) ([]string, error)
+	ListFilters(context.Context) (map[string][]string, error)
 	Refresh(context.Context) error
 }
 
@@ -67,9 +67,15 @@ func (a app) SaveCommit(ctx context.Context, o model.Commit) error {
 	})
 }
 
-const refreshMaterializedView = `REFRESH MATERIALIZED VIEW herodote.lexeme`
+const refreshLexemeQuery = `REFRESH MATERIALIZED VIEW herodote.lexeme`
+const refreshFiltersQuery = `REFRESH MATERIALIZED VIEW herodote.filters`
 
 func (a app) Refresh(ctx context.Context) error {
-	_, err := a.db.ExecContext(context.Background(), refreshMaterializedView)
+	_, err := a.db.ExecContext(ctx, refreshLexemeQuery)
+	if err != nil {
+		return err
+	}
+
+	_, err = a.db.ExecContext(ctx, refreshFiltersQuery)
 	return err
 }

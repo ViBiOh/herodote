@@ -3,65 +3,35 @@ package store
 import (
 	"context"
 	"database/sql"
-	"fmt"
 
 	"github.com/ViBiOh/httputils/v4/pkg/db"
 )
 
-const listRepositoryFiltersQuery = `
-SELECT DISTINCT
-  repository
+const listFiltersQuery = `
+SELECT
+  kind,
+  value
 FROM
-  herodote.commit
-ORDER BY
-  repository
+  herodote.filters
 `
 
-const listTypeFiltersQuery = `
-SELECT DISTINCT
-  type
-FROM
-  herodote.commit
-ORDER BY
-  type
-`
-
-const listComponentFiltersQuery = `
-SELECT DISTINCT
-  component
-FROM
-  herodote.commit
-WHERE
-  component <> ''
-ORDER BY
-  component
-`
-
-func (a app) ListFilters(ctx context.Context, name string) ([]string, error) {
-	var list []string
+func (a app) ListFilters(ctx context.Context) (map[string][]string, error) {
+	list := make(map[string][]string)
 
 	scanner := func(rows *sql.Rows) error {
-		var item string
-		if err := rows.Scan(&item); err != nil {
+		var kind, value string
+		if err := rows.Scan(&kind, &value); err != nil {
 			return err
 		}
 
-		list = append(list, item)
+		if values, ok := list[kind]; !ok {
+			list[kind] = []string{value}
+		} else {
+			list[kind] = append(values, value)
+		}
+
 		return nil
 	}
 
-	var query string
-
-	switch name {
-	case "repository":
-		query = listRepositoryFiltersQuery
-	case "type":
-		query = listTypeFiltersQuery
-	case "component":
-		query = listComponentFiltersQuery
-	default:
-		return nil, fmt.Errorf("unknown filter `%s`", name)
-	}
-
-	return list, db.List(ctx, a.db, scanner, query)
+	return list, db.List(ctx, a.db, scanner, listFiltersQuery)
 }
