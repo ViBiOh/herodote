@@ -20,6 +20,7 @@ CREATE SCHEMA herodote;
 
 -- commit
 CREATE TABLE herodote.commit (
+  repository TEXT NOT NULL,
   hash TEXT NOT NULL,
   type TEXT NOT NULL,
   component TEXT NOT NULL,
@@ -28,10 +29,10 @@ CREATE TABLE herodote.commit (
   content TEXT NOT NULL,
   date TIMESTAMP WITH TIME ZONE NOT NULL,
   remote TEXT NOT NULL,
-  repository TEXT NOT NULL,
   search_vector TSVECTOR
 );
 
+CREATE UNIQUE INDEX commit_id ON herodote.commit(repository, hash);
 CREATE INDEX commit_repository ON herodote.commit(repository);
 CREATE INDEX commit_component ON herodote.commit(component);
 CREATE INDEX commit_type ON herodote.commit(type);
