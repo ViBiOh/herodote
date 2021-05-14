@@ -17,7 +17,7 @@ var (
 // App of package
 type App interface {
 	SaveCommit(context.Context, model.Commit) error
-	SearchCommit(context.Context, string, map[string][]string, string, string, uint, uint) ([]model.Commit, uint, error)
+	SearchCommit(context.Context, string, map[string][]string, string, string, uint, string) ([]model.Commit, uint, error)
 	ListFilters(context.Context) (map[string][]string, error)
 	Refresh(context.Context) error
 }

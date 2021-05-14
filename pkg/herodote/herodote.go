@@ -141,7 +141,9 @@ func (a app) listCommits(r *http.Request) ([]model.Commit, uint, query.Paginatio
 		return nil, 0, pagination, httpModel.WrapInvalid(err)
 	}
 
-	commits, totalCount, err := a.storeApp.SearchCommit(r.Context(), query, filters, before, after, pagination.Page, pagination.PageSize)
+	lastKey := strings.TrimSpace(params.Get("lastKey"))
+
+	commits, totalCount, err := a.storeApp.SearchCommit(r.Context(), query, filters, before, after, pagination.PageSize, lastKey)
 	return commits, totalCount, pagination, err
 }
 

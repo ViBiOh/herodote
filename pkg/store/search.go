@@ -35,10 +35,9 @@ const searchCommitTail = `
 ORDER BY
   date DESC
 LIMIT $1
-OFFSET $2
 `
 
-func (a app) SearchCommit(ctx context.Context, query string, filters map[string][]string, before, after string, page, pageSize uint) ([]model.Commit, uint, error) {
+func (a app) SearchCommit(ctx context.Context, query string, filters map[string][]string, before, after string, pageSize uint, lastKey string) ([]model.Commit, uint, error) {
 	var words []string
 	var err error
 
@@ -67,18 +66,17 @@ func (a app) SearchCommit(ctx context.Context, query string, filters map[string]
 		return nil
 	}
 
-	sqlQuery, sqlArgs := computeSearchQuery(page, pageSize, words, filters, before, after)
+	sqlQuery, sqlArgs := computeSearchQuery(pageSize, lastKey, words, filters, before, after)
 
 	return list, totalCount, db.List(ctx, a.db, scanner, sqlQuery, sqlArgs...)
 }
 
-func computeSearchQuery(page, pageSize uint, words []string, filters map[string][]string, before, after string) (string, []interface{}) {
+func computeSearchQuery(pageSize uint, lastKey string, words []string, filters map[string][]string, before, after string) (string, []interface{}) {
 	query := strings.Builder{}
 	query.WriteString(searchCommitQuery)
 
 	args := []interface{}{
 		pageSize,
-		(page - 1) * pageSize,
 	}
 
 	if len(words) != 0 {
@@ -108,8 +106,14 @@ func computeSearchQuery(page, pageSize uint, words []string, filters map[string]
 		query.WriteString(fmt.Sprintf(" AND %s = ANY($%d)", key, len(args)))
 	}
 
-	if len(before) != 0 {
-		args = append(args, before)
+	if len(before) != 0 || len(lastKey) != 0 {
+		if len(lastKey) != 0 {
+			fmt.Println(lastKey)
+			args = append(args, lastKey)
+		} else {
+			args = append(args, before)
+		}
+
 		query.WriteString(fmt.Sprintf(" AND date < $%d", len(args)))
 	}
 
