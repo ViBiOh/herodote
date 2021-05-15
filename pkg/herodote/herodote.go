@@ -117,7 +117,7 @@ func (a app) TemplateFunc(r *http.Request) (string, int, map[string]interface{},
 }
 
 func (a app) listCommits(r *http.Request) ([]model.Commit, uint, query.Pagination, error) {
-	pagination, err := query.ParsePagination(r, 1, 50, 100)
+	pagination, err := query.ParsePagination(r, 50, 100)
 	if err != nil {
 		return nil, 0, pagination, httpModel.WrapInvalid(err)
 	}
@@ -141,9 +141,7 @@ func (a app) listCommits(r *http.Request) ([]model.Commit, uint, query.Paginatio
 		return nil, 0, pagination, httpModel.WrapInvalid(err)
 	}
 
-	lastKey := strings.TrimSpace(params.Get("lastKey"))
-
-	commits, totalCount, err := a.storeApp.SearchCommit(r.Context(), query, filters, before, after, pagination.PageSize, lastKey)
+	commits, totalCount, err := a.storeApp.SearchCommit(r.Context(), query, filters, before, after, pagination.PageSize, pagination.LastKey)
 	return commits, totalCount, pagination, err
 }
 
@@ -168,7 +166,12 @@ func (a app) handleGetCommits(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	httpjson.WritePagination(w, http.StatusOK, pagination.Page, pagination.PageSize, totalCount, commits, httpjson.IsPretty(r))
+	var lastKey string
+	if len(commits) > 0 {
+		lastKey = commits[len(commits)-1].Date.String()
+	}
+
+	httpjson.WritePagination(w, http.StatusOK, pagination.PageSize, totalCount, lastKey, commits, httpjson.IsPretty(r))
 }
 
 func (a app) handlePostCommits(w http.ResponseWriter, r *http.Request) {

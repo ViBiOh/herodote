@@ -121,6 +121,8 @@ Usage of herodote:
         [owasp] Content-Security-Policy {HERODOTE_CSP} (default "default-src 'self'; base-uri 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'")
   -dbHost string
         [db] Host {HERODOTE_DB_HOST}
+  -dbMaxConn uint
+        [db] Max Open Connections {HERODOTE_DB_MAX_CONN} (default 5)
   -dbName string
         [db] Name {HERODOTE_DB_NAME}
   -dbPass string

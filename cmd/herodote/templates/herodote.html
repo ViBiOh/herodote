@@ -14,12 +14,12 @@
 {{ end }}
 
 {{ define "favicon" }}
-  <link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="/favicon/favicon-32x32.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="/favicon/favicon-16x16.png">
-  <link rel="manifest" href="/favicon/site.webmanifest">
-  <link rel="mask-icon" href="/favicon/safari-pinned-tab.svg" color="#5bbad5">
-  <link rel="shortcut icon" href="/favicon/favicon.ico">
+  <link rel="apple-touch-icon" sizes="180x180" href="{{ .PublicURL }}/favicon/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="{{ .PublicURL }}/favicon/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="{{ .PublicURL }}/favicon/favicon-16x16.png">
+  <link rel="manifest" href="{{ .PublicURL }}/favicon/site.webmanifest">
+  <link rel="mask-icon" href="{{ .PublicURL }}/favicon/safari-pinned-tab.svg" color="#5bbad5">
+  <link rel="shortcut icon" href="{{ .PublicURL }}/favicon/favicon.ico">
   <meta name="msapplication-TileColor" content="#da532c">
   <meta name="msapplication-config" content="/favicon/browserconfig.xml">
   <meta name="theme-color" content="#ffffff">
@@ -27,7 +27,7 @@
 
 {{ define "header-part" }}
   <a href="#filters" class="button bg-primary" title="Filter">
-    <img class="icon" src="/svg/filter?fill={{ urlquery "#272727" }}" alt="Filter icon">
+    <img class="icon" src="{{ .PublicURL }}/svg/filter?fill={{ urlquery "#272727" }}" alt="Filter icon">
   </a>
 {{ end }}
 
@@ -104,7 +104,7 @@
         {{ end }}
 
         <li class="padding">
-          <a class="bg-primary button padding-half" style="background-color: {{ colors . }};" href="{{ toggleParam $root.Path $root.Filters "repository" .Repository }}">
+          <a class="bg-primary button padding-half" style="background-color: {{ colors . }};" href="{{ $root.PublicURL }}{{ toggleParam $root.Path $root.Filters "repository" .Repository }}">
             {{ .Repository }}
           </a>
 
@@ -116,9 +116,9 @@
             <span class="bg-danger padding-half revert label">Revert</span>
           {{- end -}}
 
-          <pre class="label padding-half no-margin"><a class="success" href="{{ toggleParam $root.Path $root.Filters "type" .Type }}">{{ .Type }}</a>
+          <pre class="label padding-half no-margin"><a class="success" href="{{ $root.PublicURL }}{{ toggleParam $root.Path $root.Filters "type" .Type }}">{{ .Type }}</a>
             {{- if .Component -}}
-              <a href="{{ toggleParam $root.Path $root.Filters "component" .Component }}"><strong class="primary">({{ .Component }})</strong></a>
+              <a href="{{ $root.PublicURL }}{{ toggleParam $root.Path $root.Filters "component" .Component }}"><strong class="primary">({{ .Component }})</strong></a>
             {{- end -}}
           </pre>
 
