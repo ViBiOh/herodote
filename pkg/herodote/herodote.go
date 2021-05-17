@@ -188,7 +188,7 @@ func (a app) handlePostCommits(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := a.storeApp.SaveCommit(r.Context(), commit); err != nil {
-		httperror.InternalServerError(w, err)
+		httperror.InternalServerError(w, fmt.Errorf("unable to save commit for `%s` with hash `%s`: %s", commit.Repository, commit.Hash, err))
 		return
 	}
 

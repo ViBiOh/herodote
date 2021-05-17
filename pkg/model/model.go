@@ -33,7 +33,7 @@ func (c Commit) Sanitize() Commit {
 // Check verifies that Commit is valid
 func (c Commit) Check() error {
 	if len(c.Hash) == 0 {
-		return fmt.Errorf("commit's hash is required (e.g. `1ab2c3f4d`)")
+		return fmt.Errorf("commit's hash is required (e.g. `1a2bc34d`)")
 	}
 
 	if len(c.Type) == 0 {
