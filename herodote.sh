@@ -94,6 +94,7 @@ latest_commit() {
 
   if [[ ${HTTP_STATUS} -eq 200 ]] && [[ $(jq --raw-output '.total' "${HTTP_OUTPUT}") -gt 0 ]]; then
     LATEST_HASH="$(jq --raw-output '.results[0].hash' "${HTTP_OUTPUT}")"
+    printf "%bLatest hash inserted is %b%s%b\n" "${BLUE}" "${YELLOW}" "${LATEST_HASH}" "${RESET}" 1>&2
   fi
 
   if [[ ${HTTP_STATUS} -ge 400 ]]; then
