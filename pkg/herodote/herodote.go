@@ -20,7 +20,6 @@ import (
 
 const (
 	isoDateLayout = "2006-01-02"
-	dayDuration   = time.Hour * 24
 
 	commitsPath = "/commits"
 )

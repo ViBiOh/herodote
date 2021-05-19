@@ -16,6 +16,7 @@ const (
 	daysInWeek   = float64(7)
 	weeksInMonth = float64(4)
 	monthsInYear = float64(12)
+	dayDuration  = time.Hour * 24
 )
 
 var (
