@@ -157,6 +157,8 @@ Usage of herodote:
         [logger] Key for timestamp in JSON {HERODOTE_LOGGER_TIME_KEY} (default "time")
   -okStatus int
         [http] Healthy HTTP Status code {HERODOTE_OK_STATUS} (default 204)
+  -pathPrefix string
+        Root Path Prefix {HERODOTE_PATH_PREFIX}
   -port uint
         [server] Listen port {HERODOTE_PORT} (default 1080)
   -prometheusAddress string

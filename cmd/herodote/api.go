@@ -3,9 +3,7 @@ package main
 import (
 	"embed"
 	"flag"
-	"net/http"
 	"os"
-	"strings"
 
 	"github.com/ViBiOh/herodote/pkg/herodote"
 	"github.com/ViBiOh/herodote/pkg/store"
@@ -74,19 +72,10 @@ func main() {
 	rendererApp, err := renderer.New(rendererConfig, content, herodote.FuncMap)
 	logger.Fatal(err)
 
-	herodoteHandler := http.StripPrefix(apiPath, herodoteApp.Handler())
 	rendererHandler := rendererApp.Handler(herodoteApp.TemplateFunc)
 
-	appHandler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if strings.HasPrefix(r.URL.Path, apiPath) {
-			herodoteHandler.ServeHTTP(w, r)
-			return
-		}
-		rendererHandler.ServeHTTP(w, r)
-	})
-
 	go promServer.Start("prometheus", healthApp.End(), prometheusApp.Handler())
-	go appServer.Start("http", healthApp.End(), httputils.Handler(appHandler, healthApp, recoverer.Middleware, prometheusApp.Middleware, owasp.New(owaspConfig).Middleware, cors.New(corsConfig).Middleware))
+	go appServer.Start("http", healthApp.End(), httputils.Handler(rendererHandler, healthApp, recoverer.Middleware, prometheusApp.Middleware, owasp.New(owaspConfig).Middleware, cors.New(corsConfig).Middleware))
 
 	healthApp.WaitForTermination(appServer.Done())
 	server.GracefulWait(appServer.Done(), promServer.Done())

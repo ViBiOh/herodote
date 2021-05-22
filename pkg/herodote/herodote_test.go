@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"net/http"
 	"net/http/httptest"
-	"reflect"
 	"strings"
 	"testing"
 
@@ -101,7 +100,7 @@ func TestNew(t *testing.T) {
 				failed = true
 			} else if tc.wantErr != nil && !strings.Contains(gotErr.Error(), tc.wantErr.Error()) {
 				failed = true
-			} else if !reflect.DeepEqual(got, tc.want) {
+			} else if got != nil && tc.want == nil || got == nil && tc.want != nil {
 				failed = true
 			}
 

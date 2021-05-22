@@ -21,6 +21,7 @@ import (
 const (
 	isoDateLayout = "2006-01-02"
 
+	apiPath     = "/api"
 	commitsPath = "/commits"
 )
 
@@ -32,7 +33,7 @@ var (
 // App of package
 type App interface {
 	Handler() http.Handler
-	TemplateFunc(*http.Request) (string, int, map[string]interface{}, error)
+	TemplateFunc(http.ResponseWriter, *http.Request) (string, int, map[string]interface{}, error)
 }
 
 // Config of package
@@ -41,9 +42,10 @@ type Config struct {
 }
 
 type app struct {
-	colors   map[string]string
-	storeApp store.App
-	secret   string
+	apiHandler http.Handler
+	colors     map[string]string
+	storeApp   store.App
+	secret     string
 }
 
 // Flags adds flags for configuring package
@@ -64,11 +66,15 @@ func New(config Config, storeApp store.App) (App, error) {
 		return nil, errors.New("store is required")
 	}
 
-	return app{
+	app := app{
 		secret:   secret,
 		storeApp: storeApp,
 		colors:   make(map[string]string),
-	}, nil
+	}
+
+	app.apiHandler = http.StripPrefix(apiPath, app.Handler())
+
+	return app, nil
 }
 
 // Handler for request. Should be use with net/http
@@ -88,7 +94,12 @@ func (a app) Handler() http.Handler {
 	})
 }
 
-func (a app) TemplateFunc(r *http.Request) (string, int, map[string]interface{}, error) {
+func (a app) TemplateFunc(w http.ResponseWriter, r *http.Request) (string, int, map[string]interface{}, error) {
+	if strings.HasPrefix(r.URL.Path, apiPath) {
+		a.apiHandler.ServeHTTP(w, r)
+		return "", 0, nil, nil
+	}
+
 	commits, _, _, err := a.listCommits(r)
 	if err != nil {
 		return "", http.StatusInternalServerError, nil, err
@@ -175,7 +186,7 @@ func (a app) handleGetCommits(w http.ResponseWriter, r *http.Request) {
 
 func (a app) handlePostCommits(w http.ResponseWriter, r *http.Request) {
 	var commit model.Commit
-	if err := httpjson.Parse(r, &commit, "commit"); err != nil {
+	if err := httpjson.Parse(r, &commit); err != nil {
 		httperror.BadRequest(w, err)
 		return
 	}

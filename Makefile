@@ -82,8 +82,7 @@ build:
 .PHONY: run
 run:
 	$(MAIN_RUNNER) \
-		-httpSecret "herodote" \
-		-publicURL "http://localhost:1080"
+		-httpSecret "herodote"
 
 .PHONY: run-database
 run-database:

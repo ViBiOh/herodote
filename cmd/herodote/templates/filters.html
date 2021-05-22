@@ -41,6 +41,7 @@
         <p class="padding no-margin">
           <label for="repository" class="block">Repository</label>
           <select id="repository" name="repository" class="full" multiple>
+            <option value=""></option>
             {{ range .Repositories }}
               <option value="{{ . }}" {{ if $root.Filters.repository }}{{ if contains $root.Filters.repository . }}selected{{ end }}{{ end }}>{{ . }}</option>
             {{ end }}
@@ -50,6 +51,7 @@
         <p class="padding no-margin">
           <label for="type" class="block">Type</label>
           <select id="type" name="type" class="full" multiple>
+            <option value=""></option>
             {{ range .Types }}
               <option value="{{ . }}" {{ if $root.Filters.type }}{{ if contains $root.Filters.type . }}selected{{ end }}{{ end }}>{{ . }}</option>
             {{ end }}
@@ -59,6 +61,7 @@
         <p class="padding no-margin">
           <label for="component" class="block">Component</label>
           <select id="component" name="component" class="full" multiple>
+            <option value=""></option>
             {{ range .Components }}
               <option value="{{ . }}" {{ if $root.Filters.component }}{{ if contains $root.Filters.component . }}selected{{ end }}{{ end }}>{{ . }}</option>
             {{ end }}
