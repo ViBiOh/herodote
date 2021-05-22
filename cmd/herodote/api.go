@@ -21,10 +21,6 @@ import (
 	"github.com/ViBiOh/httputils/v4/pkg/server"
 )
 
-const (
-	apiPath = "/api"
-)
-
 //go:embed templates static
 var content embed.FS
 
