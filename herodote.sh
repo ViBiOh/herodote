@@ -123,7 +123,7 @@ insert_commit() {
     -d "${PAYLOAD}")"
 
   if [[ ${HTTP_STATUS} -gt 299 ]]; then
-    printf "%bunable to insert commit%b\n\t%bHTTP_STATUS:%b %d%b\n\t%bHTTP_OUTPUT:%b %s%b\n" "${RED}" "${RESET}" "${BLUE}" "${YELLOW}" "${HTTP_STATUS}" "${RESET}" "${BLUE}" "${YELLOW}" "$(cat "${HTTP_OUTPUT}")" "${RESET}" 1>&2
+    printf "%bunable to insert commit%b\n\t%bHTTP_STATUS:%b %d%b\n\t%bHTTP_OUTPUT:%b %s\n\t%bPayload:%b %s%b\n" "${RED}" "${RESET}" "${BLUE}" "${YELLOW}" "${HTTP_STATUS}" "${RESET}" "${BLUE}" "${YELLOW}" "$(cat "${HTTP_OUTPUT}")" "${BLUE}" "${YELLOW}" "${PAYLOAD}" "${RESET}" 1>&2
     rm "${HTTP_OUTPUT}"
     return 1
   fi
