@@ -50,4 +50,4 @@ CREATE MATERIALIZED VIEW herodote.filters (
 ) AS
   SELECT DISTINCT 'repository', repository FROM herodote.commit
   UNION SELECT DISTINCT 'type', type FROM herodote.commit
-  UNION SELECT DISTINCT 'component', component FROM herodote.commit WHERE component <> '';
+  UNION SELECT DISTINCT 'component', component FROM herodote.commit WHERE component IS NOT NULL;
