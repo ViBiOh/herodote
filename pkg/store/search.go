@@ -37,7 +37,7 @@ ORDER BY
 LIMIT $1
 `
 
-func (a app) SearchCommit(ctx context.Context, query string, filters map[string][]string, before, after string, pageSize uint, lastKey string) ([]model.Commit, uint, error) {
+func (a app) SearchCommit(ctx context.Context, query string, filters map[string][]string, before, after string, pageSize uint, last string) ([]model.Commit, uint, error) {
 	var words []string
 	var err error
 
@@ -66,12 +66,12 @@ func (a app) SearchCommit(ctx context.Context, query string, filters map[string]
 		return nil
 	}
 
-	sqlQuery, sqlArgs := computeSearchQuery(pageSize, lastKey, words, filters, before, after)
+	sqlQuery, sqlArgs := computeSearchQuery(pageSize, last, words, filters, before, after)
 
 	return list, totalCount, db.List(ctx, a.db, scanner, sqlQuery, sqlArgs...)
 }
 
-func computeSearchQuery(pageSize uint, lastKey string, words []string, filters map[string][]string, before, after string) (string, []interface{}) {
+func computeSearchQuery(pageSize uint, last string, words []string, filters map[string][]string, before, after string) (string, []interface{}) {
 	query := strings.Builder{}
 	query.WriteString(searchCommitQuery)
 
@@ -106,10 +106,10 @@ func computeSearchQuery(pageSize uint, lastKey string, words []string, filters m
 		query.WriteString(fmt.Sprintf(" AND %s = ANY($%d)", key, len(args)))
 	}
 
-	if len(before) != 0 || len(lastKey) != 0 {
-		if len(lastKey) != 0 {
-			fmt.Println(lastKey)
-			args = append(args, lastKey)
+	if len(before) != 0 || len(last) != 0 {
+		if len(last) != 0 {
+			fmt.Println(last)
+			args = append(args, last)
 		} else {
 			args = append(args, before)
 		}

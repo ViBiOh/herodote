@@ -151,7 +151,7 @@ func (a app) listCommits(r *http.Request) ([]model.Commit, uint, query.Paginatio
 		return nil, 0, pagination, httpModel.WrapInvalid(err)
 	}
 
-	commits, totalCount, err := a.storeApp.SearchCommit(r.Context(), query, filters, before, after, pagination.PageSize, pagination.LastKey)
+	commits, totalCount, err := a.storeApp.SearchCommit(r.Context(), query, filters, before, after, pagination.PageSize, pagination.Last)
 	return commits, totalCount, pagination, err
 }
 
@@ -176,12 +176,12 @@ func (a app) handleGetCommits(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var lastKey string
+	var last string
 	if len(commits) > 0 {
-		lastKey = commits[len(commits)-1].Date.String()
+		last = commits[len(commits)-1].Date.String()
 	}
 
-	httpjson.WritePagination(w, http.StatusOK, pagination.PageSize, totalCount, lastKey, commits, httpjson.IsPretty(r))
+	httpjson.WritePagination(w, http.StatusOK, pagination.PageSize, totalCount, last, commits, httpjson.IsPretty(r))
 }
 
 func (a app) handlePostCommits(w http.ResponseWriter, r *http.Request) {
