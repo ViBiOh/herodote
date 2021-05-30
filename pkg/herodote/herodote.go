@@ -181,6 +181,7 @@ func (a app) handleGetCommits(w http.ResponseWriter, r *http.Request) {
 		last = commits[len(commits)-1].Date.String()
 	}
 
+	w.Header().Add("Link", pagination.LinkNextHeader(fmt.Sprintf("%s%s", apiPath, r.URL.Path), r.URL.Query()))
 	httpjson.WritePagination(w, http.StatusOK, pagination.PageSize, totalCount, last, commits, httpjson.IsPretty(r))
 }
 
