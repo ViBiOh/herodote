@@ -160,11 +160,13 @@ Usage of herodote:
   -pathPrefix string
         Root Path Prefix {HERODOTE_PATH_PREFIX}
   -port uint
-        [server] Listen port {HERODOTE_PORT} (default 1080)
+        [server] Listen port (0 to disable) {HERODOTE_PORT} (default 1080)
   -prometheusAddress string
         [prometheus] Listen address {HERODOTE_PROMETHEUS_ADDRESS}
   -prometheusCert string
         [prometheus] Certificate file {HERODOTE_PROMETHEUS_CERT}
+  -prometheusGzip
+        [prometheus] Enable gzip compression of metrics output {HERODOTE_PROMETHEUS_GZIP}
   -prometheusIdleTimeout string
         [prometheus] Idle Timeout {HERODOTE_PROMETHEUS_IDLE_TIMEOUT} (default "10s")
   -prometheusIgnore string
@@ -172,7 +174,7 @@ Usage of herodote:
   -prometheusKey string
         [prometheus] Key file {HERODOTE_PROMETHEUS_KEY}
   -prometheusPort uint
-        [prometheus] Listen port {HERODOTE_PROMETHEUS_PORT} (default 9090)
+        [prometheus] Listen port (0 to disable) {HERODOTE_PROMETHEUS_PORT} (default 9090)
   -prometheusReadTimeout string
         [prometheus] Read Timeout {HERODOTE_PROMETHEUS_READ_TIMEOUT} (default "5s")
   -prometheusShutdownTimeout string
