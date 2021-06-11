@@ -8,7 +8,6 @@ import (
 	"strings"
 
 	"github.com/ViBiOh/herodote/pkg/model"
-	"github.com/ViBiOh/httputils/v4/pkg/db"
 	httpModel "github.com/ViBiOh/httputils/v4/pkg/model"
 	"github.com/lib/pq"
 )
@@ -68,7 +67,7 @@ func (a app) SearchCommit(ctx context.Context, query string, filters map[string]
 
 	sqlQuery, sqlArgs := computeSearchQuery(pageSize, last, words, filters, before, after)
 
-	return list, totalCount, db.List(ctx, a.db, scanner, sqlQuery, sqlArgs...)
+	return list, totalCount, a.db.List(ctx, scanner, sqlQuery, sqlArgs...)
 }
 
 func computeSearchQuery(pageSize uint, last string, words []string, filters map[string][]string, before, after string) (string, []interface{}) {
@@ -149,5 +148,5 @@ func (a app) findSimilarWords(ctx context.Context, query string) ([]string, erro
 		return nil
 	}
 
-	return list, db.List(ctx, a.db, scanner, findSimilarWordsQuery, query)
+	return list, a.db.List(ctx, scanner, findSimilarWordsQuery, query)
 }

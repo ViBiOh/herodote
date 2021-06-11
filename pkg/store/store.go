@@ -2,7 +2,6 @@ package store
 
 import (
 	"context"
-	"database/sql"
 	"errors"
 
 	"github.com/ViBiOh/herodote/pkg/model"
@@ -23,11 +22,11 @@ type App interface {
 }
 
 type app struct {
-	db *sql.DB
+	db db.App
 }
 
 // New creates new App from Config
-func New(db *sql.DB) App {
+func New(db db.App) App {
 	return app{
 		db: db,
 	}
@@ -62,8 +61,8 @@ INSERT INTO
 `
 
 func (a app) SaveCommit(ctx context.Context, o model.Commit) error {
-	return db.DoAtomic(ctx, a.db, func(ctx context.Context) error {
-		return db.Exec(ctx, insertCommitQuery, o.Hash, o.Type, o.Component, o.Revert, o.Breaking, o.Content, o.Date.Unix(), o.Remote, o.Repository)
+	return a.db.DoAtomic(ctx, func(ctx context.Context) error {
+		return a.db.Exec(ctx, insertCommitQuery, o.Hash, o.Type, o.Component, o.Revert, o.Breaking, o.Content, o.Date.Unix(), o.Remote, o.Repository)
 	})
 }
 
@@ -71,11 +70,11 @@ const refreshLexemeQuery = `REFRESH MATERIALIZED VIEW herodote.lexeme`
 const refreshFiltersQuery = `REFRESH MATERIALIZED VIEW herodote.filters`
 
 func (a app) Refresh(ctx context.Context) error {
-	_, err := a.db.ExecContext(ctx, refreshLexemeQuery)
+	err := a.db.Exec(ctx, refreshLexemeQuery)
 	if err != nil {
 		return err
 	}
 
-	_, err = a.db.ExecContext(ctx, refreshFiltersQuery)
+	err = a.db.Exec(ctx, refreshFiltersQuery)
 	return err
 }

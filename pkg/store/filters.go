@@ -3,8 +3,6 @@ package store
 import (
 	"context"
 	"database/sql"
-
-	"github.com/ViBiOh/httputils/v4/pkg/db"
 )
 
 const listFiltersQuery = `
@@ -33,5 +31,5 @@ func (a app) ListFilters(ctx context.Context) (map[string][]string, error) {
 		return nil
 	}
 
-	return list, db.List(ctx, a.db, scanner, listFiltersQuery)
+	return list, a.db.List(ctx, scanner, listFiltersQuery)
 }
