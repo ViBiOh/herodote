@@ -70,11 +70,13 @@ const refreshLexemeQuery = `REFRESH MATERIALIZED VIEW herodote.lexeme`
 const refreshFiltersQuery = `REFRESH MATERIALIZED VIEW herodote.filters`
 
 func (a app) Refresh(ctx context.Context) error {
-	err := a.db.Exec(ctx, refreshLexemeQuery)
-	if err != nil {
-		return err
-	}
+	return a.db.DoAtomic(ctx, func(ctx context.Context) error {
+		err := a.db.Exec(ctx, refreshLexemeQuery)
+		if err != nil {
+			return err
+		}
 
-	err = a.db.Exec(ctx, refreshFiltersQuery)
-	return err
+		err = a.db.Exec(ctx, refreshFiltersQuery)
+		return err
+	})
 }
