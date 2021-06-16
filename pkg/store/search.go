@@ -105,14 +105,14 @@ func computeSearchQuery(pageSize uint, last string, words []string, filters map[
 		query.WriteString(fmt.Sprintf(" AND %s = ANY($%d)", key, len(args)))
 	}
 
-	args = computeDateQuery(query, args, before, last, after)
+	args = computeDateQuery(&query, args, before, last, after)
 
 	query.WriteString(searchCommitTail)
 
 	return query.String(), args
 }
 
-func computeDateQuery(query strings.Builder, args []interface{}, before, last, after string) []interface{} {
+func computeDateQuery(query *strings.Builder, args []interface{}, before, last, after string) []interface{} {
 	if len(before) != 0 || len(last) != 0 {
 		if len(last) != 0 {
 			args = append(args, last)
