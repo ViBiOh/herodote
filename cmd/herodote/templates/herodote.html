@@ -108,13 +108,13 @@
             {{ .Repository }}
           </a>
 
-          {{- if .Breaking }}
+          {{ if .Breaking }}
             <span class="bg-danger padding-half revert label">BREAKING CHANGE</span>
-          {{- end -}}
+          {{ end -}}
 
-          {{- if .Revert }}
+          {{ if .Revert }}
             <span class="bg-danger padding-half revert label">Revert</span>
-          {{- end -}}
+          {{ end -}}
 
           <pre class="label padding-half no-margin"><a class="success" href="{{ url "" }}{{ toggleParam $root.Path $root.Filters "type" .Type }}">{{ .Type }}</a>
             {{- if .Component -}}
