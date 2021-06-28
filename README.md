@@ -16,7 +16,7 @@ Git [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) histo
 
 Herodote aims to provide a quick view of activitiy of all your repositories. It's the changelog of your organizations.
 
-Herodote only understands conventionnal commits. Commits that don't match expectations are ignored. To ensure you have conventionnal commits, you can use [`commit-msg hooks`](https://github.com/ViBiOh/scripts/blob/main/hooks/commit-msg) and/or a [simple Github Action that checks it](.github/workflows/branch_clean.yml).
+Herodote only understands conventionnal commits. Commits that don't match expectations are ignored. To ensure you have conventionnal commits, you can use [`commit-msg hooks`](https://github.com/ViBiOh/scripts/blob/main/hooks/commit-msg) and/or a [simple Github Action that checks it](.github/workflows/branch_clean.yaml).
 
 Herodote loads data with its own script, which is idempotent. On cold start, with an empty index, it only loads last 50 commits.
 
