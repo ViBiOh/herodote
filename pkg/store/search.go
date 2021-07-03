@@ -7,7 +7,6 @@ import (
 	"strings"
 
 	"github.com/ViBiOh/herodote/pkg/model"
-	httpModel "github.com/ViBiOh/httputils/v4/pkg/model"
 	"github.com/lib/pq"
 )
 
@@ -37,13 +36,8 @@ LIMIT $1
 
 func (a app) SearchCommit(ctx context.Context, query string, filters map[string][]string, before, after string, pageSize uint, last string) ([]model.Commit, uint, error) {
 	var words []string
-	var err error
-
 	if len(query) > 0 {
-		words, err = a.findSimilarWords(ctx, query)
-		if err != nil {
-			return nil, 0, httpModel.WrapNotFound(fmt.Errorf("unable to find similar words: %s", err))
-		}
+		words = strings.Split(query, " ")
 	}
 
 	var totalCount uint
@@ -74,7 +68,7 @@ func computeSearchQuery(pageSize uint, last string, words []string, filters map[
 	}
 
 	if len(words) != 0 {
-		args = append(args, strings.Join(words, " | "))
+		args = append(args, strings.Join(words, " & "))
 		query.WriteString(fmt.Sprintf(" AND search_vector @@ to_tsquery('english', $%d)", len(args)))
 	}
 
@@ -124,29 +118,4 @@ func computeDateQuery(query *strings.Builder, args []interface{}, before, last, 
 	}
 
 	return args
-}
-
-const findSimilarWordsQuery = `
-SELECT DISTINCT
-  word
-FROM
-  herodote.lexeme
-WHERE
-  similarity(word, unaccent($1)) > 0.4
-`
-
-func (a app) findSimilarWords(ctx context.Context, query string) ([]string, error) {
-	var list []string
-
-	scanner := func(rows *sql.Rows) error {
-		var item string
-		if err := rows.Scan(&item); err != nil {
-			return err
-		}
-
-		list = append(list, item)
-		return nil
-	}
-
-	return list, a.db.List(ctx, scanner, findSimilarWordsQuery, query)
 }

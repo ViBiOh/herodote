@@ -71,12 +71,6 @@ const refreshFiltersQuery = `REFRESH MATERIALIZED VIEW herodote.filters`
 
 func (a app) Refresh(ctx context.Context) error {
 	return a.db.DoAtomic(ctx, func(ctx context.Context) error {
-		err := a.db.Exec(ctx, refreshLexemeQuery)
-		if err != nil {
-			return err
-		}
-
-		err = a.db.Exec(ctx, refreshFiltersQuery)
-		return err
+		return a.db.Exec(ctx, refreshFiltersQuery)
 	})
 }
