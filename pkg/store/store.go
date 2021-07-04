@@ -66,7 +66,6 @@ func (a app) SaveCommit(ctx context.Context, o model.Commit) error {
 	})
 }
 
-const refreshLexemeQuery = `REFRESH MATERIALIZED VIEW herodote.lexeme`
 const refreshFiltersQuery = `REFRESH MATERIALIZED VIEW herodote.filters`
 
 func (a app) Refresh(ctx context.Context) error {
