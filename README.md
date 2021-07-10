@@ -157,6 +157,8 @@ Usage of herodote:
         [logger] Key for message in JSON {HERODOTE_LOGGER_MESSAGE_KEY} (default "message")
   -loggerTimeKey string
         [logger] Key for timestamp in JSON {HERODOTE_LOGGER_TIME_KEY} (default "time")
+  -minify
+        Minify HTML {HERODOTE_MINIFY} (default true)
   -okStatus int
         [http] Healthy HTTP Status code {HERODOTE_OK_STATUS} (default 204)
   -pathPrefix string
