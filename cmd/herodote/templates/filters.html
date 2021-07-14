@@ -5,7 +5,7 @@
   </p>
 {{ end }}
 
-{{ define "filters" }}
+{{ define "filters-style" }}
   <style type="text/css">
     #filters:target {
       display: flex;
@@ -25,7 +25,9 @@
       min-width: 25rem;
     }
   </style>
+{{ end }}
 
+{{ define "filters" }}
   {{ $root := . }}
 
   <aside id="filters" class="modal">

@@ -31,7 +31,7 @@
   </a>
 {{ end }}
 
-{{ define "app" }}
+{{ define "head" }}
   <style type="text/css">
     .label {
       border-radius: 4px;
@@ -86,6 +86,10 @@
     }
   </style>
 
+  {{ template "filters-style" }}
+{{ end }}
+
+{{ define "app" }}
   {{ $root := . }}
 
   {{ template "filters" . }}
