@@ -13,7 +13,8 @@ FROM
   herodote.filters
 `
 
-func (a app) ListFilters(ctx context.Context) (map[string][]string, error) {
+// ListFilters available on GUI
+func (a App) ListFilters(ctx context.Context) (map[string][]string, error) {
 	list := make(map[string][]string)
 
 	scanner := func(rows *sql.Rows) error {

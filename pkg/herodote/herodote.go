@@ -31,21 +31,16 @@ var (
 )
 
 // App of package
-type App interface {
-	Handler() http.Handler
-	TemplateFunc(http.ResponseWriter, *http.Request) (string, int, map[string]interface{}, error)
+type App struct {
+	apiHandler http.Handler
+	colors     map[string]string
+	storeApp   store.App
+	secret     string
 }
 
 // Config of package
 type Config struct {
 	secret *string
-}
-
-type app struct {
-	apiHandler http.Handler
-	colors     map[string]string
-	storeApp   store.App
-	secret     string
 }
 
 // Flags adds flags for configuring package
@@ -59,14 +54,14 @@ func Flags(fs *flag.FlagSet, prefix string) Config {
 func New(config Config, storeApp store.App) (App, error) {
 	secret := strings.TrimSpace(*config.secret)
 	if len(secret) == 0 {
-		return nil, errors.New("http secret is required")
+		return App{}, errors.New("http secret is required")
 	}
 
-	if storeApp == nil {
-		return nil, errors.New("store is required")
+	if !storeApp.Enabled() {
+		return App{}, errors.New("store is required")
 	}
 
-	app := app{
+	app := App{
 		secret:   secret,
 		storeApp: storeApp,
 		colors:   make(map[string]string),
@@ -78,7 +73,7 @@ func New(config Config, storeApp store.App) (App, error) {
 }
 
 // Handler for request. Should be use with net/http
-func (a app) Handler() http.Handler {
+func (a App) Handler() http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.Method == http.MethodPost && r.Header.Get("Authorization") != a.secret {
 			httperror.Unauthorized(w, ErrAuthentificationFailed)
@@ -94,7 +89,8 @@ func (a app) Handler() http.Handler {
 	})
 }
 
-func (a app) TemplateFunc(w http.ResponseWriter, r *http.Request) (string, int, map[string]interface{}, error) {
+// TemplateFunc used for rendering UI
+func (a App) TemplateFunc(w http.ResponseWriter, r *http.Request) (string, int, map[string]interface{}, error) {
 	if strings.HasPrefix(r.URL.Path, apiPath) {
 		a.apiHandler.ServeHTTP(w, r)
 		return "", 0, nil, nil
@@ -126,7 +122,7 @@ func (a app) TemplateFunc(w http.ResponseWriter, r *http.Request) (string, int, 
 	}, nil
 }
 
-func (a app) listCommits(r *http.Request) ([]model.Commit, uint, query.Pagination, error) {
+func (a App) listCommits(r *http.Request) ([]model.Commit, uint, query.Pagination, error) {
 	pagination, err := query.ParsePagination(r, 50, 100)
 	if err != nil {
 		return nil, 0, pagination, httpModel.WrapInvalid(err)
@@ -155,7 +151,7 @@ func (a app) listCommits(r *http.Request) ([]model.Commit, uint, query.Paginatio
 	return commits, totalCount, pagination, err
 }
 
-func (a app) handleCommits(w http.ResponseWriter, r *http.Request) {
+func (a App) handleCommits(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodPost {
 		a.handlePostCommits(w, r)
 	} else if r.Method == http.MethodGet {
@@ -165,7 +161,7 @@ func (a app) handleCommits(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (a app) handleGetCommits(w http.ResponseWriter, r *http.Request) {
+func (a App) handleGetCommits(w http.ResponseWriter, r *http.Request) {
 	commits, totalCount, pagination, err := a.listCommits(r)
 	if err != nil {
 		if errors.Is(err, httpModel.ErrInvalid) {
@@ -185,7 +181,7 @@ func (a app) handleGetCommits(w http.ResponseWriter, r *http.Request) {
 	httpjson.WritePagination(w, http.StatusOK, pagination.PageSize, totalCount, last, commits, httpjson.IsPretty(r))
 }
 
-func (a app) handlePostCommits(w http.ResponseWriter, r *http.Request) {
+func (a App) handlePostCommits(w http.ResponseWriter, r *http.Request) {
 	var commit model.Commit
 	if err := httpjson.Parse(r, &commit); err != nil {
 		httperror.BadRequest(w, err)

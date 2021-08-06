@@ -34,7 +34,8 @@ ORDER BY
 LIMIT $1
 `
 
-func (a app) SearchCommit(ctx context.Context, query string, filters map[string][]string, before, after string, pageSize uint, last string) ([]model.Commit, uint, error) {
+// SearchCommit in the storage based on given filters
+func (a App) SearchCommit(ctx context.Context, query string, filters map[string][]string, before, after string, pageSize uint, last string) ([]model.Commit, uint, error) {
 	var words []string
 	if len(query) > 0 {
 		words = strings.Split(query, " ")

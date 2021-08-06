@@ -10,7 +10,10 @@ import (
 	"testing"
 
 	"github.com/ViBiOh/herodote/pkg/store"
+	"github.com/ViBiOh/httputils/v4/pkg/db"
 	"github.com/ViBiOh/httputils/v4/pkg/request"
+
+	"github.com/DATA-DOG/go-sqlmock"
 )
 
 func TestFlags(t *testing.T) {
@@ -62,7 +65,7 @@ func TestNew(t *testing.T) {
 			args{
 				config: Config{secret: &emptyString},
 			},
-			nil,
+			App{},
 			errors.New("http secret is required"),
 		},
 		{
@@ -70,18 +73,18 @@ func TestNew(t *testing.T) {
 			args{
 				config: Config{secret: &secretString},
 			},
-			nil,
+			App{},
 			errors.New("store is required"),
 		},
 		{
 			"valid",
 			args{
 				config: Config{secret: &secretString},
-				store:  store.New(nil),
+				store:  store.New(db.App{}),
 			},
-			app{
+			App{
 				secret:   "testing",
-				storeApp: store.New(nil),
+				storeApp: store.New(db.App{}),
 				colors:   make(map[string]string),
 			},
 			nil,
@@ -90,6 +93,16 @@ func TestNew(t *testing.T) {
 
 	for _, tc := range cases {
 		t.Run(tc.intention, func(t *testing.T) {
+			mockDb, _, err := sqlmock.New(sqlmock.MonitorPingsOption(true))
+			if err != nil {
+				t.Fatalf("unable to create mock database: %s", err)
+			}
+			defer mockDb.Close()
+
+			if tc.intention == "valid" {
+				tc.args.store = store.New(db.NewFromSQL(mockDb))
+			}
+
 			got, gotErr := New(tc.args.config, tc.args.store)
 
 			failed := false
@@ -100,7 +113,7 @@ func TestNew(t *testing.T) {
 				failed = true
 			} else if tc.wantErr != nil && !strings.Contains(gotErr.Error(), tc.wantErr.Error()) {
 				failed = true
-			} else if got != nil && tc.want == nil || got == nil && tc.want != nil {
+			} else if tc.want.secret != got.secret {
 				failed = true
 			}
 
@@ -117,7 +130,7 @@ func TestHandler(t *testing.T) {
 
 	var cases = []struct {
 		intention  string
-		instance   app
+		instance   App
 		request    *http.Request
 		want       string
 		wantStatus int
@@ -125,7 +138,7 @@ func TestHandler(t *testing.T) {
 	}{
 		{
 			"simple",
-			app{},
+			App{},
 			httptest.NewRequest(http.MethodGet, "/", nil),
 			`¯\_(ツ)_/¯
 `,
@@ -134,7 +147,7 @@ func TestHandler(t *testing.T) {
 		},
 		{
 			"post invalid token",
-			app{secret: "testing"},
+			App{secret: "testing"},
 			httptest.NewRequest(http.MethodPost, "/", nil),
 			fmt.Sprintf("%s\n", ErrAuthentificationFailed.Error()),
 			http.StatusUnauthorized,
@@ -142,7 +155,7 @@ func TestHandler(t *testing.T) {
 		},
 		{
 			"post valid",
-			app{secret: "testing"},
+			App{secret: "testing"},
 			postWithToken,
 			`¯\_(ツ)_/¯
 `,
