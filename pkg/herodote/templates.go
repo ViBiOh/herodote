@@ -60,7 +60,7 @@ var (
 			done := false
 
 			for key := range params {
-				currentValue := strings.TrimSpace(params.Get(key))
+				currentValue := params.Get(key)
 
 				if len(currentValue) == 0 {
 					continue

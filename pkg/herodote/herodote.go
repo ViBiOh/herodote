@@ -52,8 +52,7 @@ func Flags(fs *flag.FlagSet, prefix string) Config {
 
 // New creates new App from Config
 func New(config Config, storeApp store.App) (App, error) {
-	secret := strings.TrimSpace(*config.secret)
-	if len(secret) == 0 {
+	if len(*config.secret) == 0 {
 		return App{}, errors.New("http secret is required")
 	}
 
@@ -62,7 +61,7 @@ func New(config Config, storeApp store.App) (App, error) {
 	}
 
 	app := App{
-		secret:   secret,
+		secret:   *config.secret,
 		storeApp: storeApp,
 		colors:   make(map[string]string),
 	}

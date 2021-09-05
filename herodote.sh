@@ -104,7 +104,7 @@ latest_commit() {
   rm "${HTTP_OUTPUT}"
 
   if [[ -n ${LATEST_HASH:-} ]]; then
-    printf "HEAD...%s" "${LATEST_HASH}"
+    printf "%s..HEAD" "${LATEST_HASH}"
   else
     git rev-parse --abbrev-ref HEAD
   fi
