@@ -53,11 +53,7 @@ func main() {
 
 	herodoteDb, err := db.New(dbConfig)
 	logger.Fatal(err)
-	defer func() {
-		if err := herodoteDb.Close(); err != nil {
-			logger.Error("error while closing database connection: %s", err)
-		}
-	}()
+	defer herodoteDb.Close()
 
 	healthApp := health.New(healthConfig, herodoteDb.Ping)
 

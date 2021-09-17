@@ -9,11 +9,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/ViBiOh/herodote/pkg/store"
-	"github.com/ViBiOh/httputils/v4/pkg/db"
 	"github.com/ViBiOh/httputils/v4/pkg/request"
-
-	"github.com/DATA-DOG/go-sqlmock"
 )
 
 func TestFlags(t *testing.T) {
@@ -40,85 +36,6 @@ func TestFlags(t *testing.T) {
 
 			if result != testCase.want {
 				t.Errorf("Flags() = `%s`, want `%s`", result, testCase.want)
-			}
-		})
-	}
-}
-
-func TestNew(t *testing.T) {
-	emptyString := ""
-	secretString := "testing"
-
-	type args struct {
-		config Config
-		store  store.App
-	}
-
-	var cases = []struct {
-		intention string
-		args      args
-		want      App
-		wantErr   error
-	}{
-		{
-			"empty param",
-			args{
-				config: Config{secret: &emptyString},
-			},
-			App{},
-			errors.New("http secret is required"),
-		},
-		{
-			"empty databse",
-			args{
-				config: Config{secret: &secretString},
-			},
-			App{},
-			errors.New("store is required"),
-		},
-		{
-			"valid",
-			args{
-				config: Config{secret: &secretString},
-				store:  store.New(db.App{}),
-			},
-			App{
-				secret:   "testing",
-				storeApp: store.New(db.App{}),
-				colors:   make(map[string]string),
-			},
-			nil,
-		},
-	}
-
-	for _, tc := range cases {
-		t.Run(tc.intention, func(t *testing.T) {
-			mockDb, _, err := sqlmock.New(sqlmock.MonitorPingsOption(true))
-			if err != nil {
-				t.Fatalf("unable to create mock database: %s", err)
-			}
-			defer mockDb.Close()
-
-			if tc.intention == "valid" {
-				tc.args.store = store.New(db.NewFromSQL(mockDb))
-			}
-
-			got, gotErr := New(tc.args.config, tc.args.store)
-
-			failed := false
-
-			if tc.wantErr == nil && gotErr != nil {
-				failed = true
-			} else if tc.wantErr != nil && gotErr == nil {
-				failed = true
-			} else if tc.wantErr != nil && !strings.Contains(gotErr.Error(), tc.wantErr.Error()) {
-				failed = true
-			} else if tc.want.secret != got.secret {
-				failed = true
-			}
-
-			if failed {
-				t.Errorf("New() = (%+v, `%s`), want (%+v, `%s`)", got, gotErr, tc.want, tc.wantErr)
 			}
 		})
 	}

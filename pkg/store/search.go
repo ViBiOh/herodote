@@ -2,12 +2,11 @@ package store
 
 import (
 	"context"
-	"database/sql"
 	"fmt"
 	"strings"
 
 	"github.com/ViBiOh/herodote/pkg/model"
-	"github.com/lib/pq"
+	"github.com/jackc/pgx/v4"
 )
 
 const searchCommitQuery = `
@@ -44,7 +43,7 @@ func (a App) SearchCommit(ctx context.Context, query string, filters map[string]
 	var totalCount uint
 	var list []model.Commit
 
-	scanner := func(rows *sql.Rows) error {
+	scanner := func(rows pgx.Rows) error {
 		var item model.Commit
 
 		if err := rows.Scan(&item.Hash, &item.Type, &item.Component, &item.Revert, &item.Breaking, &item.Content, &item.Date, &item.Remote, &item.Repository, &totalCount); err != nil {
@@ -91,7 +90,7 @@ func computeSearchQuery(pageSize uint, last string, words []string, filters map[
 			continue
 		}
 
-		args = append(args, pq.Array(sqlValues))
+		args = append(args, sqlValues)
 		query.WriteString(fmt.Sprintf(" AND %s = ANY($%d)", key, len(args)))
 	}
 

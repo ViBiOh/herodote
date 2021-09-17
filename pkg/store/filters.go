@@ -2,7 +2,8 @@ package store
 
 import (
 	"context"
-	"database/sql"
+
+	"github.com/jackc/pgx/v4"
 )
 
 const listFiltersQuery = `
@@ -17,7 +18,7 @@ FROM
 func (a App) ListFilters(ctx context.Context) (map[string][]string, error) {
 	list := make(map[string][]string)
 
-	scanner := func(rows *sql.Rows) error {
+	scanner := func(rows pgx.Rows) error {
 		var kind, value string
 		if err := rows.Scan(&kind, &value); err != nil {
 			return err

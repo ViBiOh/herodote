@@ -23,11 +23,7 @@ func main() {
 
 	herodoteDb, err := db.New(dbConfig)
 	logger.Fatal(err)
-	defer func() {
-		if err := herodoteDb.Close(); err != nil {
-			logger.Error("error while closing database connection: %s", err)
-		}
-	}()
+	defer herodoteDb.Close()
 
 	logger.Info("Lexeme refresh...")
 	logger.Fatal(store.New(herodoteDb).Refresh(context.Background()))
