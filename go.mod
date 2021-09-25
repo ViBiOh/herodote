@@ -3,7 +3,7 @@ module github.com/ViBiOh/herodote
 go 1.17
 
 require (
-	github.com/ViBiOh/httputils/v4 v4.24.0
+	github.com/ViBiOh/httputils/v4 v4.25.1
 	github.com/jackc/pgx/v4 v4.13.0
 )
 
