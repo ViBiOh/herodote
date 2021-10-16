@@ -6,7 +6,7 @@
 {{ end }}
 
 {{ define "filters-style" }}
-  <style type="text/css">
+  <style type="text/css" nonce="{{ .nonce }}">
     #filters:target {
       display: flex;
       z-index: 5;
