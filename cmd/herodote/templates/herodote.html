@@ -84,6 +84,12 @@
         flex-basis: 100%;
       }
     }
+
+    {{ range .Colors }}
+      .bg-{{ . }} {
+        background-color: {{ . }};
+      }
+    {{ end }}
   </style>
 
   {{ template "filters-style" . }}
@@ -108,7 +114,7 @@
         {{ end }}
 
         <li class="padding">
-          <a class="bg-primary button padding-half" style="background-color: {{ colors . }};" href="{{ url "" }}{{ toggleParam $root.Path $root.Filters "repository" .Repository }}">
+          <a class="bg-primary button padding-half bg-{{ colors . }}" href="{{ url "" }}{{ toggleParam $root.Path $root.Filters "repository" .Repository }}">
             {{ .Repository }}
           </a>
 

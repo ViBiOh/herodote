@@ -116,6 +116,7 @@ func (a App) TemplateFunc(w http.ResponseWriter, r *http.Request) (string, int, 
 		"Repositories": filters["repository"],
 		"Types":        filters["type"],
 		"Components":   filters["component"],
+		"Colors":       repositoriesColors,
 		"Commits":      commits,
 		"Now":          time.Now(),
 	}, nil
