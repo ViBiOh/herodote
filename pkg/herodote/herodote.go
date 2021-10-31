@@ -25,10 +25,8 @@ const (
 	commitsPath = "/commits"
 )
 
-var (
-	// ErrAuthentificationFailed occurs when secret is invalid
-	ErrAuthentificationFailed = errors.New("invalid secret provided")
-)
+// ErrAuthentificationFailed occurs when secret is invalid
+var ErrAuthentificationFailed = errors.New("invalid secret provided")
 
 // App of package
 type App struct {

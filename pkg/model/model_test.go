@@ -9,7 +9,7 @@ import (
 )
 
 func TestSanitize(t *testing.T) {
-	var cases = []struct {
+	cases := []struct {
 		intention string
 		instance  Commit
 		want      Commit
@@ -45,7 +45,7 @@ func TestSanitize(t *testing.T) {
 }
 
 func TestCheck(t *testing.T) {
-	var cases = []struct {
+	cases := []struct {
 		intention string
 		instance  Commit
 		wantErr   error

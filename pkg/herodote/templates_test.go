@@ -11,7 +11,7 @@ func TestContains(t *testing.T) {
 		value string
 	}
 
-	var cases = []struct {
+	cases := []struct {
 		intention string
 		args      args
 		want      bool
@@ -57,7 +57,7 @@ func TestDiffInDays(t *testing.T) {
 		now  time.Time
 	}
 
-	var cases = []struct {
+	cases := []struct {
 		intention string
 		args      args
 		want      string

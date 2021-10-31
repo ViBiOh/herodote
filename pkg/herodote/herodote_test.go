@@ -13,7 +13,7 @@ import (
 )
 
 func TestFlags(t *testing.T) {
-	var cases = []struct {
+	cases := []struct {
 		intention string
 		want      string
 	}{
@@ -45,7 +45,7 @@ func TestHandler(t *testing.T) {
 	postWithToken := httptest.NewRequest(http.MethodPost, "/", nil)
 	postWithToken.Header.Add("Authorization", "testing")
 
-	var cases = []struct {
+	cases := []struct {
 		intention  string
 		instance   App
 		request    *http.Request
@@ -109,7 +109,7 @@ func TestCheckDate(t *testing.T) {
 		raw string
 	}
 
-	var cases = []struct {
+	cases := []struct {
 		intention string
 		args      args
 		wantErr   error

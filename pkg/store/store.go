@@ -8,10 +8,8 @@ import (
 	"github.com/ViBiOh/httputils/v4/pkg/db"
 )
 
-var (
-	// ErrNotFound occurs when nothing found
-	ErrNotFound = errors.New("not found")
-)
+// ErrNotFound occurs when nothing found
+var ErrNotFound = errors.New("not found")
 
 // App of package
 type App struct {
