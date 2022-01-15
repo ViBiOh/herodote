@@ -3,7 +3,7 @@ module github.com/ViBiOh/herodote
 go 1.17
 
 require (
-	github.com/ViBiOh/httputils/v4 v4.34.2
+	github.com/ViBiOh/httputils/v4 v4.34.3
 	github.com/jackc/pgx/v4 v4.14.1
 )
 
@@ -24,8 +24,8 @@ require (
 	github.com/prometheus/client_model v0.2.0 // indirect
 	github.com/prometheus/common v0.32.1 // indirect
 	github.com/prometheus/procfs v0.6.0 // indirect
-	github.com/tdewolff/minify/v2 v2.9.27 // indirect
-	github.com/tdewolff/parse/v2 v2.5.26 // indirect
+	github.com/tdewolff/minify/v2 v2.9.28 // indirect
+	github.com/tdewolff/parse/v2 v2.5.27 // indirect
 	golang.org/x/crypto v0.0.0-20210711020723-a769d52b0f97 // indirect
 	golang.org/x/sys v0.0.0-20210630005230-0f9fa26af87c // indirect
 	golang.org/x/text v0.3.6 // indirect
