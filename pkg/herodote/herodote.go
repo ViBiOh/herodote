@@ -9,9 +9,9 @@ import (
 	"strings"
 	"time"
 
+	"github.com/ViBiOh/flags"
 	"github.com/ViBiOh/herodote/pkg/model"
 	"github.com/ViBiOh/herodote/pkg/store"
-	"github.com/ViBiOh/httputils/v4/pkg/flags"
 	"github.com/ViBiOh/httputils/v4/pkg/httperror"
 	"github.com/ViBiOh/httputils/v4/pkg/httpjson"
 	httpModel "github.com/ViBiOh/httputils/v4/pkg/model"
