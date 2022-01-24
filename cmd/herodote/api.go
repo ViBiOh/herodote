@@ -34,7 +34,7 @@ func main() {
 	alcotestConfig := alcotest.Flags(fs, "")
 	loggerConfig := logger.Flags(fs, "logger")
 	prometheusConfig := prometheus.Flags(fs, "prometheus", flags.NewOverride("Gzip", false))
-	owaspConfig := owasp.Flags(fs, "", flags.NewOverride("Csp", "default-src 'self'; base-uri 'self'; script-src 'self' 'nonce'; style-src 'self' 'nonce'"))
+	owaspConfig := owasp.Flags(fs, "", flags.NewOverride("Csp", "default-src 'self'; base-uri 'self'; script-src 'self' 'httputils-nonce'; style-src 'self' 'httputils-nonce'"))
 	corsConfig := cors.Flags(fs, "cors")
 	rendererConfig := renderer.Flags(fs, "", flags.NewOverride("Title", "Herodote"), flags.NewOverride("PublicURL", "https://herodote.vibioh.fr"))
 

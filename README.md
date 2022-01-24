@@ -122,7 +122,7 @@ Usage of herodote:
   -corsOrigin string
         [cors] Access-Control-Allow-Origin {HERODOTE_CORS_ORIGIN} (default "*")
   -csp string
-        [owasp] Content-Security-Policy {HERODOTE_CSP} (default "default-src 'self'; base-uri 'self'; script-src 'self' 'nonce'; style-src 'self' 'nonce'")
+        [owasp] Content-Security-Policy {HERODOTE_CSP} (default "default-src 'self'; base-uri 'self'; script-src 'self' 'httputils-nonce'; style-src 'self' 'httputils-nonce'")
   -dbHost string
         [db] Host {HERODOTE_DB_HOST}
   -dbMaxConn uint
