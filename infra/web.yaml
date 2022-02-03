@@ -45,7 +45,7 @@ spec:
       url: https://herodote.vibioh.fr
     affinity:
       podAffinity:
-        requiredDuringSchedulingIgnoredDuringExecution:
+        preferredDuringSchedulingIgnoredDuringExecution:
           - labelSelector:
               matchExpressions:
                 - key: app.kubernetes.io/instance
