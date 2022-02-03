@@ -43,13 +43,3 @@ spec:
     canary:
       enabled: true
       url: https://herodote.vibioh.fr
-    affinity:
-      podAffinity:
-        preferredDuringSchedulingIgnoredDuringExecution:
-          - labelSelector:
-              matchExpressions:
-                - key: app.kubernetes.io/instance
-                  operator: In
-                  values:
-                    - herodote-db
-            topologyKey: "kubernetes.io/hostname"
