@@ -27,7 +27,7 @@ spec:
     schedule: "0 6 * * *"
     image:
       name: vibioh/herodote
-      tag: "202201290643" # {"$imagepolicy": "default:flux-herodote-web:tag"}
+      tag: "202202050923" # {"$imagepolicy": "default:flux-herodote-web:tag"}
     config:
       INDEXER_DB_HOST: herodote-db
       INDEXER_DB_NAME: herodote
@@ -37,6 +37,6 @@ spec:
     secrets:
       INDEXER_DB_PASS: AgB1etadoPxwuJcuH2azWl/JW+ochnZhV58Mfz8vwARmtjhdLnvpeOOxe/id9to3ctENsRmh62+LaGrvKvf0YvYGpLCQSZ1qMSGuG+iTKFSDK+D+fOkcOBWfraD6OBtXHTIHRHVazBejD93NKEdh9mif5vzAfnfPlJWRy6rodJK7N5whae12oVmAGZ0D1qZL0aFeWdlXjspr9Su0jAIk4kDWrCf/zr9B+RnSfv38osonvXDrH/+460HV2JVECzQOqrZ5vsoLRijvCxp6BSlS0vm29IifHEnBiUA9PLKWOZI/re5HTaN0V/EiMMhS153N44z8uZq4yCF4ntXHZRW9ZpLzcKn05tZ3RtAW1cWhL4HSEJubASY/e+O/5tT5P5gXLBhAGo9bKII7dksTyzEx1rFjzInAhGeEwmjQYe1SyXLwgaIVXQHhr1eohTT+1cusTsFqJUfx5rFBlkOTZOXC6dZjnwLFNgbHeCvlgFsyr9X+M32KiT7wbYxNEmboa79oMVEn2ok89qLxw2Aq5pJpwxFU8xR1gaf9A64F7AxPE7jrV0aQhX5lQiwK4KonOcqAhIvkdISp+XmLtNokQeQXc7mwem4yYvFnBHXBf+Tc4wujWwQQLhqbPyDU/Ccf5z1LEKuYZcdlDnG0gksB7UZse0ylRLlesFKpp7dcM/6RQR0q8kGvpERhPaijwHYy2I+p4afG7taRm6YJfkiXZiUX1GL4VwR7Ig5qRFeuvjXFvILTO19Esbm0U9FTUd3ik6u0js/5yl3/DK4f+CDML5M=
     containers:
-      - name: job
-        command:
-          - /indexer
+    - name: job
+      command:
+      - /indexer

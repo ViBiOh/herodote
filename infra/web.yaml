@@ -25,7 +25,7 @@ spec:
     nameOverride: herodote
     image:
       name: vibioh/herodote
-      tag: "202201290643" # {"$imagepolicy": "default:flux-herodote-web:tag"}
+      tag: "202202050923" # {"$imagepolicy": "default:flux-herodote-web:tag"}
     config:
       HERODOTE_DB_HOST: herodote-db
       HERODOTE_DB_NAME: herodote
@@ -39,7 +39,7 @@ spec:
       enabled: true
       compress: true
       hosts:
-        - herodote.vibioh.fr
+      - herodote.vibioh.fr
     canary:
       enabled: true
       url: https://herodote.vibioh.fr
