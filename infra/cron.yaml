@@ -8,7 +8,7 @@ spec:
   chart:
     spec:
       chart: cron
-      version: "0.0.19"
+      version: "0.0.22"
       sourceRef:
         kind: HelmRepository
         name: vibioh
@@ -35,8 +35,8 @@ spec:
       INDEXER_DB_USER: herodote
       INDEXER_LOGGER_JSON: "true"
     secrets:
-      INDEXER_DB_PASS: AgB1etadoPxwuJcuH2azWl/JW+ochnZhV58Mfz8vwARmtjhdLnvpeOOxe/id9to3ctENsRmh62+LaGrvKvf0YvYGpLCQSZ1qMSGuG+iTKFSDK+D+fOkcOBWfraD6OBtXHTIHRHVazBejD93NKEdh9mif5vzAfnfPlJWRy6rodJK7N5whae12oVmAGZ0D1qZL0aFeWdlXjspr9Su0jAIk4kDWrCf/zr9B+RnSfv38osonvXDrH/+460HV2JVECzQOqrZ5vsoLRijvCxp6BSlS0vm29IifHEnBiUA9PLKWOZI/re5HTaN0V/EiMMhS153N44z8uZq4yCF4ntXHZRW9ZpLzcKn05tZ3RtAW1cWhL4HSEJubASY/e+O/5tT5P5gXLBhAGo9bKII7dksTyzEx1rFjzInAhGeEwmjQYe1SyXLwgaIVXQHhr1eohTT+1cusTsFqJUfx5rFBlkOTZOXC6dZjnwLFNgbHeCvlgFsyr9X+M32KiT7wbYxNEmboa79oMVEn2ok89qLxw2Aq5pJpwxFU8xR1gaf9A64F7AxPE7jrV0aQhX5lQiwK4KonOcqAhIvkdISp+XmLtNokQeQXc7mwem4yYvFnBHXBf+Tc4wujWwQQLhqbPyDU/Ccf5z1LEKuYZcdlDnG0gksB7UZse0ylRLlesFKpp7dcM/6RQR0q8kGvpERhPaijwHYy2I+p4afG7taRm6YJfkiXZiUX1GL4VwR7Ig5qRFeuvjXFvILTO19Esbm0U9FTUd3ik6u0js/5yl3/DK4f+CDML5M=
+      INDEXER_DB_PASS: AgAIRpcGMXQ/Fg7s4U7Pip4apuzYOtF1DzBfJO+arErDRrOb6u2+jO21l2q3yVzhKYwnEQSpKoCZVAAxihjPlEI/75YuDeuxbW+2ba1CLV9ENQtsIqsNlprMXc6I5Kj0keiairFrQaDDBqxfy6SjwwYMHQl3FR/AgDzL4JLHqPlP10fjMkZSoebV46a5oOfsJpeKV92H9/MQhlpGhVkPjl3d4Jk4qG+w/FfWDGLU2/Im54ydvLCg8iVr9BiMC5ceY8PO6lUVsFSerBpLFu9Fx6rwoQUqcG0prshX10S29xYA/93mwKK976J9cvav+gLk8kNaP6cAP6qQArFEwOu08wjHiYBe6Q6cAWJoxlH78NGvD52NmIa901+QGVJrkbLPH8MwRwBqasHXJ3I04X/ssW+RWqWfELNerEfKR4qWRpQD0IFqYesxmJt1AFaJfrFdEBXtb7nPqo3/84dhres6bRbpikUTykbBCZo6zliGD8eWBzZZUB7H/r4SD0MWCSJM2LlBApj3AVMQPLsPh1+F4vlniNGDvgceiUVbYK1uTDOHxRJpU58ewkbBqzcog0nFdzJLv+xVsP2YqONRTXypZ9NUk2V/4HUxLQY9Kar+iPIEzVo+UtKUbjRmdsYu0l+Cpw9/P0LFW9lm+AoW//GO/uHPgJUiVjFKvaC1VRC8Ak8/YvqA2H94ED9muy4j5BCm/mzNqVD921/6pOFRl+Dd+jV+y0ixd3QvckxKnFnL5uSVXu1JcAPGNKgdxSrMLo9QeDTkpm6ixxjRd2JgNmk=
     containers:
-    - name: job
-      command:
-      - /indexer
+      - name: job
+        command:
+          - /indexer
