@@ -16,6 +16,7 @@ import (
 	"github.com/ViBiOh/httputils/v4/pkg/httpjson"
 	httpModel "github.com/ViBiOh/httputils/v4/pkg/model"
 	"github.com/ViBiOh/httputils/v4/pkg/query"
+	"github.com/ViBiOh/httputils/v4/pkg/renderer"
 )
 
 const (
@@ -87,28 +88,28 @@ func (a App) Handler() http.Handler {
 }
 
 // TemplateFunc used for rendering UI
-func (a App) TemplateFunc(w http.ResponseWriter, r *http.Request) (string, int, map[string]interface{}, error) {
+func (a App) TemplateFunc(w http.ResponseWriter, r *http.Request) (renderer.Page, error) {
 	if strings.HasPrefix(r.URL.Path, apiPath) {
 		a.apiHandler.ServeHTTP(w, r)
-		return "", 0, nil, nil
+		return renderer.Page{}, nil
 	}
 
 	commits, _, _, err := a.listCommits(r)
 	if err != nil {
-		return "", http.StatusInternalServerError, nil, err
+		return renderer.NewPage("", http.StatusInternalServerError, nil), err
 	}
 
 	params, err := url.ParseQuery(r.URL.RawQuery)
 	if err != nil {
-		return "", http.StatusInternalServerError, nil, fmt.Errorf("unable to parse query: %s", err)
+		return renderer.NewPage("", http.StatusInternalServerError, nil), fmt.Errorf("unable to parse query: %s", err)
 	}
 
 	filters, err := a.storeApp.ListFilters(r.Context())
 	if err != nil {
-		return "", http.StatusInternalServerError, nil, fmt.Errorf("unable to list filters: %s", err)
+		return renderer.NewPage("", http.StatusInternalServerError, nil), fmt.Errorf("unable to list filters: %s", err)
 	}
 
-	return "public", http.StatusOK, map[string]interface{}{
+	return renderer.NewPage("public", http.StatusOK, map[string]interface{}{
 		"Path":         r.URL.Path,
 		"Filters":      params,
 		"Repositories": filters["repository"],
@@ -117,7 +118,7 @@ func (a App) TemplateFunc(w http.ResponseWriter, r *http.Request) (string, int, 
 		"Colors":       repositoriesColors,
 		"Commits":      commits,
 		"Now":          time.Now(),
-	}, nil
+	}), nil
 }
 
 func (a App) listCommits(r *http.Request) ([]model.Commit, uint, query.Pagination, error) {
