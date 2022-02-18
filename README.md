@@ -197,6 +197,10 @@ Usage of herodote:
         [server] Shutdown Timeout {HERODOTE_SHUTDOWN_TIMEOUT} (default "10s")
   -title string
         Application title {HERODOTE_TITLE} (default "Herodote")
+  -tracerRate string
+        [tracer] Jaeger sample rate, 'always', 'never' or a float value {HERODOTE_TRACER_RATE} (default "always")
+  -tracerURL string
+        [tracer] Jaeger endpoint URL (e.g. http://jaeger:14268/api/traces) {HERODOTE_TRACER_URL}
   -url string
         [alcotest] URL to check {HERODOTE_URL}
   -userAgent string
