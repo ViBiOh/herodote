@@ -66,7 +66,7 @@ func main() {
 	healthApp := health.New(healthConfig, herodoteDb.Ping)
 
 	storeApp := store.New(herodoteDb)
-	herodoteApp, err := herodote.New(herodoteConfig, storeApp)
+	herodoteApp, err := herodote.New(herodoteConfig, storeApp, tracerApp)
 	logger.Fatal(err)
 
 	rendererApp, err := renderer.New(rendererConfig, content, herodote.FuncMap, tracerApp)

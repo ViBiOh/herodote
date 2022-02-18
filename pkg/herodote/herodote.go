@@ -17,6 +17,8 @@ import (
 	httpModel "github.com/ViBiOh/httputils/v4/pkg/model"
 	"github.com/ViBiOh/httputils/v4/pkg/query"
 	"github.com/ViBiOh/httputils/v4/pkg/renderer"
+	"github.com/ViBiOh/httputils/v4/pkg/tracer"
+	"go.opentelemetry.io/otel/trace"
 )
 
 const (
@@ -31,6 +33,7 @@ var ErrAuthentificationFailed = errors.New("invalid secret provided")
 
 // App of package
 type App struct {
+	tracer     trace.Tracer
 	apiHandler http.Handler
 	colors     map[string]string
 	storeApp   store.App
@@ -50,7 +53,7 @@ func Flags(fs *flag.FlagSet, prefix string) Config {
 }
 
 // New creates new App from Config
-func New(config Config, storeApp store.App) (App, error) {
+func New(config Config, storeApp store.App, tracerApp tracer.App) (App, error) {
 	if len(*config.secret) == 0 {
 		return App{}, errors.New("http secret is required")
 	}
@@ -62,6 +65,7 @@ func New(config Config, storeApp store.App) (App, error) {
 	app := App{
 		secret:   *config.secret,
 		storeApp: storeApp,
+		tracer:   tracerApp.GetTracer("herodote"),
 		colors:   make(map[string]string),
 	}
 
@@ -122,6 +126,13 @@ func (a App) TemplateFunc(w http.ResponseWriter, r *http.Request) (renderer.Page
 }
 
 func (a App) listCommits(r *http.Request) ([]model.Commit, uint, query.Pagination, error) {
+	ctx := r.Context()
+	if a.tracer != nil {
+		var span trace.Span
+		ctx, span = a.tracer.Start(r.Context(), "list commits")
+		defer span.End()
+	}
+
 	pagination, err := query.ParsePagination(r, 50, 100)
 	if err != nil {
 		return nil, 0, pagination, httpModel.WrapInvalid(err)
@@ -146,7 +157,7 @@ func (a App) listCommits(r *http.Request) ([]model.Commit, uint, query.Paginatio
 		return nil, 0, pagination, httpModel.WrapInvalid(err)
 	}
 
-	commits, totalCount, err := a.storeApp.SearchCommit(r.Context(), query, filters, before, after, pagination.PageSize, pagination.Last)
+	commits, totalCount, err := a.storeApp.SearchCommit(ctx, query, filters, before, after, pagination.PageSize, pagination.Last)
 	return commits, totalCount, pagination, err
 }
 
