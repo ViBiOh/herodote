@@ -129,7 +129,7 @@ func (a App) listCommits(r *http.Request) ([]model.Commit, uint, query.Paginatio
 	ctx := r.Context()
 	if a.tracer != nil {
 		var span trace.Span
-		ctx, span = a.tracer.Start(r.Context(), "list commits")
+		ctx, span = a.tracer.Start(r.Context(), "list commits", trace.WithSpanKind(trace.SpanKindInternal))
 		defer span.End()
 	}
 
