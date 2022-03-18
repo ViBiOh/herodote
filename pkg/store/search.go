@@ -59,11 +59,11 @@ func (a App) SearchCommit(ctx context.Context, query string, filters map[string]
 	return list, totalCount, a.db.List(ctx, scanner, sqlQuery, sqlArgs...)
 }
 
-func computeSearchQuery(pageSize uint, last string, words []string, filters map[string][]string, before, after string) (string, []interface{}) {
+func computeSearchQuery(pageSize uint, last string, words []string, filters map[string][]string, before, after string) (string, []any) {
 	query := strings.Builder{}
 	query.WriteString(searchCommitQuery)
 
-	args := []interface{}{
+	args := []any{
 		pageSize,
 	}
 
@@ -101,7 +101,7 @@ func computeSearchQuery(pageSize uint, last string, words []string, filters map[
 	return query.String(), args
 }
 
-func computeDateQuery(query *strings.Builder, args []interface{}, before, last, after string) []interface{} {
+func computeDateQuery(query *strings.Builder, args []any, before, last, after string) []any {
 	if len(before) != 0 || len(last) != 0 {
 		if len(last) != 0 {
 			args = append(args, last)

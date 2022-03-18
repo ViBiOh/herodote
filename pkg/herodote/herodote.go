@@ -113,7 +113,7 @@ func (a App) TemplateFunc(w http.ResponseWriter, r *http.Request) (renderer.Page
 		return renderer.NewPage("", http.StatusInternalServerError, nil), fmt.Errorf("unable to list filters: %s", err)
 	}
 
-	return renderer.NewPage("public", http.StatusOK, map[string]interface{}{
+	return renderer.NewPage("public", http.StatusOK, map[string]any{
 		"Path":         r.URL.Path,
 		"Filters":      params,
 		"Repositories": filters["repository"],
