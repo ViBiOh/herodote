@@ -3,7 +3,7 @@ module github.com/ViBiOh/herodote
 go 1.18
 
 require (
-	github.com/ViBiOh/flags v0.0.1
+	github.com/ViBiOh/flags v0.1.0
 	github.com/ViBiOh/httputils/v4 v4.37.2
 	github.com/jackc/pgx/v4 v4.15.0
 	go.opentelemetry.io/otel/trace v1.4.1
