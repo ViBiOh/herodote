@@ -9,13 +9,11 @@ import (
 )
 
 func TestSanitize(t *testing.T) {
-	cases := []struct {
-		intention string
-		instance  Commit
-		want      Commit
+	cases := map[string]struct {
+		instance Commit
+		want     Commit
 	}{
-		{
-			"simple",
+		"simple": {
 			Commit{
 				Hash:       "  Hash   ",
 				Type:       "  Type   ",
@@ -35,8 +33,8 @@ func TestSanitize(t *testing.T) {
 		},
 	}
 
-	for _, tc := range cases {
-		t.Run(tc.intention, func(t *testing.T) {
+	for intention, tc := range cases {
+		t.Run(intention, func(t *testing.T) {
 			if got := tc.instance.Sanitize(); !reflect.DeepEqual(got, tc.want) {
 				t.Errorf("Sanitize() = %+v, want %+v", got, tc.want)
 			}
@@ -45,33 +43,28 @@ func TestSanitize(t *testing.T) {
 }
 
 func TestCheck(t *testing.T) {
-	cases := []struct {
-		intention string
-		instance  Commit
-		wantErr   error
+	cases := map[string]struct {
+		instance Commit
+		wantErr  error
 	}{
-		{
-			"empty",
+		"empty": {
 			Commit{},
 			errors.New("commit's hash is required"),
 		},
-		{
-			"type",
+		"type": {
 			Commit{
 				Hash: "1ab2c3f4d",
 			},
 			errors.New("commit's type is required"),
 		},
-		{
-			"content",
+		"content": {
 			Commit{
 				Hash: "1ab2c3f4d",
 				Type: "feat",
 			},
 			errors.New("commit's content is required"),
 		},
-		{
-			"date",
+		"date": {
 			Commit{
 				Hash:    "1ab2c3f4d",
 				Type:    "feat",
@@ -79,8 +72,7 @@ func TestCheck(t *testing.T) {
 			},
 			errors.New("commit's date is required"),
 		},
-		{
-			"remote",
+		"remote": {
 			Commit{
 				Hash:    "1ab2c3f4d",
 				Type:    "feat",
@@ -89,8 +81,7 @@ func TestCheck(t *testing.T) {
 			},
 			errors.New("repository's remote is required"),
 		},
-		{
-			"repository",
+		"repository": {
 			Commit{
 				Hash:    "1ab2c3f4d",
 				Type:    "feat",
@@ -100,8 +91,7 @@ func TestCheck(t *testing.T) {
 			},
 			errors.New("repository's name is required"),
 		},
-		{
-			"valid",
+		"valid": {
 			Commit{
 				Hash:       "1ab2c3f4d",
 				Type:       "feat",
@@ -114,8 +104,8 @@ func TestCheck(t *testing.T) {
 		},
 	}
 
-	for _, tc := range cases {
-		t.Run(tc.intention, func(t *testing.T) {
+	for intention, tc := range cases {
+		t.Run(intention, func(t *testing.T) {
 			gotErr := tc.instance.Check()
 
 			failed := false

@@ -13,19 +13,17 @@ import (
 )
 
 func TestFlags(t *testing.T) {
-	cases := []struct {
-		intention string
-		want      string
+	cases := map[string]struct {
+		want string
 	}{
-		{
-			"simple",
+		"simple": {
 			"Usage of simple:\n  -httpSecret string\n    \t[herodote] HTTP Secret Key for Update {SIMPLE_HTTP_SECRET}\n",
 		},
 	}
 
-	for _, testCase := range cases {
-		t.Run(testCase.intention, func(t *testing.T) {
-			fs := flag.NewFlagSet(testCase.intention, flag.ContinueOnError)
+	for intention, tc := range cases {
+		t.Run(intention, func(t *testing.T) {
+			fs := flag.NewFlagSet(intention, flag.ContinueOnError)
 			Flags(fs, "")
 
 			var writer strings.Builder
@@ -34,8 +32,8 @@ func TestFlags(t *testing.T) {
 
 			result := writer.String()
 
-			if result != testCase.want {
-				t.Errorf("Flags() = `%s`, want `%s`", result, testCase.want)
+			if result != tc.want {
+				t.Errorf("Flags() = `%s`, want `%s`", result, tc.want)
 			}
 		})
 	}
@@ -45,16 +43,14 @@ func TestHandler(t *testing.T) {
 	postWithToken := httptest.NewRequest(http.MethodPost, "/", nil)
 	postWithToken.Header.Add("Authorization", "testing")
 
-	cases := []struct {
-		intention  string
+	cases := map[string]struct {
 		instance   App
 		request    *http.Request
 		want       string
 		wantStatus int
 		wantHeader http.Header
 	}{
-		{
-			"simple",
+		"simple": {
 			App{},
 			httptest.NewRequest(http.MethodGet, "/", nil),
 			`¯\_(ツ)_/¯
@@ -62,16 +58,14 @@ func TestHandler(t *testing.T) {
 			http.StatusNotFound,
 			http.Header{},
 		},
-		{
-			"post invalid token",
+		"post invalid token": {
 			App{secret: "testing"},
 			httptest.NewRequest(http.MethodPost, "/", nil),
 			fmt.Sprintf("%s\n", ErrAuthentificationFailed.Error()),
 			http.StatusUnauthorized,
 			http.Header{},
 		},
-		{
-			"post valid",
+		"post valid": {
 			App{secret: "testing"},
 			postWithToken,
 			`¯\_(ツ)_/¯
@@ -81,8 +75,8 @@ func TestHandler(t *testing.T) {
 		},
 	}
 
-	for _, tc := range cases {
-		t.Run(tc.intention, func(t *testing.T) {
+	for intention, tc := range cases {
+		t.Run(intention, func(t *testing.T) {
 			writer := httptest.NewRecorder()
 			tc.instance.Handler().ServeHTTP(writer, tc.request)
 
@@ -109,27 +103,23 @@ func TestCheckDate(t *testing.T) {
 		raw string
 	}
 
-	cases := []struct {
-		intention string
-		args      args
-		wantErr   error
+	cases := map[string]struct {
+		args    args
+		wantErr error
 	}{
-		{
-			"empty",
+		"empty": {
 			args{
 				raw: "",
 			},
 			nil,
 		},
-		{
-			"invalid format",
+		"invalid format": {
 			args{
 				raw: "2020-31-08",
 			},
 			errors.New(`unable to parse date: parsing time "2020-31-08": month out of range`),
 		},
-		{
-			"valid",
+		"valid": {
 			args{
 				raw: "2020-08-31",
 			},
@@ -137,8 +127,8 @@ func TestCheckDate(t *testing.T) {
 		},
 	}
 
-	for _, tc := range cases {
-		t.Run(tc.intention, func(t *testing.T) {
+	for intention, tc := range cases {
+		t.Run(intention, func(t *testing.T) {
 			gotErr := checkDate(tc.args.raw)
 
 			failed := false
