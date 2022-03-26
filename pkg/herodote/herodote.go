@@ -48,7 +48,7 @@ type Config struct {
 // Flags adds flags for configuring package
 func Flags(fs *flag.FlagSet, prefix string) Config {
 	return Config{
-		secret: flags.New(prefix, "herodote", "HttpSecret").Default("", nil).Label("HTTP Secret Key for Update").ToString(fs),
+		secret: flags.String(fs, prefix, "herodote", "HttpSecret", "HTTP Secret Key for Update", "", nil),
 	}
 }
 
