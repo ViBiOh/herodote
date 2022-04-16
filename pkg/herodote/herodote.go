@@ -17,7 +17,6 @@ import (
 	httpModel "github.com/ViBiOh/httputils/v4/pkg/model"
 	"github.com/ViBiOh/httputils/v4/pkg/query"
 	"github.com/ViBiOh/httputils/v4/pkg/renderer"
-	"github.com/ViBiOh/httputils/v4/pkg/tracer"
 	"go.opentelemetry.io/otel/trace"
 )
 
@@ -53,7 +52,7 @@ func Flags(fs *flag.FlagSet, prefix string) Config {
 }
 
 // New creates new App from Config
-func New(config Config, storeApp store.App, tracerApp tracer.App) (App, error) {
+func New(config Config, storeApp store.App, tracer trace.Tracer) (App, error) {
 	if len(*config.secret) == 0 {
 		return App{}, errors.New("http secret is required")
 	}
@@ -65,7 +64,7 @@ func New(config Config, storeApp store.App, tracerApp tracer.App) (App, error) {
 	app := App{
 		secret:   *config.secret,
 		storeApp: storeApp,
-		tracer:   tracerApp.GetTracer("herodote"),
+		tracer:   tracer,
 		colors:   make(map[string]string),
 	}
 
