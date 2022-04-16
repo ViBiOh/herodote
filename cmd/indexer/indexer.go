@@ -8,7 +8,6 @@ import (
 	"github.com/ViBiOh/herodote/pkg/store"
 	"github.com/ViBiOh/httputils/v4/pkg/db"
 	"github.com/ViBiOh/httputils/v4/pkg/logger"
-	"github.com/ViBiOh/httputils/v4/pkg/tracer"
 )
 
 func main() {
@@ -22,7 +21,7 @@ func main() {
 	logger.Global(logger.New(loggerConfig))
 	defer logger.Close()
 
-	herodoteDb, err := db.New(dbConfig, tracer.App{})
+	herodoteDb, err := db.New(dbConfig, nil)
 	logger.Fatal(err)
 	defer herodoteDb.Close()
 

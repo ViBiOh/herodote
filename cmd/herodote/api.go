@@ -67,17 +67,17 @@ func main() {
 	promServer := server.New(promServerConfig)
 	prometheusApp := prometheus.New(prometheusConfig)
 
-	herodoteDb, err := db.New(dbConfig, tracerApp)
+	herodoteDb, err := db.New(dbConfig, tracerApp.GetTracer("database"))
 	logger.Fatal(err)
 	defer herodoteDb.Close()
 
 	healthApp := health.New(healthConfig, herodoteDb.Ping)
 
 	storeApp := store.New(herodoteDb)
-	herodoteApp, err := herodote.New(herodoteConfig, storeApp, tracerApp)
+	herodoteApp, err := herodote.New(herodoteConfig, storeApp, tracerApp.GetTracer("herodote"))
 	logger.Fatal(err)
 
-	rendererApp, err := renderer.New(rendererConfig, content, herodote.FuncMap, tracerApp)
+	rendererApp, err := renderer.New(rendererConfig, content, herodote.FuncMap, tracerApp.GetTracer("renderer"))
 	logger.Fatal(err)
 
 	rendererHandler := rendererApp.Handler(herodoteApp.TemplateFunc)
