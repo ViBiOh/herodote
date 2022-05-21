@@ -17,6 +17,7 @@ import (
 	httpModel "github.com/ViBiOh/httputils/v4/pkg/model"
 	"github.com/ViBiOh/httputils/v4/pkg/query"
 	"github.com/ViBiOh/httputils/v4/pkg/renderer"
+	"github.com/ViBiOh/httputils/v4/pkg/tracer"
 	"go.opentelemetry.io/otel/trace"
 )
 
@@ -125,12 +126,8 @@ func (a App) TemplateFunc(w http.ResponseWriter, r *http.Request) (renderer.Page
 }
 
 func (a App) listCommits(r *http.Request) ([]model.Commit, uint, query.Pagination, error) {
-	ctx := r.Context()
-	if a.tracer != nil {
-		var span trace.Span
-		ctx, span = a.tracer.Start(r.Context(), "list commits", trace.WithSpanKind(trace.SpanKindInternal))
-		defer span.End()
-	}
+	ctx, end := tracer.StartSpan(r.Context(), a.tracer, "list commits", trace.WithSpanKind(trace.SpanKindInternal))
+	defer end()
 
 	pagination, err := query.ParsePagination(r, 50, 100)
 	if err != nil {
