@@ -141,14 +141,14 @@ Usage of herodote:
         [db] User {HERODOTE_DB_USER}
   -frameOptions string
         [owasp] X-Frame-Options {HERODOTE_FRAME_OPTIONS} (default "deny")
-  -graceDuration string
-        [http] Grace duration when SIGTERM received {HERODOTE_GRACE_DURATION} (default "30s")
+  -graceDuration duration
+        [http] Grace duration when SIGTERM received {HERODOTE_GRACE_DURATION} (default 30s)
   -hsts
         [owasp] Indicate Strict Transport Security {HERODOTE_HSTS} (default true)
   -httpSecret string
         [herodote] HTTP Secret Key for Update {HERODOTE_HTTP_SECRET}
-  -idleTimeout string
-        [server] Idle Timeout {HERODOTE_IDLE_TIMEOUT} (default "2m")
+  -idleTimeout duration
+        [server] Idle Timeout {HERODOTE_IDLE_TIMEOUT} (default 2m0s)
   -key string
         [server] Key file {HERODOTE_KEY}
   -loggerJson
@@ -175,26 +175,26 @@ Usage of herodote:
         [prometheus] Certificate file {HERODOTE_PROMETHEUS_CERT}
   -prometheusGzip
         [prometheus] Enable gzip compression of metrics output {HERODOTE_PROMETHEUS_GZIP}
-  -prometheusIdleTimeout string
-        [prometheus] Idle Timeout {HERODOTE_PROMETHEUS_IDLE_TIMEOUT} (default "10s")
+  -prometheusIdleTimeout duration
+        [prometheus] Idle Timeout {HERODOTE_PROMETHEUS_IDLE_TIMEOUT} (default 10s)
   -prometheusIgnore string
         [prometheus] Ignored path prefixes for metrics, comma separated {HERODOTE_PROMETHEUS_IGNORE}
   -prometheusKey string
         [prometheus] Key file {HERODOTE_PROMETHEUS_KEY}
   -prometheusPort uint
         [prometheus] Listen port (0 to disable) {HERODOTE_PROMETHEUS_PORT} (default 9090)
-  -prometheusReadTimeout string
-        [prometheus] Read Timeout {HERODOTE_PROMETHEUS_READ_TIMEOUT} (default "5s")
-  -prometheusShutdownTimeout string
-        [prometheus] Shutdown Timeout {HERODOTE_PROMETHEUS_SHUTDOWN_TIMEOUT} (default "5s")
-  -prometheusWriteTimeout string
-        [prometheus] Write Timeout {HERODOTE_PROMETHEUS_WRITE_TIMEOUT} (default "10s")
+  -prometheusReadTimeout duration
+        [prometheus] Read Timeout {HERODOTE_PROMETHEUS_READ_TIMEOUT} (default 5s)
+  -prometheusShutdownTimeout duration
+        [prometheus] Shutdown Timeout {HERODOTE_PROMETHEUS_SHUTDOWN_TIMEOUT} (default 5s)
+  -prometheusWriteTimeout duration
+        [prometheus] Write Timeout {HERODOTE_PROMETHEUS_WRITE_TIMEOUT} (default 10s)
   -publicURL string
         Public URL {HERODOTE_PUBLIC_URL} (default "https://herodote.vibioh.fr")
-  -readTimeout string
-        [server] Read Timeout {HERODOTE_READ_TIMEOUT} (default "5s")
-  -shutdownTimeout string
-        [server] Shutdown Timeout {HERODOTE_SHUTDOWN_TIMEOUT} (default "10s")
+  -readTimeout duration
+        [server] Read Timeout {HERODOTE_READ_TIMEOUT} (default 5s)
+  -shutdownTimeout duration
+        [server] Shutdown Timeout {HERODOTE_SHUTDOWN_TIMEOUT} (default 10s)
   -title string
         Application title {HERODOTE_TITLE} (default "Herodote")
   -tracerRate string
@@ -205,6 +205,6 @@ Usage of herodote:
         [alcotest] URL to check {HERODOTE_URL}
   -userAgent string
         [alcotest] User-Agent for check {HERODOTE_USER_AGENT} (default "Alcotest")
-  -writeTimeout string
-        [server] Write Timeout {HERODOTE_WRITE_TIMEOUT} (default "10s")
+  -writeTimeout duration
+        [server] Write Timeout {HERODOTE_WRITE_TIMEOUT} (default 10s)
 ```

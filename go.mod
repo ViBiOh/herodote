@@ -3,8 +3,8 @@ module github.com/ViBiOh/herodote
 go 1.18
 
 require (
-	github.com/ViBiOh/flags v1.0.0
-	github.com/ViBiOh/httputils/v4 v4.43.0
+	github.com/ViBiOh/flags v1.1.0
+	github.com/ViBiOh/httputils/v4 v4.43.1
 	github.com/jackc/pgx/v4 v4.16.1
 	go.opentelemetry.io/otel/trace v1.7.0
 )
@@ -29,14 +29,14 @@ require (
 	github.com/prometheus/client_model v0.2.0 // indirect
 	github.com/prometheus/common v0.34.0 // indirect
 	github.com/prometheus/procfs v0.7.3 // indirect
-	github.com/tdewolff/minify/v2 v2.11.9 // indirect
-	github.com/tdewolff/parse/v2 v2.5.33 // indirect
+	github.com/tdewolff/minify/v2 v2.11.10 // indirect
+	github.com/tdewolff/parse/v2 v2.6.0 // indirect
 	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.32.0 // indirect
 	go.opentelemetry.io/otel v1.7.0 // indirect
 	go.opentelemetry.io/otel/exporters/jaeger v1.7.0 // indirect
 	go.opentelemetry.io/otel/metric v0.30.0 // indirect
 	go.opentelemetry.io/otel/sdk v1.7.0 // indirect
-	golang.org/x/crypto v0.0.0-20220513210258-46612604a0f9 // indirect
+	golang.org/x/crypto v0.0.0-20220525230936-793ad666bf5e // indirect
 	golang.org/x/sys v0.0.0-20220513210249-45d2b4557a2a // indirect
 	golang.org/x/term v0.0.0-20220411215600-e5f449aeb171 // indirect
 	golang.org/x/text v0.3.7 // indirect
