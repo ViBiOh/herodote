@@ -35,27 +35,27 @@ spec:
       HERODOTE_TRACER_URL: http://jaeger.monitoring:14268/api/traces
       OTEL_SERVICE_NAME: herodote
     secrets:
-      HERODOTE_DB_PASS: AgCMGQMqeqSl/6UKq4HWfg0P/tVaeV0pU95KFcinDfrEtYKPiixrxEY5Fk+CadOAQaONgbXm9d/f+M60FdUn+U8d0tneAR6F//9CBO+Yy6APM6Ang+rWVTDPzQNPz1GsmuxNTu+YBEknkb015XNsPZ8DYaJwV8yStxmiZbXbpcVXdK+iJUUnse0dgvZCSHAXU49OIhf+uLH97mOvhekjxLn0SIKrbfu3q2OkHZHly89eiwzOjw/2G0Hqvx0CPkYogCMtb9vpF08Dlh7f4C9saFkj7Zldg8ncoEeyEiU2THlgxGjAilGazOhClqxVdFZru3PibM6mwWk4MWe0Yx2O0YqzHLWVrTlG1atQ/KuTFhnpUUxnAxfaE8u+kjuLUfNDbtW2WxS2xA51IkR9sKuTuzoKwHSHYdvNmObOqVUmUPEhkP+yZcBukFmBvTceqN9/qU3PHSCkqy4jHw83Lp7Vd+Tr62rMMeP0QB0/u7wSrlRe2sd+Qs7HSYJ+G1EUg3ftyBNe3qkECdAwwkSMIdBFhIidG0qt5sFtRGhpFLAIanL7eOZ20Bg//ukOMP+C6nLluiYQCRrmyfGhIFIMaCg4s9D8CSYGtKQaxQ8UC2J/4hRakw0W0UnQpwOUrFVm8MmrfIG0QebNciuJimMS5kpsZeDDLDi/pnr22b245xxt8P05KBGrf+htFhTTf1V6eKpeIPLRbqhprRCLEvbHFQH+c93P0cBAMmXMRZ/TSWB+o+O1TVc3YvX5Wkuy64Sse8wdRS62BsektE4jTOuDfTM=
-      HERODOTE_HTTP_SECRET: AgDMcZP8eNx9wKfHpbJxqpMtzquB43hQPrwCP0DAm5d4VLI8uQtkswn6n9nD5BY5OYHR0gufHhFD47T9/sw3Cjd9YuTjyLtM6oi1ExuenoQSJ+5E9cnRAinZserOIZe7nuh6wfr/xOvCjLicwvuPyeRAoIJojoALDqT4YZfERU8Eu9Ue+sOgNhbJCR05OPqU8TIPdTbkZmTEpp/huIJN/grxv6RgpO2/i0cqqTgNbJpP4Cc9a3ur2wYOUguh8hhvXoyeqoKc3KeKBNNqAsOtF1lk8KAg5bLhbX9+kwrz54PW+8WnbE7Qwv6/GRIa4Z6aXhvDXAYBug1doQwk7bO9rxSr1N+omeiuUM9duzciY0pOYampWvcwT3Jyzii4CsfPr0fbrK6rCqb3AlCWKGy+prk9hnVb/QqFw2eyKJwzyZyJv9t6HzKVXhsMx/YSz17wlrRc0au8HgXyFmSs8faluAI455sPkZxDzrD63tztr+Kiu+UiKShDqFUiMvESN/Rk17wY78y4fdQqxd4FDbuc7xHen9YdOw8HDcX9WMWomMDvM2mZODYo+CloiKkvdL8TtUUbP/0IlNxavmxoPHeF+xMzX5QYEAdpCKmoMGyi8I6nLsE83p90JbR49dCTREwfwFjS+cbBVcCZypZSSMTAmav2gNSKMMGZyhKm3yBVLtqRp+yW3T8KIDavlMiAQHUL9RGDAmgMhsC6l/k94iGErZaj/FiI4lmTgf3qM3QmVXGb6/RjYJNHQUr5zR0tXXRbikiJdSjI4dL0B+xT+qg=
+      HERODOTE_DB_PASS: AgCVZR1IsiBpklK/IrgvggZgFldpFSzzEQPQtSGzBRN7dNH0v0gzqYrephBsUrGOR2zQpv++lpaWUQJG1D5AdMctJAcnMG5iLRxLhet/Ii0z3VyFr10UEN8nS1QB6b5pGUPTPEV8aHTq2hAglimvbI8xsb0Fc9woqshH7WBApsr5tEUpZbRoei5Tqmh6soe25fKNXMnQES1bddOJGbi2/8cIVv19AN8V5U+KGI9wTq0lDKc/PbDHAaP0Qjq7Mkcf4fIqC/V27qBv0hWCwWYEkGzNNZAWztHxRg2oPBozQSxOFjRr+N9ugXUTYgTdpUTmtUSnRjSQPuOsXoa2T+chcJie15waQ/dMhtf7hHe+ua1xzs5WDwDh3xrgoQrTFsvNn7tq/PZDLyiy/k2I/n8X8s7c+UJdwjnz1TYfRnY6irP8PczHymw1CZx5egO2dELwJQF2i9V1/tYnKR4NElE4u++gCL7w158Fe00NIMvaOlHkQUQ7gIEi9BPErj6gqdSYdEKK0pfQ7zswK+mkFdWiLphviu5dyTsatJE1qHKt2imOpKXPWTnPQq36NUu0Qy/3glirfoSZVPuBMvoJ85A4s3vjxJS4XthpwMlazhW88LgF3DBtBR8/bKcG3B5y6ef9muLJXZYD0XunE5p7hxUgXj93wAjkfGRXgAPY5R05xIuKw/3E5zOOXjQntsKFvbNkoYIR9pI7O1TczLY8OgIP9sYYe5Lhll33VIFHh31eoMCFcR/3rPOvQl2QzzLuihn02FdvbEHDy2vKTe3xwVE=
+      HERODOTE_HTTP_SECRET: AgBica5uC9nog/YYa1OWU65DgU6/TQ2SIBtJYrRsECbCLxLLLlN/TprzclpptXmrZa3gvacadTDuhDjJDy+XT6OeYOBCDnYV/fkpo2R5Vpa490opLCJShHksRAr/OWEoTVLV9hI8M2GXKlqoIezTLgda6VTOkDau4yxpagRndhmFUd4Q8JlvMUBAwgsWYyVXIHYhQDm6YpQq2Ng5Sxfl18qYCP92f6jCBZjgQ0XdK1Zw1ZMKA+dajYRoeMUh7DHdo+FTOJm/3CVRjKxPVkYI6VaqJMyh4G8qokgbJ02MSZ0EkhRTenZPXmDIeiUdFCwVnwSP9Jl1mIAWuOM1/yBKi44tknYHr4YTBOGI/e6ziPacriL5jiRAcQjCfhDLRnnsLoDwHFYh8SlDwvewD0hxoDI8LI5XXl3e0BJ4z5Ss8FeUxP6FcgT2Nu4Os/cO3oaH1cYYxgDU1eOwakivI2nJsgJ5ttppW8g5azhiZygiFZhvShtL8fq3PD1+kfL6U4XQGm6J86aKK58Oa32Bc7631c41sSbiYKc4NZ2WvzOZKnZ6LctfVuiwScJ63bzv/ah8IKetZSW+ClCUDnW0lrQtQsOxbOGH1zmdxSwpu7mdDV1sLfETYu87BZq+hmMq0A6cvgV4DkPAX2bIuhn1aWJb9R9cQdr5leJfn57Zxqu7JxVBSNOnDRHq++stjPUO8TTyTgy33AVWsLd1J8IqjXOfVwXNd41aNaOGUc+xu+2YRjTqS+RxncpjNz6EyA87RgFbsDBReaT6WDnD3lkYkJE=
     ingress:
       enabled: true
       compress: true
       hosts:
-      - herodote.vibioh.fr
+        - herodote.vibioh.fr
     canary:
       enabled: true
       url: https://herodote.vibioh.fr
     affinity:
       podAffinity:
         preferredDuringSchedulingIgnoredDuringExecution:
-        - weight: 100
-          podAffinityTerm:
-            labelSelector:
-              matchExpressions:
-              - key: app.kubernetes.io/instance
-                operator: In
-                values:
-                - herodote-db
-            topologyKey: "kubernetes.io/hostname"
+          - weight: 100
+            podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                  - key: app.kubernetes.io/instance
+                    operator: In
+                    values:
+                      - herodote-db
+              topologyKey: "kubernetes.io/hostname"
     pprof:
       enabled: true
