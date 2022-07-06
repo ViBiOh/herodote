@@ -42,9 +42,6 @@ spec:
       compress: true
       hosts:
         - herodote.vibioh.fr
-    canary:
-      enabled: true
-      url: https://herodote.vibioh.fr
     affinity:
       podAffinity:
         preferredDuringSchedulingIgnoredDuringExecution:
