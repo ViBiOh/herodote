@@ -147,8 +147,6 @@ Usage of herodote:
         [db] Port {HERODOTE_DB_PORT} (default 5432)
   -dbSslmode string
         [db] SSL Mode {HERODOTE_DB_SSLMODE} (default "disable")
-  -dbTimeout uint
-        [db] Connect timeout {HERODOTE_DB_TIMEOUT} (default 10)
   -dbUser string
         [db] User {HERODOTE_DB_USER}
   -frameOptions string
