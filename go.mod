@@ -6,7 +6,7 @@ require (
 	github.com/ViBiOh/flags v1.1.0
 	github.com/ViBiOh/httputils/v4 v4.43.4
 	github.com/jackc/pgx/v4 v4.16.1
-	go.opentelemetry.io/otel/trace v1.7.0
+	go.opentelemetry.io/otel/trace v1.8.0
 )
 
 require (
@@ -32,7 +32,7 @@ require (
 	github.com/tdewolff/minify/v2 v2.11.12 // indirect
 	github.com/tdewolff/parse/v2 v2.6.1 // indirect
 	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.32.0 // indirect
-	go.opentelemetry.io/otel v1.7.0 // indirect
+	go.opentelemetry.io/otel v1.8.0 // indirect
 	go.opentelemetry.io/otel/exporters/jaeger v1.7.0 // indirect
 	go.opentelemetry.io/otel/metric v0.30.0 // indirect
 	go.opentelemetry.io/otel/sdk v1.7.0 // indirect
