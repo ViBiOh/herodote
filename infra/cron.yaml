@@ -24,7 +24,7 @@ spec:
     cleanupOnFail: true
   values:
     nameOverride: herodote-indexer
-    jobLabel:
+    jobLabels:
       k8s-cleaner: "true"
     schedule: "0 6 * * *"
     image:
