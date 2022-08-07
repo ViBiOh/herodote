@@ -105,12 +105,12 @@ func (a App) TemplateFunc(w http.ResponseWriter, r *http.Request) (renderer.Page
 
 	params, err := url.ParseQuery(r.URL.RawQuery)
 	if err != nil {
-		return renderer.NewPage("", http.StatusInternalServerError, nil), fmt.Errorf("unable to parse query: %s", err)
+		return renderer.NewPage("", http.StatusInternalServerError, nil), fmt.Errorf("parse query: %s", err)
 	}
 
 	filters, err := a.storeApp.ListFilters(r.Context())
 	if err != nil {
-		return renderer.NewPage("", http.StatusInternalServerError, nil), fmt.Errorf("unable to list filters: %s", err)
+		return renderer.NewPage("", http.StatusInternalServerError, nil), fmt.Errorf("list filters: %s", err)
 	}
 
 	return renderer.NewPage("public", http.StatusOK, map[string]any{
@@ -201,7 +201,7 @@ func (a App) handlePostCommits(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := a.storeApp.SaveCommit(r.Context(), commit); err != nil {
-		httperror.InternalServerError(w, fmt.Errorf("unable to save commit for `%s` with hash `%s`: %s", commit.Repository, commit.Hash, err))
+		httperror.InternalServerError(w, fmt.Errorf("save commit for `%s` with hash `%s`: %s", commit.Repository, commit.Hash, err))
 		return
 	}
 
@@ -215,7 +215,7 @@ func checkDate(raw string) error {
 
 	_, err := time.Parse(isoDateLayout, raw)
 	if err != nil {
-		return fmt.Errorf("unable to parse date: %s", err)
+		return fmt.Errorf("parse date: %s", err)
 	}
 
 	return nil

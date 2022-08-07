@@ -117,7 +117,7 @@ func TestCheckDate(t *testing.T) {
 			args{
 				raw: "2020-31-08",
 			},
-			errors.New(`unable to parse date: parsing time "2020-31-08": month out of range`),
+			errors.New(`parse date: parsing time "2020-31-08": month out of range`),
 		},
 		"valid": {
 			args{
