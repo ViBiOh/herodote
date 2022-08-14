@@ -136,7 +136,7 @@ func (a App) listCommits(r *http.Request) ([]model.Commit, uint, query.Paginatio
 
 	params := r.URL.Query()
 
-	query := strings.TrimSpace(params.Get("q"))
+	searchQuery := strings.TrimSpace(params.Get("q"))
 	filters := map[string][]string{
 		"repository": params["repository"],
 		"type":       params["type"],
@@ -153,7 +153,7 @@ func (a App) listCommits(r *http.Request) ([]model.Commit, uint, query.Paginatio
 		return nil, 0, pagination, httpModel.WrapInvalid(err)
 	}
 
-	commits, totalCount, err := a.storeApp.SearchCommit(ctx, query, filters, before, after, pagination.PageSize, pagination.Last)
+	commits, totalCount, err := a.storeApp.SearchCommit(ctx, searchQuery, filters, before, after, pagination.PageSize, pagination.Last)
 	return commits, totalCount, pagination, err
 }
 

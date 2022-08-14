@@ -6,7 +6,7 @@ Git [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) histo
 - Light frontend (<60kb gzipped) with desktop and responsive UI
 - Filters on repository, type or component
 - Light shell script for loading data into backend
-- Github Actions provided for integration
+- GitHub Actions provided for integration
 
 [![Build](https://github.com/ViBiOh/herodote/workflows/Build/badge.svg)](https://github.com/ViBiOh/herodote/actions)
 [![codecov](https://codecov.io/gh/ViBiOh/herodote/branch/main/graph/badge.svg)](https://codecov.io/gh/ViBiOh/herodote)
@@ -16,7 +16,7 @@ Git [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) histo
 
 Herodote aims to provide a quick view of activitiy of all your repositories. It's the changelog of your organizations.
 
-Herodote only understands conventionnal commits. Commits that don't match expectations are ignored. To ensure you have conventionnal commits, you can use [`commit-msg hooks`](https://github.com/ViBiOh/scripts/blob/main/hooks/commit-msg) and/or a [simple Github Action that checks it](.github/workflows/branch_clean.yaml).
+Herodote only understands conventionnal commits. Commits that don't match expectations are ignored. To ensure you have conventionnal commits, you can use [`commit-msg hooks`](https://github.com/ViBiOh/scripts/blob/main/hooks/commit-msg) and/or a [simple GitHub Action that checks it](.github/workflows/branch_clean.yaml).
 
 Herodote loads data with its own script, which is idempotent. On cold start, with an empty index, it only loads last 50 commits.
 
@@ -26,17 +26,17 @@ Herodote loads data with its own script, which is idempotent. On cold start, wit
 
 Herodote use a Postgres database as a backend storage. You need a Postgres database for storing your datas. You can use free tier of [ElephantSQL](https://www.elephantsql.com).
 
-Once setup, you _have to_ to create schema with [Herodote DDL](sql/ddl.sql) and start the Herodote API. Configuration is done by passing `-dbHost`, `-dbName`, `-dbUser`, `-dbPass` arg or setting equivalent environment variables (cf. [API Usage](#usage) section).
+Once setup, you _have to_ create schema with [Herodote DDL](sql/ddl.sql) and start the Herodote API. Configuration is done by passing `-dbHost`, `-dbName`, `-dbUser`, `-dbPass` arg or setting equivalent environment variables (cf. [API Usage](#usage) section).
 
 ### Installation
 
-Golang binary is built with static link. You can download it directly from the [Github Release page](https://github.com/ViBiOh/herodote/releases) or build it by yourself by cloning this repo and running `make`.
+Golang binary is built with static link. You can download it directly from the [GitHub Release page](https://github.com/ViBiOh/herodote/releases) or build it by yourself by cloning this repo and running `make`.
 
 A Docker image is available for `amd64`, `arm` and `arm64` platforms on Docker Hub: [vibioh/herodote](https://hub.docker.com/r/vibioh/herodote/tags).
 
 You can configure app by passing CLI args or environment variables (cf. [Usage](#usage) section). CLI override environment variables.
 
-You'll find a Kubernetes exemple in the [`infra/`](infra/) folder, using my [`app chart`](https://github.com/ViBiOh/charts/tree/main/app)
+You'll find a Kubernetes exemple in the [`infra/`](infra) folder, using my [`app chart`](https://github.com/ViBiOh/charts/tree/main/app)
 
 ### CI Integration
 
@@ -53,9 +53,9 @@ The script needs the following variables to be set (or will prompt you for):
 
 If you execute your script in a non-interactive environment, set the `SCRIPTS_NO_INTERACTIVE=1` for disabling prompt, guessed value will be used.
 
-#### Github Actions
+#### GitHub Actions
 
-You can use the following Github Actions for pushing your commits to Herodote index on merge to `main`.
+You can use the following GitHub Actions for pushing your commits to Herodote index on merge to `main`.
 
 ```yaml
 ---

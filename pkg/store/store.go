@@ -2,14 +2,10 @@ package store
 
 import (
 	"context"
-	"errors"
 
 	"github.com/ViBiOh/herodote/pkg/model"
 	"github.com/ViBiOh/httputils/v4/pkg/db"
 )
-
-// ErrNotFound occurs when nothing found
-var ErrNotFound = errors.New("not found")
 
 // App of package
 type App struct {
