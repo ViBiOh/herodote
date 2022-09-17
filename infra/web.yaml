@@ -27,7 +27,7 @@ spec:
       name: vibioh/herodote
       tag: "202209171006" # {"$imagepolicy": "default:flux-herodote-web:tag"}
     config:
-      HERODOTE_DB_HOST: herodote-db
+      HERODOTE_DB_HOST: postgres
       HERODOTE_DB_NAME: herodote
       HERODOTE_DB_PORT: "80"
       HERODOTE_DB_USER: herodote
@@ -35,7 +35,7 @@ spec:
       HERODOTE_TRACER_URL: http://jaeger.monitoring:14268/api/traces
       OTEL_SERVICE_NAME: herodote
     secrets:
-      HERODOTE_DB_PASS: AgCdorc3AdFTwd1Fs2YgLQIGJawTwpiMyrKea9IqSNaoOYaWt15uv9y9D3/OwK7TRtjtKm1z3OOPXqWYTrh7r2gQW7iQzXjJxeKRqsOC82TVuN1oDejIAkF7Tpsd0VRLrt6KXTKX/ez+FvLf/c9XCfJeazZPrETwI0FB+QcpJZeXCgOSQMNsyk1QFtQZ3uOn3DJodhQgRhmfNsETJN42yF+SU3H2ZfJptqYpX10ifTO26wdaNHgR1Lg4qI7zLJMA1TemGMHbhMUyDyzCsmtzmSs7ke4+Wk0hepGuQTm1Blg7bchSiIff/KcEejVddV9yUEehZeuMIIEmTYn5K4gEPm+k0+AnFT5Rlf/ifrcGMiUb7RvdZytP+llINMFLT06SgvRwwhiCr/3TvqeFXgTzzRUtE2YkGmpp5bHkjIdgn/zp9IinT8k9Yx/lefGYPBx/zHhGt4LKfijVUj+MPvGzHPrVX478eyy8VKRRaHH+EsIS1kkGDXGzMQY3jKDc9M2bEJZmhmqeeSP/IecB9B7mmEWC3QzMFqUXVb53Pq3xVXxQyvX26DS27jaFbPMK2XTD2h9h/71WEMG8tJxBViXfuMQQH9oUSd6f/x4CsGr0NCjM/I6JOm+y9JbsBSqRj/p1ove6DoXE651vlbmg0nU/AIz+sXB5b3gGiz/PvX/tiTHo0a3eDpqQRzGGtv5OQmqEal+Sigt81mty5qWlORsog2RbTLgDvtKaMRptOs9K7JE0FcSvhKn/8rmRbldSWWgyxxZ3JKQMHGobx8NflCY=
+      HERODOTE_DB_PASS: AgCLCTuRD1bLUtXZfDnrfjGvpvyVq9kJS1+VRH62A2DR2uW5yptqPwivf2eZBhEDKivL56Cit2A291LhXmW9G7aHAJsgVkWJJ9aIwa3j6mpW23RBas9OIYMchWt59LCWfGJg9TNmJKjM+7a/coN9qdt2ey6UKrTIpUvy1bOCkdRncbfEX+IDvPKTJpSLWmCHXh5HXB4rwGmdtzU9LjvaczvWPBfholhr68//PMMA2Hlm+CqCWXf4n0Vg1SdyXTNjO/7NBakYqsETIXHcsmAHmMPpzzsTqeIFojAtwNrCuPIE7osz15KXCqMHTq0kBxWHV7NtWReCD91fEiCRkzf85dNqgVKB0jEy+BaMRfQ6rYOZLlj9bSVi2oPqsFqkof0dvJDfT8mPmBI9fSbDviJ/38zo5O5jyOtxioCggHuPZCtXn5LGfXJc0s5Wc+Q3S901Jp6kUJu/Hyt/ug8+Q2CXisGZq//OXvTZ/j0xZJUYWaKvY4PywLIY65KY+l9BahSEnjImwp+9DUcC1+YcGELWNEHT7QUMPFv5wsGgF3+8Qs1wlCBQXtVl55RrZB/sUVUgiy33FEUy3piaDuW874IrKGYIBBzZUT8RXuIjRkdO15LxAx2zhbQdDZV03KqTU55gqqJzqqSxgVrd0yPrdyhI9zIxZuQKx5eA8Daj2ZoW6pi2vw0yABH0lcw3zor+nQeNtjdhotU6Uge2IqeaKjDe4EueVtaTRrW/J57Xh7DBSSN6HFrP+xUdI6//W74CMD++Eaf6VVKkD8wG/pzwzLo=
       HERODOTE_HTTP_SECRET: AgAgEZLj1eWb1durpolIigG+Ny1WrotFOQ3FpvZ7EnHQkr48xZvpXcOWCou18sj9tJutaOH4SpX3/NrSpxVowqv5L6GhNUawqa39hg625EU85e5MB+94u/GhjlrI+yemeS2W3ozo857pR9LcErDc7acjhvlodn7DMb7oOlp/hnAlPt/Oc6GnQ1Ohje7kreiub7A9Qey6sShXUnKxpTKsk1Kqu8hHuj1YETDsbzZ6P/p8GNbq/he1Cc6pfed1tc66SV1dRTl6WoYSN8n7JObPu5DlREVA8Sj0TTNcJEXrGLBVi2m8GpxOl8+CYl5TqOe5HCQmGdUGaDwYlenoB6pdcucaWKRuB0l1S3opquMfmX+bMB5eJT/P3Tm8t5bYPx1aRJane82+d1gU7hO3K4PmFpVMTnkux/yFFn8g5HjD90iJNCOPU0OWM8GaoMFgjiBWK8AsHtnaKrr7CNGgK1nK6tXFb/xYds/OXpKldMeH5BBxfe5brfg4wNJ6Hw5BlTsGXrbroXdahl2h30DGe+WCYy3xzZ/MEondZg10LDGfPYWMCVX8T2HRAN9yYO/++Qxv/nT0cu5o1kj+6jjZlKt72yFykZPt2IhYPi6P4zfWX/WVIa+SLD0nTsEBySE441VzXKw6aPhv6GW+pJqYJm7OelPumBsl9NtZTUTY/mDjaYrEIHxmZQIH9R3oxnnfJanTHBTWOXkugwEcP4njVKDn6VsgrrQmoWevAFcHAEC6WM6B0nSKgVg2q0UAbS8GBmnjKW+ajM3hbQdNyzT6UE8=
     ingress:
       enabled: true
@@ -52,7 +52,7 @@ spec:
                   - key: app.kubernetes.io/instance
                     operator: In
                     values:
-                      - herodote-db
+                      - postgres
               topologyKey: "kubernetes.io/hostname"
     pprof:
       enabled: true

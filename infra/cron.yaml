@@ -31,13 +31,13 @@ spec:
       name: vibioh/herodote
       tag: "202209171006" # {"$imagepolicy": "default:flux-herodote-web:tag"}
     config:
-      INDEXER_DB_HOST: herodote-db
+      INDEXER_DB_HOST: postgres
       INDEXER_DB_NAME: herodote
       INDEXER_DB_PORT: "80"
       INDEXER_DB_USER: herodote
       INDEXER_LOGGER_JSON: "true"
     secrets:
-      INDEXER_DB_PASS: AgAmLWKCtgRKRPGyvZoJ2W4zZgbZBBo1a7pyTj3I+32lf3qFDRmX7tqJBY9BOPMJUwjJreU6sq92kP5vK21ZEZ9c9d8VBG/SmmksCQguVE7JItve/ea+EhNWHdjcQC9Ip2Y/qzCZ4bDkWts1IsSQHjxd6aYfcMRRSfbRpYm23P2AEFWD8WpDA9sI9D+HVxfuBIahCAkYGJ0k0mCSmDIFaMjVgKp8F5nFiA2AXNoF3DTQOB8QQHINAf+lRjBxWf5dCn21338m5Vtf+/hMTic4vLcgdoEHKMjYOFj9nKr4cCWAJNr3+SVcL/H9FJJ4flhjxOzyv4ZVlyErSWISRuJDjK6GyiHJkIoOLH8Xyrw1EiLlJVMnWvpvhXfOnGZ7y3PV9jJJoDgzxT+1hS6pNJyRsXXOsY1xae78VYrLWKFycUxRk6L1GQtJnblH1lICnaqg6XPs7URKElM2w4sPQtHjhatzjLilaqj1tfn2wncUcjaOTn+S1YSy6bWReYqjItRMF7BNddIuDUznnSo1zb8vpDBzp2Ljy+eQqhtQPLImvl1VqLqmJUPzWMX+WFJQsk3LLEfgwM4kL58sNJOmzcaVV/Vuk2GA61Ctjr0LJT2wZYkAqCpJL8561GOeD2OrwkS5c27eV5ZFK5DiNNazIkcIq4WaLbE2qzzd4e9nrnH4AkRxYDIKmaDWzwryacidBRCV864ShgZE1h3A7V2/0msmJxINOvpvY5xQTcYggecypePYBxGvoZ1bI5Z9ktf9BPVyy0vS2o5mSoS/j4ZUf4c=
+      INDEXER_DB_PASS: AgC2ZrWlyi4NRSk+sqNQJdT6/2N/H9cbYTvG8mdCr27C86Tthwg7NkWrhDwlLbblvxaHhIestRODT15gsyEixBtoY8zyrwHQRCAjSrshEZUdkj7KebVutn+BOh42MfWY/mlzsd6sib2lFNZxAVqVpEgbMaW2pONpLVXw9qSwCIUcAevJjPNxxLqQKdSDwIEytKzKxl7IvF3N0FuOj5Zcm/RGJQ+SjGXVfNgaH8R5Ijp/uQXigwdo/uMxKbMUkrt8kjxFGnqI6Du9Z/g8AgLaC60r1Gtjvbo7819WFA40O68YvR2jhakM5caats5s7yiDNfz3eOVnOhVZRRqjsPvS4D3xlTiKY8n3nmygRXC+2u3brgCYYrJIaeiUC3viybdpZkvhBa1yTLIQkVzTCIAn47mdm1aUfSvU0rfm1QJjKxXCnqvVXsyeZSHUTqDH+xm5qcXbwD4TpVH48BU8XT1rZVvn+vM1oBDj8QycgnGRg8xpYr0PFviQ+h+BUq3apVMFXtYnsexmcLjRdLUtEgk+8nTytbebX7kROpEqUwPMm2UiJEIAYmgJLQn3XKbJRE1/1dMMyfXv+IYNueXYacFHnZdwnwAiPt8EADRkB3BrkbH0GZodUJtsKn6kf3q6nfcpaKTOAn6aHI9FuB5r1qdTXdjB780MKTNmxieO0MmLzFTrLSQzQbRtIydxRJuAxGzDRuohwOP2qc2xp841lZhB1FHbDEHDKNIW03UXiUxhkZ1DVEYKvG6/FGCI+O6wFuzHaTg96wuQstM6+W+SWak=
     containers:
       - name: job
         command:
