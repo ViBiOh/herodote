@@ -1,6 +1,7 @@
 package herodote
 
 import (
+	"context"
 	"errors"
 	"flag"
 	"fmt"
@@ -11,7 +12,6 @@ import (
 
 	"github.com/ViBiOh/flags"
 	"github.com/ViBiOh/herodote/pkg/model"
-	"github.com/ViBiOh/herodote/pkg/store"
 	"github.com/ViBiOh/httputils/v4/pkg/httperror"
 	"github.com/ViBiOh/httputils/v4/pkg/httpjson"
 	httpModel "github.com/ViBiOh/httputils/v4/pkg/model"
@@ -28,32 +28,34 @@ const (
 	commitsPath = "/commits"
 )
 
-// ErrAuthentificationFailed occurs when secret is invalid
 var ErrAuthentificationFailed = errors.New("invalid secret provided")
 
-// App of package
+type Store interface {
+	Enabled() bool
+	ListFilters(context.Context) (map[string][]string, error)
+	SearchCommit(ctx context.Context, query string, filters map[string][]string, before, after string, pageSize uint, last string) (model.CommitsList, error)
+	SaveCommit(context.Context, model.Commit) error
+}
+
 type App struct {
 	tracer     trace.Tracer
 	apiHandler http.Handler
 	colors     map[string]string
-	storeApp   store.App
+	storeApp   Store
 	secret     string
 }
 
-// Config of package
 type Config struct {
 	secret *string
 }
 
-// Flags adds flags for configuring package
 func Flags(fs *flag.FlagSet, prefix string) Config {
 	return Config{
 		secret: flags.String(fs, prefix, "herodote", "HttpSecret", "HTTP Secret Key for Update", "", nil),
 	}
 }
 
-// New creates new App from Config
-func New(config Config, storeApp store.App, tracer trace.Tracer) (App, error) {
+func New(config Config, storeApp Store, tracer trace.Tracer) (App, error) {
 	if len(*config.secret) == 0 {
 		return App{}, errors.New("http secret is required")
 	}
@@ -74,7 +76,6 @@ func New(config Config, storeApp store.App, tracer trace.Tracer) (App, error) {
 	return app, nil
 }
 
-// Handler for request. Should be use with net/http
 func (a App) Handler() http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.Method == http.MethodPost && r.Header.Get("Authorization") != a.secret {
@@ -91,14 +92,13 @@ func (a App) Handler() http.Handler {
 	})
 }
 
-// TemplateFunc used for rendering UI
 func (a App) TemplateFunc(w http.ResponseWriter, r *http.Request) (renderer.Page, error) {
 	if strings.HasPrefix(r.URL.Path, apiPath) {
 		a.apiHandler.ServeHTTP(w, r)
 		return renderer.Page{}, nil
 	}
 
-	commits, _, _, err := a.listCommits(r)
+	commits, _, err := a.listCommits(r)
 	if err != nil {
 		return renderer.NewPage("", http.StatusInternalServerError, nil), err
 	}
@@ -120,18 +120,18 @@ func (a App) TemplateFunc(w http.ResponseWriter, r *http.Request) (renderer.Page
 		"Types":        filters["type"],
 		"Components":   filters["component"],
 		"Colors":       repositoriesColors,
-		"Commits":      commits,
+		"Commits":      commits.Commits,
 		"Now":          time.Now(),
 	}), nil
 }
 
-func (a App) listCommits(r *http.Request) ([]model.Commit, uint, query.Pagination, error) {
+func (a App) listCommits(r *http.Request) (model.CommitsList, query.Pagination, error) {
 	ctx, end := tracer.StartSpan(r.Context(), a.tracer, "list commits", trace.WithSpanKind(trace.SpanKindInternal))
 	defer end()
 
-	pagination, err := query.ParsePagination(r, 50, 100)
+	pagination, err := query.ParsePagination(r, model.DefaultPageSize, 100)
 	if err != nil {
-		return nil, 0, pagination, httpModel.WrapInvalid(err)
+		return model.CommitsList{}, pagination, httpModel.WrapInvalid(err)
 	}
 
 	params := r.URL.Query()
@@ -145,16 +145,16 @@ func (a App) listCommits(r *http.Request) ([]model.Commit, uint, query.Paginatio
 
 	before := strings.TrimSpace(params.Get("before"))
 	if err := checkDate(before); err != nil {
-		return nil, 0, pagination, httpModel.WrapInvalid(err)
+		return model.CommitsList{}, pagination, httpModel.WrapInvalid(err)
 	}
 
 	after := strings.TrimSpace(params.Get("after"))
 	if err := checkDate(after); err != nil {
-		return nil, 0, pagination, httpModel.WrapInvalid(err)
+		return model.CommitsList{}, pagination, httpModel.WrapInvalid(err)
 	}
 
-	commits, totalCount, err := a.storeApp.SearchCommit(ctx, searchQuery, filters, before, after, pagination.PageSize, pagination.Last)
-	return commits, totalCount, pagination, err
+	commits, err := a.storeApp.SearchCommit(ctx, searchQuery, filters, before, after, pagination.PageSize, pagination.Last)
+	return commits, pagination, err
 }
 
 func (a App) handleCommits(w http.ResponseWriter, r *http.Request) {
@@ -168,7 +168,7 @@ func (a App) handleCommits(w http.ResponseWriter, r *http.Request) {
 }
 
 func (a App) handleGetCommits(w http.ResponseWriter, r *http.Request) {
-	commits, totalCount, pagination, err := a.listCommits(r)
+	commits, pagination, err := a.listCommits(r)
 	if err != nil {
 		if errors.Is(err, httpModel.ErrInvalid) {
 			httperror.BadRequest(w, err)
@@ -179,12 +179,12 @@ func (a App) handleGetCommits(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var last string
-	if len(commits) > 0 {
-		last = commits[len(commits)-1].Date.String()
+	if len(commits.Commits) > 0 {
+		last = commits.Commits[len(commits.Commits)-1].Date.String()
 	}
 
 	w.Header().Add("Link", pagination.LinkNextHeader(fmt.Sprintf("%s%s", apiPath, r.URL.Path), r.URL.Query()))
-	httpjson.WritePagination(w, http.StatusOK, pagination.PageSize, totalCount, last, commits)
+	httpjson.WritePagination(w, http.StatusOK, pagination.PageSize, commits.TotalCount, last, commits)
 }
 
 func (a App) handlePostCommits(w http.ResponseWriter, r *http.Request) {

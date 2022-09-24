@@ -34,7 +34,7 @@ LIMIT $1
 `
 
 // SearchCommit in the storage based on given filters
-func (a App) SearchCommit(ctx context.Context, query string, filters map[string][]string, before, after string, pageSize uint, last string) ([]model.Commit, uint, error) {
+func (a App) SearchCommit(ctx context.Context, query string, filters map[string][]string, before, after string, pageSize uint, last string) (model.CommitsList, error) {
 	var words []string
 	if len(query) > 0 {
 		words = strings.Split(query, " ")
@@ -56,7 +56,10 @@ func (a App) SearchCommit(ctx context.Context, query string, filters map[string]
 
 	sqlQuery, sqlArgs := computeSearchQuery(pageSize, last, words, filters, before, after)
 
-	return list, totalCount, a.db.List(ctx, scanner, sqlQuery, sqlArgs...)
+	return model.CommitsList{
+		Commits:    list,
+		TotalCount: totalCount,
+	}, a.db.List(ctx, scanner, sqlQuery, sqlArgs...)
 }
 
 func computeSearchQuery(pageSize uint, last string, words []string, filters map[string][]string, before, after string) (string, []any) {

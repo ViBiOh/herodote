@@ -6,7 +6,8 @@ import (
 	"time"
 )
 
-// Commit describes a commit on a repository
+const DefaultPageSize = 50
+
 type Commit struct {
 	Date       time.Time `json:"date"`
 	Hash       string    `json:"hash"`
@@ -19,7 +20,6 @@ type Commit struct {
 	Revert     bool      `json:"revert"`
 }
 
-// Sanitize cleans value of a commit
 func (c Commit) Sanitize() Commit {
 	c.Hash = cleanString(c.Hash)
 	c.Type = cleanString(c.Type)
@@ -30,7 +30,6 @@ func (c Commit) Sanitize() Commit {
 	return c
 }
 
-// Check verifies that Commit is valid
 func (c Commit) Check() error {
 	if len(c.Hash) == 0 {
 		return fmt.Errorf("commit's hash is required (e.g. `1a2bc34d`)")
@@ -61,4 +60,9 @@ func (c Commit) Check() error {
 
 func cleanString(s string) string {
 	return strings.TrimSpace(strings.ToLower(s))
+}
+
+type CommitsList struct {
+	Commits    []Commit `json:"commits"`
+	TotalCount uint     `json:"totalCount"`
 }

@@ -203,6 +203,16 @@ Usage of herodote:
         Public URL {HERODOTE_PUBLIC_URL} (default "https://herodote.vibioh.fr")
   -readTimeout duration
         [server] Read Timeout {HERODOTE_READ_TIMEOUT} (default 5s)
+  -redisAddress string
+        [redis] Redis Address fqdn:port (blank to disable) {HERODOTE_REDIS_ADDRESS} (default "localhost:6379")
+  -redisAlias string
+        [redis] Connection alias, for metric {HERODOTE_REDIS_ALIAS}
+  -redisDatabase int
+        [redis] Redis Database {HERODOTE_REDIS_DATABASE}
+  -redisPassword string
+        [redis] Redis Password, if any {HERODOTE_REDIS_PASSWORD}
+  -redisUsername string
+        [redis] Redis Username, if any {HERODOTE_REDIS_USERNAME}
   -shutdownTimeout duration
         [server] Shutdown Timeout {HERODOTE_SHUTDOWN_TIMEOUT} (default 10s)
   -title string

@@ -8,7 +8,7 @@ endif
 APP_NAME = herodote
 PACKAGES ?= ./...
 
-MAIN_SOURCE = cmd/herodote/api.go
+MAIN_SOURCE = ./cmd/herodote
 MAIN_RUNNER = go run $(MAIN_SOURCE)
 ifeq ($(DEBUG), true)
 	MAIN_RUNNER = dlv debug $(MAIN_SOURCE) --
@@ -86,6 +86,11 @@ build:
 run:
 	$(MAIN_RUNNER) \
 		-httpSecret "herodote"
+
+## config: Create .env configuration
+.PHONY: config
+config:
+	cp .env.example .env
 
 .PHONY: run-database
 run-database:
