@@ -10,6 +10,7 @@ import (
 	"github.com/ViBiOh/herodote/pkg/version"
 	"github.com/ViBiOh/httputils/v4/pkg/cache"
 	"github.com/ViBiOh/httputils/v4/pkg/db"
+	"github.com/ViBiOh/httputils/v4/pkg/logger"
 	"github.com/ViBiOh/httputils/v4/pkg/redis"
 	"github.com/ViBiOh/httputils/v4/pkg/sha"
 )
@@ -48,10 +49,18 @@ func (a App) SaveCommit(ctx context.Context, commit model.Commit) error {
 		return fmt.Errorf("save: %w", err)
 	}
 
-	entries, err := a.redis.Scan(ctx, version.Redis("commits:*"), 100)
-	if err != nil {
-		return fmt.Errorf("redis scan: %w", err)
-	}
+	go func() {
+		ctx := context.Background()
 
-	return a.redis.Delete(ctx, entries...)
+		entries, err := a.redis.Scan(ctx, version.Redis("commits:*"), 100)
+		if err != nil {
+			logger.Error("redis scan for eviction after save commit: %s", err)
+		}
+
+		if err := a.redis.Delete(ctx, entries...); err != nil {
+			logger.Error("redis delete after save commit: %s", err)
+		}
+	}()
+
+	return err
 }
