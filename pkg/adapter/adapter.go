@@ -50,14 +50,7 @@ func (a App) SaveCommit(ctx context.Context, commit model.Commit) error {
 	}
 
 	go func() {
-		ctx := context.Background()
-
-		entries, err := a.redis.Scan(ctx, version.Redis("commits:*"), 100)
-		if err != nil {
-			logger.Error("redis scan for eviction after save commit: %s", err)
-		}
-
-		if err := a.redis.Delete(ctx, entries...); err != nil {
+		if err := a.redis.DeletePattern(context.Background(), version.Redis("commits:*")); err != nil {
 			logger.Error("redis delete after save commit: %s", err)
 		}
 	}()
