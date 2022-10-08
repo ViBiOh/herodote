@@ -11,7 +11,6 @@ updates:
     directory: /
     schedule:
       interval: daily
-      time: "06:00"
     commit-message:
       prefix: chore
       include: scope
