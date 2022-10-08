@@ -10,9 +10,8 @@ updates:
   - package-ecosystem: gomod
     directory: /
     schedule:
-      interval: weekly
+      interval: daily
       time: "06:00"
-      day: saturday
     commit-message:
       prefix: chore
       include: scope
