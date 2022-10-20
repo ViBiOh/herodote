@@ -25,7 +25,7 @@ spec:
     nameOverride: herodote
     image:
       name: vibioh/herodote
-      tag: "202210140817" # {"$imagepolicy": "default:flux-herodote-web:tag"}
+      tag: "202210200903" # {"$imagepolicy": "default:flux-herodote-web:tag"}
     config:
       HERODOTE_DB_HOST: postgres
       HERODOTE_DB_NAME: herodote
