@@ -29,7 +29,7 @@ spec:
     schedule: "0 6 * * *"
     image:
       name: vibioh/herodote
-      tag: "202211280908" # {"$imagepolicy": "default:flux-herodote-web:tag"}
+      tag: "202211280922" # {"$imagepolicy": "default:flux-herodote-web:tag"}
     config:
       INDEXER_DB_HOST: postgres
       INDEXER_DB_NAME: herodote
