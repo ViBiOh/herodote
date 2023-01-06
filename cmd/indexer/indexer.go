@@ -21,7 +21,9 @@ func main() {
 	logger.Global(logger.New(loggerConfig))
 	defer logger.Close()
 
-	herodoteDb, err := db.New(dbConfig, nil)
+	ctx := context.Background()
+
+	herodoteDb, err := db.New(ctx, dbConfig, nil)
 	logger.Fatal(err)
 	defer herodoteDb.Close()
 
