@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 
 	"github.com/ViBiOh/httputils/v4/pkg/db"
@@ -21,7 +22,7 @@ type clients struct {
 	health     health.App
 }
 
-func newClients(config configuration) (clients, error) {
+func newClients(ctx context.Context, config configuration) (clients, error) {
 	var output clients
 	var err error
 
@@ -30,14 +31,14 @@ func newClients(config configuration) (clients, error) {
 
 	output.prometheus = prometheus.New(config.prometheus)
 
-	output.tracer, err = tracer.New(config.tracer)
+	output.tracer, err = tracer.New(ctx, config.tracer)
 	if err != nil {
 		return output, fmt.Errorf("tracer: %w", err)
 	}
 
 	request.AddTracerToDefaultClient(output.tracer.GetProvider())
 
-	output.database, err = db.New(config.db, output.tracer.GetTracer("database"))
+	output.database, err = db.New(ctx, config.db, output.tracer.GetTracer("database"))
 	if err != nil {
 		return output, fmt.Errorf("database: %w", err)
 	}
@@ -49,8 +50,8 @@ func newClients(config configuration) (clients, error) {
 	return output, nil
 }
 
-func (c clients) Close() {
+func (c clients) Close(ctx context.Context) {
 	c.database.Close()
-	c.tracer.Close()
+	c.tracer.Close(ctx)
 	c.logger.Close()
 }

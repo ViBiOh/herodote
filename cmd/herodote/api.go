@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"embed"
 	"fmt"
 	"net/http"
@@ -31,12 +32,14 @@ func main() {
 		fmt.Println(http.ListenAndServe("localhost:9999", http.DefaultServeMux))
 	}()
 
-	client, err := newClients(config)
+	ctx := context.Background()
+
+	client, err := newClients(ctx, config)
 	if err != nil {
 		logger.Fatal(fmt.Errorf("client: %s", err))
 	}
 
-	defer client.Close()
+	defer client.Close(ctx)
 
 	adapter := newAdapters(client)
 
@@ -52,8 +55,8 @@ func main() {
 
 	rendererHandler := rendererApp.Handler(herodoteApp.TemplateFunc)
 
-	go promServer.Start("prometheus", client.health.End(), prometheusApp.Handler())
-	go appServer.Start("http", client.health.End(), httputils.Handler(rendererHandler, client.health, recoverer.Middleware, prometheusApp.Middleware, client.tracer.Middleware, owasp.New(config.owasp).Middleware, cors.New(config.cors).Middleware))
+	go promServer.Start(client.health.ContextEnd(), "prometheus", prometheusApp.Handler())
+	go appServer.Start(client.health.ContextEnd(), "http", httputils.Handler(rendererHandler, client.health, recoverer.Middleware, prometheusApp.Middleware, client.tracer.Middleware, owasp.New(config.owasp).Middleware, cors.New(config.cors).Middleware))
 
 	client.health.WaitForTermination(appServer.Done())
 	server.GracefulWait(appServer.Done(), promServer.Done())
