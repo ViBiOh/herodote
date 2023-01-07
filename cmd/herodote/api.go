@@ -55,8 +55,8 @@ func main() {
 
 	rendererHandler := rendererApp.Handler(herodoteApp.TemplateFunc)
 
-	go promServer.Start(client.health.ContextEnd(), "prometheus", prometheusApp.Handler())
-	go appServer.Start(client.health.ContextEnd(), "http", httputils.Handler(rendererHandler, client.health, recoverer.Middleware, prometheusApp.Middleware, client.tracer.Middleware, owasp.New(config.owasp).Middleware, cors.New(config.cors).Middleware))
+	go promServer.Start(client.health.End(ctx), "prometheus", prometheusApp.Handler())
+	go appServer.Start(client.health.End(ctx), "http", httputils.Handler(rendererHandler, client.health, recoverer.Middleware, prometheusApp.Middleware, client.tracer.Middleware, owasp.New(config.owasp).Middleware, cors.New(config.cors).Middleware))
 
 	client.health.WaitForTermination(appServer.Done())
 	server.GracefulWait(appServer.Done(), promServer.Done())
