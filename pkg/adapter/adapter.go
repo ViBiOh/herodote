@@ -13,6 +13,7 @@ import (
 	"github.com/ViBiOh/httputils/v4/pkg/logger"
 	"github.com/ViBiOh/httputils/v4/pkg/redis"
 	"github.com/ViBiOh/httputils/v4/pkg/sha"
+	"github.com/ViBiOh/httputils/v4/pkg/tracer"
 )
 
 type App struct {
@@ -49,11 +50,11 @@ func (a App) SaveCommit(ctx context.Context, commit model.Commit) error {
 		return fmt.Errorf("save: %w", err)
 	}
 
-	go func() {
-		if err := a.redis.DeletePattern(context.Background(), version.Redis("commits:*")); err != nil {
+	go func(ctx context.Context) {
+		if err := a.redis.DeletePattern(ctx, version.Redis("commits:*")); err != nil {
 			logger.Error("redis delete after save commit: %s", err)
 		}
-	}()
+	}(tracer.CopyToBackground(ctx))
 
 	return err
 }

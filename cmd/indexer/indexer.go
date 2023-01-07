@@ -28,6 +28,6 @@ func main() {
 	defer herodoteDb.Close()
 
 	logger.Info("Lexeme refresh...")
-	logger.Fatal(store.New(herodoteDb).Refresh(context.Background()))
+	logger.Fatal(store.New(herodoteDb).Refresh(ctx))
 	logger.Info("Lexeme refreshed!")
 }
