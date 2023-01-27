@@ -17,7 +17,7 @@ type clients struct {
 	logger     logger.Logger
 	prometheus prometheus.App
 	tracer     tracer.App
-	redis      redis.App
+	redis      redis.Client
 	database   db.App
 	health     health.App
 }

@@ -17,11 +17,11 @@ import (
 )
 
 type App struct {
-	redis redis.App
+	redis redis.Client
 	store store.App
 }
 
-func New(redis redis.App, database db.App) App {
+func New(redis redis.Client, database db.App) App {
 	return App{
 		redis: redis,
 		store: store.New(database),
