@@ -6,7 +6,7 @@ import (
 	"strings"
 
 	"github.com/ViBiOh/herodote/pkg/model"
-	"github.com/jackc/pgx/v4"
+	"github.com/jackc/pgx/v5"
 )
 
 const searchCommitQuery = `
