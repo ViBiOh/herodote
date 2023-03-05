@@ -43,7 +43,7 @@ func newClients(ctx context.Context, config configuration) (clients, error) {
 		return output, fmt.Errorf("database: %w", err)
 	}
 
-	output.redis = redis.New(config.redis, output.prometheus.Registerer(), output.tracer.GetTracer("redis"))
+	output.redis = redis.New(config.redis, output.tracer.GetTracer("redis"))
 
 	output.health = health.New(config.health, output.database.Ping)
 

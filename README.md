@@ -139,6 +139,8 @@ Usage of herodote:
         [db] Host {HERODOTE_DB_HOST}
   -dbMaxConn uint
         [db] Max Open Connections {HERODOTE_DB_MAX_CONN} (default 5)
+  -dbMinConn uint
+        [db] Min Open Connections {HERODOTE_DB_MIN_CONN} (default 2)
   -dbName string
         [db] Name {HERODOTE_DB_NAME}
   -dbPass string
@@ -218,9 +220,9 @@ Usage of herodote:
   -title string
         Application title {HERODOTE_TITLE} (default "Herodote")
   -tracerRate string
-        [tracer] Jaeger sample rate, 'always', 'never' or a float value {HERODOTE_TRACER_RATE} (default "always")
+        [tracer] OpenTracing sample rate, 'always', 'never' or a float value {HERODOTE_TRACER_RATE} (default "always")
   -tracerURL string
-        [tracer] Jaeger endpoint URL (e.g. http://jaeger:14268/api/traces) {HERODOTE_TRACER_URL}
+        [tracer] OpenTracing gRPC endpoint (e.g. otel-exporter:4317) {HERODOTE_TRACER_URL}
   -url string
         [alcotest] URL to check {HERODOTE_URL}
   -userAgent string

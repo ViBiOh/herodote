@@ -126,8 +126,10 @@ func (a App) TemplateFunc(w http.ResponseWriter, r *http.Request) (renderer.Page
 }
 
 func (a App) listCommits(r *http.Request) (model.CommitsList, query.Pagination, error) {
+	var err error
+
 	ctx, end := tracer.StartSpan(r.Context(), a.tracer, "list commits", trace.WithSpanKind(trace.SpanKindInternal))
-	defer end()
+	defer end(&err)
 
 	pagination, err := query.ParsePagination(r, model.DefaultPageSize, 100)
 	if err != nil {
