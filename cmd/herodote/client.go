@@ -43,7 +43,10 @@ func newClients(ctx context.Context, config configuration) (clients, error) {
 		return output, fmt.Errorf("database: %w", err)
 	}
 
-	output.redis = redis.New(config.redis, output.tracer.GetTracer("redis"))
+	output.redis, err = redis.New(config.redis, output.tracer.GetProvider())
+	if err != nil {
+		return output, fmt.Errorf("redis: %w", err)
+	}
 
 	output.health = health.New(config.health, output.database.Ping)
 
@@ -52,6 +55,7 @@ func newClients(ctx context.Context, config configuration) (clients, error) {
 
 func (c clients) Close(ctx context.Context) {
 	c.database.Close()
+	c.redis.Close()
 	c.tracer.Close(ctx)
 	c.logger.Close()
 }
