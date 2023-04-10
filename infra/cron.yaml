@@ -30,7 +30,7 @@ spec:
     timeZone: "Europe/Paris"
     image:
       name: vibioh/herodote
-      tag: "202304100841" # {"$imagepolicy": "default:flux-herodote-web:tag"}
+      tag: "202304101405" # {"$imagepolicy": "default:flux-herodote-web:tag"}
     config:
       INDEXER_DB_HOST: postgres
       INDEXER_DB_NAME: herodote
