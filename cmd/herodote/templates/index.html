@@ -273,13 +273,11 @@
     }
 
     /**
-    * Handle Previous/next.
-    */
-    window.onkeyup = e => {
-      switch(e.key) {
-        case 'Escape':
-          goBack();
-          break;
+     * Handle Previous/next.
+     */
+    window.onkeyup = (e) => {
+      if (e.key === "Escape") {
+        goBack();
       }
     };
 
