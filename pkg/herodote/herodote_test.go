@@ -17,7 +17,7 @@ func TestFlags(t *testing.T) {
 		want string
 	}{
 		"simple": {
-			"Usage of simple:\n  -httpSecret string\n    \t[herodote] HTTP Secret Key for Update {SIMPLE_HTTP_SECRET}\n",
+			"Usage of simple:\n  -httpSecret string\n    \t[herodote] HTTP Secret Key for Update ${SIMPLE_HTTP_SECRET}\n",
 		},
 	}
 

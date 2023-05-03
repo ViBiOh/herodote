@@ -51,7 +51,7 @@ type Config struct {
 
 func Flags(fs *flag.FlagSet, prefix string) Config {
 	return Config{
-		secret: flags.String(fs, prefix, "herodote", "HttpSecret", "HTTP Secret Key for Update", "", nil),
+		secret: flags.New("HttpSecret", "HTTP Secret Key for Update").Prefix(prefix).DocPrefix("herodote").String(fs, "", nil),
 	}
 }
 
