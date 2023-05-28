@@ -5,6 +5,7 @@ import (
 	"flag"
 	"os"
 
+	"github.com/ViBiOh/flags"
 	"github.com/ViBiOh/herodote/pkg/store"
 	"github.com/ViBiOh/httputils/v4/pkg/db"
 	"github.com/ViBiOh/httputils/v4/pkg/logger"
@@ -12,6 +13,7 @@ import (
 
 func main() {
 	fs := flag.NewFlagSet("indexer", flag.ExitOnError)
+	fs.Usage = flags.Usage(fs)
 
 	loggerConfig := logger.Flags(fs, "logger")
 	dbConfig := db.Flags(fs, "db")
