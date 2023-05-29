@@ -14,12 +14,12 @@ import (
 )
 
 type clients struct {
-	logger     logger.Logger
-	prometheus prometheus.App
+	logger     *logger.Logger
+	prometheus *prometheus.App
 	tracer     tracer.App
 	redis      redis.Client
 	database   db.App
-	health     health.App
+	health     *health.App
 }
 
 func newClients(ctx context.Context, config configuration) (clients, error) {
