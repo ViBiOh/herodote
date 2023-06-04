@@ -33,7 +33,6 @@ ORDER BY
 LIMIT $1
 `
 
-// SearchCommit in the storage based on given filters
 func (a App) SearchCommit(ctx context.Context, query string, filters map[string][]string, before, after string, pageSize uint, last string) (model.CommitsList, error) {
 	var words []string
 	if len(query) > 0 {

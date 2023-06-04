@@ -40,7 +40,6 @@ var (
 	colorsCount = 0
 	colors      = sync.Map{}
 
-	// FuncMap for template rendering
 	FuncMap = template.FuncMap{
 		"colors": func(commit model.Commit) string {
 			if color, ok := colors.Load(commit.Repository); ok {

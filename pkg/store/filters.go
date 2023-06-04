@@ -14,7 +14,6 @@ FROM
   herodote.filters
 `
 
-// ListFilters available on GUI
 func (a App) ListFilters(ctx context.Context) (map[string][]string, error) {
 	list := make(map[string][]string)
 
